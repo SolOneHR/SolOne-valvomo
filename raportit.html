@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Etäsilmät - Raporttiarkisto</title>
+    <script src="auth.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; }
+        .box { background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd; }
+        .table-container { overflow-x: auto; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f8f9fa; white-space: nowrap; }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h2>Raporttiarkisto</h2>
+        <div class="table-container">
+            <table id="raportti-taulu">
+                <thead>
+                    <tr>
+                        <th>Käyntiaika</th>
+                        <th>Asiakas</th>
+                        <th>Jääkaappi</th>
+                        <th>Tekniikka</th>
+                        <th>Yleisvointi</th>
+                        <th>Mieliala</th>
+                        
+                        <th>Viesti omaiselle</th>
+                    </tr>
+                </thead>
+                <tbody id="raportti-lista">
+                    <tr><td colspan="7">Ladataan raportteja...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+       
+        async function lataaRaportit() {
+    // 1. Määritellään muuttuja 'lista' heti alussa
+    const lista = document.getElementById('raportti-lista');
+
+    // Haetaan tiedot REST API:n kautta
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/etasilmat_raportit?select=*,asiakkaat(nimi)&order=kaynnin_ajankohta.desc`, {
+        method: 'GET',
+        headers: {
+            'apikey': ANON_KEY,
+            'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
+            'Content-Type': 'application/json'
+        }
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+        console.log("Raportit ladattu:", data);
+        
+        // 2. Nyt 'lista' on olemassa ja toimii
+        lista.innerHTML = ''; 
+        data.forEach(r => {
+            const tr = document.createElement('tr');
+            const aika = r.kaynnin_ajankohta ? new Date(r.kaynnin_ajankohta).toLocaleString('fi-FI') : '-';
+            
+            tr.innerHTML = `
+                <td>${aika}</td>
+                <td>${r.asiakkaat ? r.asiakkaat.nimi : 'Tuntematon'}</td>
+                <td>${r.jaakaappi_status || '-'}</td>
+                <td>${r.tekniikka_status || '-'}</td>
+                <td>${r.yleisvointi || '-'}</td>
+                <td>${r.mieliala || '-'}</td>
+                <td>${r.viesti_omaiselle || '-'}</td>
+            `;
+            lista.appendChild(tr);
+        });
+    } else {
+        console.error("Virhe ladattaessa:", data);
+        alert("Virhe raporttien latauksessa.");
+    }
+}
+
+
+        lataaRaportit();
+    </script>
+</body>
+</html>

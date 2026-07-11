@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>SolOne Hallinta</title>
+    <script src="auth.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 40px; text-align: center; background: #f4f7f6; }
+        h1 { color: #333; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 20px; 
+            max-width: 800px; 
+            margin: 40px auto; 
+        }
+        .card { 
+            padding: 30px; 
+            border: 2px solid #007bff; 
+            border-radius: 12px; 
+            background: white; 
+            text-decoration: none; 
+            color: #007bff; 
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: 0.3s;
+        }
+        .card:hover { background: #007bff; color: white; }
+        
+        .somevalvomo-btn {
+            background: #4a3df5; /* Sininen pohjaväri */
+            color: white;        /* Valkoinen teksti */
+            border-color: #4a3df5;
+        }
+        .somevalvomo-btn:hover {
+            background: #352bc2; /* Hieman tummempi sininen, kun hiiri on päällä */
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>SolOne Hallintapaneeli</h1>
+    <div class="grid">
+        <a href="valvomo.html" class="card">IT-Valvomo</a>
+        <a href="lisaa_asiakas.html" class="card">Lisää asiakas</a>
+        <a href="raportit.html" class="card">Raportit</a>
+        <a href="etasilmat_raportointi.html" class="card">Etäsilmät-raportti</a>
+        
+        <a href="somevalvomo.html" class="card somevalvomo-btn">Somejulkaisujen Valvomo</a>
+    </div>
+    <button onclick="kirjauduUlos()">Kirjaudu ulos</button>
+    <script src="auth.js"></script>
+</body>
+</html>

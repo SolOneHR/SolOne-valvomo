@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Soloset Valvomo</title>
+   
+    <script src="auth.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f4f9; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .error { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>IT-Valvomo</h1>
+    <button onclick="haeLogit()">Päivitä tiedot</button>
+    <br><br>
+
+    <table id="logTable">
+        <thead>
+            <tr>
+                <th>Aika</th>
+                <th>Palvelu</th>
+                <th>Viesti</th>
+            </tr>
+        </thead>
+        <tbody id="logBody">
+            </tbody>
+    </table>
+
+    <script>
+       
+      async function haeLogit() {
+    console.log("Haetaan lokeja...");
+    const tbody = document.getElementById('logBody');
+    tbody.innerHTML = '<tr><td colspan="3">Ladataan...</td></tr>';
+
+    // Haetaan tiedot suoraan REST API:n kautta
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/system_logs?select=*&order=created_at.desc`, {
+        method: 'GET',
+        headers: {
+            'apikey': ANON_KEY,
+            'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
+            'Content-Type': 'application/json'
+        }
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+        tbody.innerHTML = ''; // Tyhjennetään latausviesti
+        
+        if (data && data.length > 0) {
+            data.forEach(log => {
+                const row = document.createElement('tr');
+                
+                // Viestin käsittely
+                let viesti = log.message;
+                if (!viesti || viesti === "") {
+                    viesti = "Tyhjä viesti. Payload: " + JSON.stringify(log.payload);
+                }
+
+                row.innerHTML = `
+                    <td>${new Date(log.created_at).toLocaleString('fi-FI')}</td>
+                    <td>${log.service_name}</td>
+                    <td class="${log.log_level === 'ERROR' ? 'error' : ''}">${viesti}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="3">Ei lokitietoja löytynyt.</td></tr>';
+        }
+    } else {
+        console.error("Virhe haussa:", data);
+        tbody.innerHTML = '<tr><td colspan="3" class="error">Virhe ladattaessa lokit.</td></tr>';
+    }
+}
+
+// Haetaan automaattisesti kun sivu latautuu
+haeLogit();
+    </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Käyttöohje: SolOne AutoPublish & Valvomo</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm 15mm;
+            background-color: #ffffff;
+            @bottom-right {
+                content: counter(page);
+                font-family: 'Arial', sans-serif;
+                font-size: 9pt;
+                color: #64748b;
+            }
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #334155;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            font-size: 10.5pt;
+        }
+        .header-banner {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 25px 20px;
+            margin-bottom: 30px;
+            border-radius: 6px;
+        }
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 20pt;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        .subtitle {
+            margin: 0;
+            font-size: 11pt;
+            color: #94a3b8;
+        }
+        h2 {
+            font-size: 14pt;
+            color: #0f172a;
+            border-left: 4px solid #10b981;
+            padding-left: 10px;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            page-break-after: avoid;
+        }
+        p {
+            margin: 0 0 12px 0;
+        }
+        .info-box {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #166534;
+        }
+        .example-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 10pt;
+            white-space: pre-line;
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+        ul, ol {
+            margin: 0 0 15px 0;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 6px;
+        }
+        strong {
+            color: #0f172a;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-banner">
+        <h1>Käyttöohje: SolOne AutoPublish & Valvomo</h1>
+        <p class="subtitle">Pikaopas somejulkaisujen luomiseen, tekoälyn ohjeistamiseen ja julkaisujen hallintaan suoraan sähköpostistasi.</p>
+    </div>
+
+    <div class="info-box">
+        <strong>Tervetuloa käyttämään SolOne AutoPublish -järjestelmää!</strong><br>
+        Tämän järjestelmän avulla voit luoda valmiita ammattimaisia somejulkaisuja suoraan sähköpostistasi. Järjestelmän integroitu tekoäly huolehtii tekstin viimeistelystä ja hastageista, mutta julkaisu ei koskaan lähde liveksi ilman sinun hyväksyntääsi sähköisestä Valvomosta.
+    </div>
+
+    <h2>1. Julkaisun luominen sähköpostitse</h2>
+    <p>Kun haluat luoda uuden somepostauksen, lähetä sähköposti järjestelmän omaan vastaanotto-osoitteeseen seuraavilla määrityksillä:</p>
+    <ul>
+        <li><strong>Vastaanottaja (To):</strong> Sinulle toimitettu järjestelmän oma sähköpostiosoite.</li>
+        <li><strong>Aihe (Subject):</strong> Määrittää kanavan, johon haluat julkaista. Kirjoita aiheeksi jokin seuraavista (Huom! Kirjoitetaan isolla alkukirjaimella):
+            <ul>
+                <li><code>Molemmat</code> (Julkaistaan sekä Facebookiin että Instagramiin)</li>
+                <li><code>Facebook</code> (Julkaistaan vain Facebookiin)</li>
+                <li><code>Instagram</code> (Julkaistaan vain Instagramiin)</li>
+            </ul>
+        </li>
+        <li><strong>Liitteet:</strong> Liitä sähköpostiin mukaan kuva, jonka haluat julkaista tekstin yhteydessä.</li>
+    </ul>
+
+    <h2>2. Tekoälyn ohjeistaminen ja "Promptaus"</h2>
+    <p>Järjestelmän tekoäly on opetettu muotoilemaan raakatekstisi automaattisesti sujuvaksi some-kieleksi ja lisäämään loppuun osuvat hastagit. Voit kuitenkin <strong>antaa tekoälylle erillisiä ohjeita</strong> suoraan sähköpostiviestissäsi erottamalla ohjeet selkeästi omalle rivilleen.</p>
+    
+    <p><strong>Miten syötät ohjeita tekoälylle:</strong></p>
+    <div class="example-box"><strong>Aihe:</strong> Molemmat
+<strong>Viesti:</strong>
+Meillä oli tänään aivan mahtava asiakastapaaminen ja esittelimme uutta julkaisuautomaatiota! Asiakas oli todella innoissaan tehokkuudesta.
+
+[OHJE TEKOÄLYLLE: Kirjoita tämä teksti erittäin innostavalla ja energisellä sävyllä. Lisää mukaan aiheeseen sopivia emojeita ja käännä tekstin loppuun sama lyhyesti englanniksi.]</div>
+
+<p><strong>Suositeltuja ohjeita, joita voit kokeilla:</strong></p>
+        <ul>
+            <li><code>[OHJE: Säilytä antamani teksti ilman muokkauksia, lisää vain hastagit loppuun.]</code></li>
+            <li><code>[OHJE: Kirjoita asiallisella / hauskalla / rennolla / asiantuntevalla sävyllä.]</code></li>
+            <li><code>[OHJE: Tee tekstistä hyvin lyhyt ja ytimekäs tiivistys.]</code></li>
+            <li><code>[OHJE: Käännä julkaisu myös ruotsiksi/englanniksi tekstin alle.]</code></li>
+            <li><code>[OHJE: Muuta tämä listamuotoon ja lisää loppuun selkeä toimintakehote (CTA).]</code></li>
+        </ul>
+
+  
+    <h2>3. Julkaisujen hallinta Somevalvomossa</h2>
+    <p>Kun olet lähettänyt sähköpostin, järjestelmä käsittelee sen sekunneissa ja siirtää sen luonnokseksi sähköiseen valvomoosi. Avaa valvomo selaimellasi suorittaaksesi seuraavat vaiheet:</p>
+    <ol>
+        <li><strong>Tarkista teksti:</strong> Näet tekoälyn viimeistelemän tekstin tekstilaatikossa. Voit klikata laatikkoa ja korjata tai muuttaa tekstiä vapaasti.</li>
+        <li><strong>Tarkista kuva:</strong> Valvomo näyttää esikatselun sähköpostissa lähettämästäsi kuvasta.</li>
+        <li><strong>Muuta kanavaa tarvittaessa:</strong> Voit vielä valvomossakin vaihtaa julkaisukanavaa pudotusvalikosta (esim. jos päätätkin lähettää viestin vain Facebookiin).</li>
+        <li><strong>Valitse toiminto painikkeilla:</strong>
+            <ul>
+                <li><strong>🚀 Julkaise välittömästi:</strong> Lähettää julkaisun live-kanaviin heti.</li>
+                <li><strong>Hyväksy julkaistavaksi:</strong> Siirtää julkaisun valmiustilaan automaattista ajastettua julkaisua varten.</li>
+                <li><strong>Hylkää:</strong> Poistaa julkaisun jonosta, eikä sitä lähetetä eteenpäin.</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h2>4. Turvallinen testaaminen (Testitila)</h2>
+    <p>If haluat kokeilla järjestelmää tai uutta ohjetta ilman riskiä siitä, että viesti karkaa julkisuuteen:</p>
+    <ul>
+        <li>Kirjoita sähköpostin aiheeksi <code>Molemmat testi</code> tai valitse valvomon pudotusvalikosta jokin <strong>🛠️ TESTI</strong>-vaihtoehdoista.</li>
+        <li>Tällöin viesti kulkee koko ketjun läpi ja näet sen toiminnan, mutta järjestelmän turvasuodattimet estävät sen päätymisen sosiaalisen median kanaviin.</li>
+    </ul>
+
+</body>
+</html>
