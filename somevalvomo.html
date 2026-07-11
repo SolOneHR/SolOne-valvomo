@@ -305,6 +305,9 @@
         .btn-hylkaa { background-color: var(--danger); color: white; }
         .btn-hylkaa:hover { background-color: var(--danger-hover); }
 
+        .btn-testi { background-color: #64748b; color: white; }
+        .btn-testi:hover { background-color: #475569; }
+
         .tyhja-tila { 
             text-align: center; 
             padding: 30px 20px; 
@@ -565,6 +568,7 @@
             htmlSisalto += '<div class="nappi-ryhma">';
             htmlSisalto += '<button class="btn-hyvaksy" onclick="paivitaStatus(\'' + julkaisu.id + '\', \'hyvaksytty\')">✓ Hyväksy jonoon</button>';
             htmlSisalto += '<button class="btn-pika" onclick="paivitaStatus(\'' + julkaisu.id + '\', \'hyvaksytty\', true);">🚀 Julkaise välittömästi</button>';
+            htmlSisalto += '<button class="btn-testi" onclick="paivitaStatus(\'' + julkaisu.id + '\', \'testi_molemmat\', true);">🧪 Testaa molemmat</button>';
             htmlSisalto += '<button class="btn-hylkaa" onclick="paivitaStatus(\'' + julkaisu.id + '\', \'hylatty\')">✕ Hylkää</button>';
             htmlSisalto += '</div>';
         }
