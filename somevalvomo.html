@@ -614,7 +614,7 @@
 
         if (response.ok) {
             naytaIlmoitus('Muotoilupyyntö lähetetty AI:lle! Sivu päivittyy hetken kuluttua.', 'success');
-            setTimeout(() => { location.reload(); }, 6000);
+            setTimeout(() => { location.reload(); }, 10000);
         } else {
             naytaIlmoitus('❌ Virhe AI-muotoilupyynnössä.', 'error');
             if (reformatNappi) {
