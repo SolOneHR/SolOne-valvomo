@@ -182,6 +182,15 @@
             background-color: #f0fdf4;
         }
 
+        .julkaisu-card.hylatty-kortti {
+    border: 2px solid var(--danger);
+    background-color: #fef2f2;
+}
+
+.tilamerkinta.hylatty-badge {
+    background-color: var(--danger);
+}
+
         .julkaisu-card.kasittelyssa {
             border: 2px dashed #f59e0b;
             background-color: #fffbeb;
@@ -552,17 +561,23 @@
             return card;
         }
 
-        card.className = 'julkaisu-card' + (onHistoria ? ' historia' : '');
-        card.id = 'card-' + julkaisu.id;
-        
-        const nykyinenAlusta = (julkaisu.target_channel || julkaisu.alusta || 'FB_IG').trim();
-        const nykyinenProfiili = (julkaisu.julkaisuprofiili || julkaisu.profile_id || 'Yleinen').trim();
+        const onHylatty = julkaisu.status === 'hylatty';
 
-        let htmlSisalto = '';
-        
-        if (onHistoria) {
-            htmlSisalto += '<div class="tilamerkinta">✓ JULKAISTU / HYVÄKSYTTY</div>';
-        }
+card.className = 'julkaisu-card' + (onHistoria ? (onHylatty ? ' hylatty-kortti' : ' historia') : '');
+card.id = 'card-' + julkaisu.id;
+
+const nykyinenAlusta = (julkaisu.target_channel || julkaisu.alusta || 'FB_IG').trim();
+const nykyinenProfiili = (julkaisu.julkaisuprofiili || julkaisu.profile_id || 'Yleinen').trim();
+
+let htmlSisalto = '';
+
+if (onHistoria) {
+    if (onHylatty) {
+        htmlSisalto += '<div class="tilamerkinta hylatty-badge">✕ HYLÄTTY</div>';
+    } else {
+        htmlSisalto += '<div class="tilamerkinta">✓ JULKAISTU / HYVÄKSYTTY</div>';
+    }
+}
         
         htmlSisalto += '<div class="meta-info">';
         htmlSisalto += '<span><strong>Luotu:</strong> ' + pvm + '</span>';
