@@ -611,7 +611,7 @@ if (onHistoria) {
             htmlSisalto += '<div>';
             htmlSisalto += '<label class="field-label">Julkaisuprofiili:</label>';
             const prof = julkaisu.julkaisuprofiili || 'Yleinen';
-            htmlSisalto += '<select id="profiili-' + julkaisu.id + '" class="field-select">';
+            htmlSisalto += '<select id="profiili-' + julkaisu.id + '" class="field-select" onchange="paivitaProfiiliKantaan(\'' + julkaisu.id + '\', this.value)">';
             htmlSisalto += '  <option value="Yleinen"' + (prof === 'Yleinen' ? ' selected' : '') + '>Yleinen</option>';
             htmlSisalto += '  <option value="Yritys & B2B"' + (prof === 'Yritys & B2B' ? ' selected' : '') + '>Yritys & B2B</option>';
             htmlSisalto += '  <option value="Yritys & B2C"' + (prof === 'Yritys & B2C' ? ' selected' : '') + '>Yritys & B2C</option>';
@@ -867,6 +867,26 @@ if (onHistoria) {
     }, 5 * 60 * 1000);
 
     window.addEventListener('load', alustaNakyma);
+    async function paivitaProfiiliKantaan(id, uusiProfiili) {
+    const db = haeSupabaseAsiakas();
+    try {
+        await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: {
+                'apikey': db.key,
+                'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({
+                julkaisuprofiili: uusiProfiili,
+                profile_id: uusiProfiili
+            })
+        });
+    } catch (e) {
+        console.error("Profiilin tallennus epäonnistui:", e);
+    }
+}
 </script>
 
 </body>
