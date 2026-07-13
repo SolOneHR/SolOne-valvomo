@@ -482,7 +482,7 @@
         card.id = 'card-' + julkaisu.id;
         
         const nykyinenAlusta = (julkaisu.target_channel || julkaisu.alusta || 'FB_IG').trim();
-        const nykyinenProfiili = (julkaisu.profile_id || 'Yleinen').trim();
+        const nykyinenProfiili = (julkaisu.julkaisuprofiili || julkaisu.profile_id || 'Yleinen').trim();
 
         let htmlSisalto = '';
         
