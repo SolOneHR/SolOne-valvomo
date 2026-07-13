@@ -612,8 +612,8 @@
         });
 
         if (response.ok) {
-            naytaIlmoitus('✨ Muotoilupyyntö lähetetty AI:lle! Sivu päivittyy hetken kuluttua.', 'success');
-            setTimeout(() => { location.reload(); }, 4000);
+            naytaIlmoitus('Muotoilupyyntö lähetetty AI:lle! Sivu päivittyy hetken kuluttua.', 'success');
+            setTimeout(() => { location.reload(); }, 6000);
         } else {
             naytaIlmoitus('❌ Virhe AI-muotoilupyynnössä.', 'error');
             if (reformatNappi) {
