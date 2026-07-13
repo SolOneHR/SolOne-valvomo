@@ -522,7 +522,7 @@
             htmlSisalto += '<div>';
             htmlSisalto += '<label class="field-label">Julkaisuprofiili:</label>';
             const prof = julkaisu.julkaisuprofiili || 'Yleinen';
-            htmlSisalto += '<select id="julkaisuprofiili" class="field-select">';
+            htmlSisalto += '<select id="profiili-' + julkaisu.id + '" class="field-select">';
             htmlSisalto += '  <option value="Yleinen"' + (prof === 'Yleinen' ? ' selected' : '') + '>Yleinen</option>';
             htmlSisalto += '  <option value="Yritys & B2B"' + (prof === 'Yritys & B2B' ? ' selected' : '') + '>Yritys & B2B</option>';
             htmlSisalto += '  <option value="Yritys & B2C"' + (prof === 'Yritys & B2C' ? ' selected' : '') + '>Yritys & B2C</option>';
