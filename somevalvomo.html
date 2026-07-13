@@ -629,8 +629,8 @@ if (onHistoria) {
 
         // 3. Muotoiltu Julkaisuteksti (julkaisuteksti)
         htmlSisalto += '<label class="field-label">Julkaisuteksti (FB / IG):</label>';
-        htmlSisalto += '<textarea id="teksti-' + julkaisu.id + '" class="teksti-alue"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.julkaisuteksti || '') + '</textarea>';
-
+        htmlSisalto += '<textarea id="teksti-' + julkaisu.id + '" class="teksti-alue" rows="5"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.julkaisuteksti || '') + '</textarea>'
+       
         // 4. LinkedIn (Tulossa)
         htmlSisalto += '<div class="linkedin-osio">';
         htmlSisalto += '<label class="field-label" style="color: #64748b;">LinkedIn-teksti (Tulossa):</label>';
