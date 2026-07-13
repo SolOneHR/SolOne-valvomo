@@ -652,15 +652,6 @@
             }
         }
     }
-   } catch (err) {
-            console.error('Virhe:', err);
-            naytaIlmoitus('❌ Verkkovirhe AI-muotoilussa.', 'error');
-            if (reformatNappi) {
-                reformatNappi.disabled = false;
-                reformatNappi.textContent = '🔄 Muotoile AI:lla';
-            }
-        }
-    }
 
     async function haeValvomonTiedot() {
         const odottavatLista = document.getElementById('julkaisut-lista');
