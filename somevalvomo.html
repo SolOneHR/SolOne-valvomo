@@ -444,6 +444,7 @@
     const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
     
     let nykyinenAsiakastunnus = null;
+    let automaattiPäivitysAjastin = null;
 
     function naytaIlmoitus(viesti, tyyppi = 'success') {
         const alue = document.getElementById('ilmoitus-alue');
@@ -755,17 +756,26 @@
                 dataOdottavat.forEach(julkaisu => odottavatLista.appendChild(luoKorttiHtml(julkaisu, false)));
             }
 
-            if (!dataHistoria || dataHistoria.length === 0) {
-                historiaLista.innerHTML = '<div class="tyhja-tila">Ei aiemmin julkaistuja viestejä historiassa.</div>';
-            } else {
-                historiaLista.innerHTML = '';
-                dataHistoria.forEach(julkaisu => historiaLista.appendChild(luoKorttiHtml(julkaisu, true)));
-            }
-        } catch (error) {
-            console.error("Valvomo-virhe:", error);
-            naytaIlmoitus('Virhe ladattaessa tietoja: ' + error.message, 'error');
-        }
-    }
+          if (!dataHistoria || dataHistoria.length === 0) {
+             historiaLista.innerHTML = '<div class="tyhja-tila">Ei aiemmin julkaistuja viestejä historiassa.</div>';
+         } else {
+             historiaLista.innerHTML = '';
+             dataHistoria.forEach(julkaisu => historiaLista.appendChild(luoKorttiHtml(julkaisu, true)));
+         }
+
+         // --- AUTOMAATTIPÄIVITYS ---
+         if (automaattiPäivitysAjastin) clearTimeout(automaattiPäivitysAjastin);
+
+         const onKäsittelyssä = dataOdottavat && dataOdottavat.some(j => j.status === 'kasittelyssa');
+         const vive = onKäsittelyssä ? 3000 : 10000;
+
+         automaattiPäivitysAjastin = setTimeout(haeValvomonTiedot, vive);
+
+     } catch (error) {
+         console.error("Valvomo-virhe:", error);
+         naytaIlmoitus('Virhe ladattaessa tietoja: ' + error.message, 'error');
+     }
+ }
 
     async function paivitaStatus(id, uusiStatus, kaynnistaPika = false) {
         const muokattuRawTeksti = document.getElementById('raw-teksti-' + id).value;
