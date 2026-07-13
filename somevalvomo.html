@@ -767,7 +767,7 @@
          if (automaattiPäivitysAjastin) clearTimeout(automaattiPäivitysAjastin);
 
          const onKäsittelyssä = dataOdottavat && dataOdottavat.some(j => j.status === 'kasittelyssa');
-         const vive = onKäsittelyssä ? 3000 : 10000;
+         const vive = onKäsittelyssä ? 2000 : 4000;
 
          automaattiPäivitysAjastin = setTimeout(haeValvomonTiedot, vive);
 
