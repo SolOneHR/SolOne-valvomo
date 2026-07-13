@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="fi"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>SolOne - Somejulkaisujen Valvomo</title>        <style>        :root {            --bg-color: #f8fafc;            --card-bg: #ffffff;            --primary: #2563eb;            --primary-hover: #1d4ed8;            --success: #10b981;            --success-hover: #059669;            --danger: #ef4444;            --danger-hover: #dc2626;            --text-main: #0f172a;            --text-muted: #64748b;            --border-color: #e2e8f0;        }
+<!DOCTYPE html><html lang="fi"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>SolOne - Somejulkaisujen Valvomo</title>        <style>        :root {            --bg-color: #f8fafc;            --card-bg: #ffffff;            --primary: #2563eb;            --primary-hover: #1d4ed8;            --success: #10b981;            --success-hover: #059669;            --danger: #ef4444;            --danger-hover: #dc2626;            --text-main: #0f172a;            --text-muted: #64748b;            --border-color: #e2e8f0;        }
         body {             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;             background-color: var(--bg-color);             color: var(--text-main);             margin: 0;             padding: 15px 10px;             line-height: 1.5;        }
         @media (min-width: 600px) {            body { padding: 30px 20px; }        }
         .container {             max-width: 850px;             margin: 0 auto;         }
@@ -52,7 +51,6 @@
         <div class="osio-otsikko">            <span>Julkaisuhistoria</span>            <span class="osio-infoteksti">Näytetään 10 viimeisintä julkaisua</span>        </div>        <div id="historia-lista">Ladataan historiaa...</div>    </div></div>
 <script>    const SUPABASE_URL = 'https://oajnnrrnatqqymmvncxf.supabase.co';    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
     let nykyinenAsiakastunnus = null;
-    let kasittelyAjastin = null;
 
     function naytaIlmoitus(viesti, tyyppi = 'success') {        const alue = document.getElementById('ilmoitus-alue');        alue.textContent = viesti;        alue.className = 'ilmoitus ' + tyyppi;        alue.style.display = 'block';        alue.scrollIntoView({ behavior: 'smooth', block: 'center' });                setTimeout(() => {             alue.style.display = 'none';         }, 6000);    }
     function kaynnistaMakeSkenaario(id) {        const webhookUrl = 'https://hook.eu1.make.com/19dyks73yrgq8t3qbo3idoxt8p4i8t66?id=' + id; 
@@ -91,9 +89,10 @@
    async function muotoileAIlla(id) {        const rawTeksti = document.getElementById('raw-teksti-' + id) ? document.getElementById('raw-teksti-' + id).value : '';        const profiiliSelect = document.getElementById('profiili-' + id);        const profiili = profiiliSelect ? profiiliSelect.value : 'Yleinen';        const reformatNappi = document.getElementById('btn-reformat-' + id);        const db = haeSupabaseAsiakas();
         if (!rawTeksti && document.getElementById('raw-teksti-' + id)) {            naytaIlmoitus('⚠️ Alkuperäinen teksti ei voi olla tyhjä!', 'error');            return;        }
         if (reformatNappi) {            reformatNappi.disabled = true;            reformatNappi.textContent = '⏳ Muotoillaan...';        }
-        // 1. Tallenna profiili ja raw_text heti Supabaseen        try {            await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}`, {                method: 'PATCH',                headers: {                    'apikey': db.key,                    'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,                    'Content-Type': 'application/json',                    'Prefer': 'return=minimal'                },                body: JSON.stringify({                    julkaisuprofiili: profiili,                    profile_id: profiili,                    raw_text: rawTeksti                })            });        } catch (e) {            console.log("Esitallennus epäonnistui, jatketaan Make-pyyntöön.");        }
-        // 2. Lähetetään pyyntö Make.comille        const webhookUrl = 'https://hook.eu1.make.com/gy1aohydxbsuzftgrxekchsjh5v6nqma';
+        try {            await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}`, {                method: 'PATCH',                headers: {                    'apikey': db.key,                    'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,                    'Content-Type': 'application/json',                    'Prefer': 'return=minimal'                },                body: JSON.stringify({                    julkaisuprofiili: profiili,                    profile_id: profiili,                    raw_text: rawTeksti                })            });        } catch (e) {            console.log("Esitallennus epäonnistui, jatketaan Make-pyyntöön.");        }
+        const webhookUrl = 'https://hook.eu1.make.com/gy1aohydxbsuzftgrxekchsjh5v6nqma';
         try {            const response = await fetch(webhookUrl, {                method: 'POST',                headers: { 'Content-Type': 'application/json' },                body: JSON.stringify({                    id: id,                    tyyli: profiili,                    rawTeksti: rawTeksti                })            });
+
             if (response.ok) {                naytaIlmoitus('Muotoilupyyntö lähetetty AI:lle! Sivu päivittyy hetken kuluttua.', 'success');                setTimeout(() => { location.reload(); }, 10000);            } else {                naytaIlmoitus('❌ Virhe AI-muotoilupyynnössä.', 'error');                if (reformatNappi) {                    reformatNappi.disabled = false;                    reformatNappi.textContent = '🔄 Muotoile AI:lla';                }            }        } catch (err) {            console.error('Virhe:', err);            naytaIlmoitus('❌ Verkkovirhe AI-muotoilussa.', 'error');            if (reformatNappi) {                reformatNappi.disabled = false;                reformatNappi.textContent = '🔄 Muotoile AI:lla';            }        }    }
     async function haeValvomonTiedot() {        const odottavatLista = document.getElementById('julkaisut-lista');        const historiaLista = document.getElementById('historia-lista');        const db = haeSupabaseAsiakas();                try {            const headers = {                'apikey': db.key,                'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,                'Content-Type': 'application/json'            };
             let asiakasSuodatus = '';            if (nykyinenAsiakastunnus) {                asiakasSuodatus = `&or=(asiakastunnus.eq.${nykyinenAsiakastunnus},asiakastunnus.is.null)`;            }
@@ -102,23 +101,7 @@
 
             const resHistoria = await fetch(`${db.url}/rest/v1/somepostaukset?status=not.in.(odotetaan,kasittelyssa)${asiakasSuodatus}&order=luotu_aika.desc&limit=10`, { method: 'GET', headers });            const dataHistoria = await resHistoria.json();
 
-            let onKasittelyssa = false;
-
-            if (!dataOdottavat || dataOdottavat.length === 0) {                odottavatLista.innerHTML = '<div class="tyhja-tila">Ei odottavia somejulkaisuja. Kaikki valmiina!</div>';            } else {                odottavatLista.innerHTML = '';                dataOdottavat.forEach(julkaisu => {
-                    if (julkaisu.status === 'kasittelyssa') onKasittelyssa = true;
-                    odottavatLista.appendChild(luoKorttiHtml(julkaisu, false));
-                });            }
-
-            if (onKasittelyssa) {
-                if (!kasittelyAjastin) {
-                    kasittelyAjastin = setInterval(haeValvomonTiedot, 3000);
-                }
-            } else {
-                if (kasittelyAjastin) {
-                    clearInterval(kasittelyAjastin);
-                    kasittelyAjastin = null;
-                }
-            }
+            if (!dataOdottavat || dataOdottavat.length === 0) {                odottavatLista.innerHTML = '<div class="tyhja-tila">Ei odottavia somejulkaisuja. Kaikki valmiina!</div>';            } else {                odottavatLista.innerHTML = '';                dataOdottavat.forEach(julkaisu => odottavatLista.appendChild(luoKorttiHtml(julkaisu, false)));            }
 
             if (!dataHistoria || dataHistoria.length === 0) {                historiaLista.innerHTML = '<div class="tyhja-tila">Ei aiemmin julkaistuja viestejä historiassa.</div>';            } else {                historiaLista.innerHTML = '';                dataHistoria.forEach(julkaisu => historiaLista.appendChild(luoKorttiHtml(julkaisu, true)));            }
         } catch (error) {            console.error("Valvomo-virhe:", error);            naytaIlmoitus('Virhe ladattaessa tietoja: ' + error.message, 'error');        }    }
