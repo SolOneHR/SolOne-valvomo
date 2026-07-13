@@ -582,46 +582,76 @@
         return card;
     }
 
-    async function muotoileAIlla(id) {
-    const rawTeksti = document.getElementById('raw-teksti-' + id) ? document.getElementById('raw-teksti-' + id).value : '';
-    const profiiliSelect = document.getElementById('julkaisuprofiili') || document.getElementById('profiili-' + id);
-    const profiili = profiiliSelect ? profiiliSelect.value : 'Yleinen';
-    const reformatNappi = document.getElementById('btn-reformat-' + id);
+   async function muotoileAIlla(id) {
+        const rawTeksti = document.getElementById('raw-teksti-' + id) ? document.getElementById('raw-teksti-' + id).value : '';
+        const profiiliSelect = document.getElementById('profiili-' + id);
+        const profiili = profiiliSelect ? profiiliSelect.value : 'Yleinen';
+        const reformatNappi = document.getElementById('btn-reformat-' + id);
+        const db = haeSupabaseAsiakas();
 
-    if (!rawTeksti && document.getElementById('raw-teksti-' + id)) {
-        naytaIlmoitus('⚠️ Alkuperäinen teksti ei voi olla tyhjä!', 'error');
-        return;
-    }
+        if (!rawTeksti && document.getElementById('raw-teksti-' + id)) {
+            naytaIlmoitus('⚠️ Alkuperäinen teksti ei voi olla tyhjä!', 'error');
+            return;
+        }
 
-    if (reformatNappi) {
-        reformatNappi.disabled = true;
-        reformatNappi.textContent = '⏳ Muotoillaan...';
-    }
+        if (reformatNappi) {
+            reformatNappi.disabled = true;
+            reformatNappi.textContent = '⏳ Muotoillaan...';
+        }
 
-    // Aseta tähän Skenaario 3:sta kopioimasi Webhook URL:
-    const webhookUrl = 'https://hook.eu1.make.com/gy1aohydxbsuzftgrxekchsjh5v6nqma';
+        // 1. Tallenna profiili ja raw_text heti Supabaseen
+        try {
+            await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'apikey': db.key,
+                    'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                    julkaisuprofiili: profiili,
+                    profile_id: profiili,
+                    raw_text: rawTeksti
+                })
+            });
+        } catch (e) {
+            console.log("Esitallennus epäonnistui, jatketaan Make-pyyntöön.");
+        }
 
-    try {
-        const response = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                id: id,
-                tyyli: profiili,
-                rawTeksti: rawTeksti
-            })
-        });
+        // 2. Lähetetään pyyntö Make.comille
+        const webhookUrl = 'https://hook.eu1.make.com/gy1aohydxbsuzftgrxekchsjh5v6nqma';
 
-        if (response.ok) {
-            naytaIlmoitus('Muotoilupyyntö lähetetty AI:lle! Sivu päivittyy hetken kuluttua.', 'success');
-            setTimeout(() => { location.reload(); }, 10000);
-        } else {
-            naytaIlmoitus('❌ Virhe AI-muotoilupyynnössä.', 'error');
+        try {
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: id,
+                    tyyli: profiili,
+                    rawTeksti: rawTeksti
+                })
+            });
+
+            if (response.ok) {
+                naytaIlmoitus('Muotoilupyyntö lähetetty AI:lle! Sivu päivittyy hetken kuluttua.', 'success');
+                setTimeout(() => { location.reload(); }, 10000);
+            } else {
+                naytaIlmoitus('❌ Virhe AI-muotoilupyynnössä.', 'error');
+                if (reformatNappi) {
+                    reformatNappi.disabled = false;
+                    reformatNappi.textContent = '🔄 Muotoile AI:lla';
+                }
+            }
+        } catch (err) {
+            console.error('Virhe:', err);
+            naytaIlmoitus('❌ Verkkovirhe AI-muotoilussa.', 'error');
             if (reformatNappi) {
                 reformatNappi.disabled = false;
                 reformatNappi.textContent = '🔄 Muotoile AI:lla';
             }
         }
+    }
     } catch (err) {
         console.error('Virhe:', err);
         naytaIlmoitus('❌ Verkkovirhe AI-muotoilussa.', 'error');
