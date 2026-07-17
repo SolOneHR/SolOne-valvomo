@@ -905,6 +905,7 @@ if (onHistoria) {
 function palautaEnsimmainenVersio(id) {
         if (confirm("Haluatko varmasti palauttaa ensimmäisen AI-generoidun tekstiversion?")) {
             const db = haeSupabaseAsiakas();
+            
             fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}&select=alkuperainen_ai_teksti`, {
                 method: 'GET',
                 headers: {
@@ -915,19 +916,20 @@ function palautaEnsimmainenVersio(id) {
             })
             .then(res => res.json())
             .then(data => {
-                if (data && data[0] && data[0].alkuperainen_ai_teksti) {
-                    // Etsitään julkaisutekstikenttä (joko ID:llä tai luokan perusteella)
+                console.log("Supabasesta haettu data:", data); // Tulostetaan selaimen konsoliin
+
+                const haettuTeksti = data && data[0] ? data[0].alkuperainen_ai_teksti : null;
+
+                if (haettuTeksti) {
                     const tekstikentta = document.getElementById('teksti-' + id);
                     if (tekstikentta) {
-                        tekstikentta.value = data[0].alkuperainen_ai_teksti;
-                        // Varmistetaan syötteen päivitys
-                        tekstikentta.dispatchEvent(new Event('input', { bubbles: true }));
+                        tekstikentta.value = haettuTeksti;
                         naytaIlmoitus('✓ Ensimmäinen versio palautettu kenttään!', 'success');
                     } else {
-                        naytaIlmoitus('⚠️ Tekstikenttää ei löytynyt sivulta.', 'error');
+                        alert('Virhe: Tekstikenttää ID:llä "teksti-' + id + '" ei löytynyt sivulta.');
                     }
                 } else {
-                    naytaIlmoitus('⚠️ Alkuperäistä 1. versiota ei löytynyt tietokannasta tälle julkaisulle.', 'error');
+                    alert('Tietokannasta haettu teksti oli tyhjä! (alkuperainen_ai_teksti = ' + haettuTeksti + ')');
                 }
             })
             .catch(err => {
