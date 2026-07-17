@@ -621,8 +621,13 @@ if (onHistoria) {
             htmlSisalto += '</select>';
             htmlSisalto += '</div>';
 
-            htmlSisalto += '<div>';
+            htmlSisalto += '<div style="display: flex; gap: 8px;">';
             htmlSisalto += '<button type="button" id="btn-reformat-' + julkaisu.id + '" class="btn-reformat" onclick="muotoileAIlla(\'' + julkaisu.id + '\')">🔄 Muotoile AI:lla</button>';
+            
+            // Tarkistetaan löytyykö alkuperäistä AI-versiota
+            if (julkaisu.alkuperainen_ai_teksti) {
+                htmlSisalto += '<button type="button" class="btn-reformat" style="background-color: #64748b;" onclick="palautaEnsimmainenVersio(\'' + julkaisu.id + '\')">↩️ Palauta 1. versio</button>';
+            }
             htmlSisalto += '</div>';
             htmlSisalto += '</div>';
         }
