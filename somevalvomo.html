@@ -902,7 +902,30 @@ if (onHistoria) {
         console.error("Profiilin tallennus epäonnistui:", e);
     }
 }
-async function palautaEnsimmainenVersio(id) {
+window.addEventListener('load', alustaNakyma);
+
+    async function paivitaProfiiliKantaan(id, uusiProfiili) {
+        const db = haeSupabaseAsiakas();
+        try {
+            await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'apikey': db.key,
+                    'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                    julkaisuprofiili: uusiProfiili,
+                    profile_id: uusiProfiili
+                })
+            });
+        } catch (e) {
+            console.error("Profiilin tallennus epäonnistui:", e);
+        }
+    }
+
+    async function palautaEnsimmainenVersio(id) {
         if (!confirm("Haluatko varmasti palauttaa ensimmäisen AI-generoidun tekstiversion?")) {
             return;
         }
@@ -945,6 +968,20 @@ async function palautaEnsimmainenVersio(id) {
             if (!updateRes.ok) {
                 throw new Error("Tallennus tietokantaan epäonnistui.");
             }
+
+            // 3. Päivitetään tekstikenttä ruudulle
+            const tekstikentta = document.getElementById('teksti-' + id);
+            if (tekstikentta) {
+                tekstikentta.value = haettuTeksti;
+            }
+
+            naytaIlmoitus('✓ Ensimmäinen versio palautettu ja tallennettu!', 'success');
+
+        } catch (err) {
+            console.error("Virhe palautuksessa:", err);
+            naytaIlmoitus('❌ Virhe palautettaessa 1. versiota: ' + err.message, 'error');
+        }
+    }
 </script>
 
 </body>
