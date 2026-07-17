@@ -741,6 +741,16 @@ if (onHistoria) {
     }
 
     async function haeValvomonTiedot() {
+    // Jos käyttäjä muokkaa parhaillaan tekstiä tai valikoita, älä ylikirjoita näkymää
+        const aktiivinenElementti = document.activeElement;
+        const kirjoittaaParhaillaan = aktiivinenElementti && 
+            ['TEXTAREA', 'INPUT', 'SELECT'].includes(aktiivinenElementti.tagName);
+
+        if (kirjoittaaParhaillaan) {
+            if (automaattiPäivitysAjastin) clearTimeout(automaattiPäivitysAjastin);
+            automaattiPäivitysAjastin = setTimeout(haeValvomonTiedot, 2000);
+            return;
+        }
         const odottavatLista = document.getElementById('julkaisut-lista');
         const historiaLista = document.getElementById('historia-lista');
         const db = haeSupabaseAsiakas();
