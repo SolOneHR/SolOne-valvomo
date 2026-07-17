@@ -902,42 +902,49 @@ if (onHistoria) {
         console.error("Profiilin tallennus epäonnistui:", e);
     }
 }
-function palautaEnsimmainenVersio(id) {
-        if (confirm("Haluatko varmasti palauttaa ensimmäisen AI-generoidun tekstiversion?")) {
-            const db = haeSupabaseAsiakas();
-            
-            fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}&select=alkuperainen_ai_teksti`, {
+async function palautaEnsimmainenVersio(id) {
+        if (!confirm("Haluatko varmasti palauttaa ensimmäisen AI-generoidun tekstiversion?")) {
+            return;
+        }
+
+        const db = haeSupabaseAsiakas();
+        const token = localStorage.getItem('supabase_token');
+
+        try {
+            // 1. Haetaan 1. versio Supabasesta
+            const res = await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}&select=alkuperainen_ai_teksti`, {
                 method: 'GET',
                 headers: {
                     'apikey': db.key,
-                    'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
-            })
-            .then(res => res.json())
-            .then(data => {
-                console.log("Supabasesta haettu data:", data); // Tulostetaan selaimen konsoliin
-
-                const haettuTeksti = data && data[0] ? data[0].alkuperainen_ai_teksti : null;
-
-                if (haettuTeksti) {
-                    const tekstikentta = document.getElementById('teksti-' + id);
-                    if (tekstikentta) {
-                        tekstikentta.value = haettuTeksti;
-                        naytaIlmoitus('✓ Ensimmäinen versio palautettu kenttään!', 'success');
-                    } else {
-                        alert('Virhe: Tekstikenttää ID:llä "teksti-' + id + '" ei löytynyt sivulta.');
-                    }
-                } else {
-                    alert('Tietokannasta haettu teksti oli tyhjä! (alkuperainen_ai_teksti = ' + haettuTeksti + ')');
-                }
-            })
-            .catch(err => {
-                console.error("Virhe palautuksessa:", err);
-                naytaIlmoitus('❌ Virhe ladattaessa 1. versiota.', 'error');
             });
-        }
-    }
+            const data = await res.json();
+            const haettuTeksti = data && data[0] ? data[0].alkuperainen_ai_teksti : null;
+
+            if (!haettuTeksti) {
+                naytaIlmoitus('⚠️ Alkuperäistä 1. versiota ei löytynyt tietokannasta.', 'error');
+                return;
+            }
+
+            // 2. Päivitetään haettu 1. versio Supabasessa julkaisutekstiksi
+            const updateRes = await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'apikey': db.key,
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                    julkaisuteksti: haettuTeksti
+                })
+            });
+
+            if (!updateRes.ok) {
+                throw new Error("Tallennus tietokantaan epäonnistui.");
+            }
 </script>
 
 </body>
