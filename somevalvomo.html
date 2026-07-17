@@ -902,6 +902,37 @@ if (onHistoria) {
         console.error("Profiilin tallennus epäonnistui:", e);
     }
 }
+function palautaEnsimmainenVersio(id) {
+        // Etsitään julkaisu Supabasesta ladatuista tiedoista tai kysytään vahvistus
+        if (confirm("Haluatko varmasti palauttaa ensimmäisen AI-generoidun tekstiversion?")) {
+            // Etsitään oikea julkaisukortti ja haetaan sen tallennettu 1. versio
+            const db = haeSupabaseAsiakas();
+            fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}&select=alkuperainen_ai_teksti`, {
+                method: 'GET',
+                headers: {
+                    'apikey': db.key,
+                    'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data && data[0] && data[0].alkuperainen_ai_teksti) {
+                    const tekstikentta = document.getElementById('teksti-' + id);
+                    if (tekstikentta) {
+                        tekstikentta.value = data[0].alkuperainen_ai_teksti;
+                        naytaIlmoitus('✓ Ensimmäinen versio palautettu kenttään! Muista hyväksyä tai tallentaa muutos.', 'success');
+                    }
+                } else {
+                    naytaIlmoitus('⚠️ Alkuperäistä 1. versiota ei löytynyt tälle julkaisulle.', 'error');
+                }
+            })
+            .catch(err => {
+                console.error("Virhe palautuksessa:", err);
+                naytaIlmoitus('❌ Virhe ladattaessa 1. versiota.', 'error');
+            });
+        }
+    }
 </script>
 
 </body>
