@@ -558,11 +558,19 @@
             haePostaukset(); 
         }
 
-        // --- 5. REALTIME REALIAIKASEURANTA ---
+        // --- 5. REALTIME REALIAIKASEURANTA (KORJATTU) ---
         supabaseClient
             .channel('demomuutokset')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'demopostaukset' }, (payload) => {
-                if (kirjautunutTunnus) haePostaukset();
+                // Tarkistetaan, kirjoittaako käyttäjä parhaillaan lomakkeelle
+                const aktiivinenElementti = document.activeElement;
+                const kirjoittaaParhaillaan = aktiivinenElementti && 
+                    ['TEXTAREA', 'INPUT', 'SELECT'].includes(aktiivinenElementti.tagName);
+
+                // Jos käyttäjä ei ole kesken kirjoituksen ja tunnus on aktiivinen, päivitetään sivu automaattisesti!
+                if (!kirjoittaaParhaillaan && kirjautunutTunnus) {
+                    haePostaukset();
+                }
             })
             .subscribe();
 
