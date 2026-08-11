@@ -399,13 +399,14 @@
             }
         }
 
-        // --- 3. DATAN HAKU ---
+        // --- 3. DATAN HAKU (KORJATTU: Suodatetaan vain kirjautuneen tunnuksen tiedot) ---
         async function haePostaukset() {
             if (!kirjautunutTunnus) return;
 
             const { data, error } = await supabaseClient
                 .from('demopostaukset')
                 .select('*')
+                .eq('alusta', kirjautunutTunnus) // Käyttäjäkohtainen suodatus
                 .order('id', { ascending: false })
                 .limit(10);
 
@@ -523,7 +524,7 @@
             haePostaukset();
         }
 
-        // --- 4. PAINIKKEIDEN TOIMINNALLISUUS ---
+        // --- 4. PAINIKKEIDEN TOIMINNALLISUUS (KORJATTU: Tilaa ei muuteta enää selaimessa) ---
         async function paivitaStatus(id, uusiStatus) {
             const tekstiElem = document.getElementById(`teksti-${id}`);
             const ajastusElem = document.getElementById(`ajastus-${id}`);
@@ -531,30 +532,27 @@
             const muokattuTeksti = tekstiElem ? tekstiElem.value : null;
             const muokattuAjastus = ajastusElem ? ajastusElem.value : null;
 
-            const paivitysobjekti = { status: uusiStatus };
+            // Tallennetaan muokattu teksti ja aika Supabaseen ilman tilan muutosta
+            const paivitysobjekti = {};
             if (muokattuTeksti !== null) paivitysobjekti.teksti = muokattuTeksti;
             if (muokattuAjastus !== null) paivitysobjekti.ajastettu_aika = muokattuAjastus ? new Date(muokattuAjastus).toISOString() : null;
 
-            const { error } = await supabaseClient
-                .from('demopostaukset')
-                .update(paivitysobjekti)
-                .eq('id', id);
-
-            if (error) {
-                alert("Virhe päivityksessä: " + error.message);
-                return;
+            if (Object.keys(paivitysobjekti).length > 0) {
+                await supabaseClient
+                    .from('demopostaukset')
+                    .update(paivitysobjekti)
+                    .eq('id', id);
             }
 
-            if (uusiStatus === 'hyvaksytty' || uusiStatus === 'julkaistu_demo') {
-                try {
-                    await fetch(MAKE_WEBHOOK_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id: id, status: uusiStatus, tunnus: kirjautunutTunnus })
-                    });
-                } catch (e) {
-                    console.log("Webhook lähetetty Makeen.");
-                }
+            // Lähetetään käsky Makeen, joka tekee varsinaisen tilapäivityksen
+            try {
+                await fetch(MAKE_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id, status: uusiStatus, tunnus: kirjautunutTunnus })
+                });
+            } catch (e) {
+                console.log("Webhook lähetetty Makeen.");
             }
 
             haePostaukset(); 
