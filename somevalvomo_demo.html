@@ -533,6 +533,7 @@
             haePostaukset();
         }
 
+        
         // --- 4. PAINIKKEIDEN TOIMINNALLISUUS ---
         async function paivitaStatus(id, uusiStatus) {
             const tekstiElem = document.getElementById(`teksti-${id}`);
@@ -543,24 +544,24 @@
             const muokattuAjastus = ajastusElem ? ajastusElem.value : null;
             const valittuKanava = alustaElem ? alustaElem.value : '(Molemmat FB & IG)';
 
-            // Yhdistetään tunnus ja valittu alusta, jotta tunnus säilyy kanta-haussa
+            // Yhdistetään tunnus ja valittu alusta
             const yhdistettyAlusta = `${kirjautunutTunnus} ${valittuKanava}`;
 
             const paivitysobjekti = {
-                alusta: yhdistettyAlusta
+                alusta: yhdistettyAlusta,
+                status: uusiStatus // Tallennetaan tila (julkaistu_demo) heti Supabaseen
             };
             
             if (muokattuTeksti !== null) paivitysobjekti.teksti = muokattuTeksti;
             if (muokattuAjastus !== null) paivitysobjekti.ajastettu_aika = muokattuAjastus ? new Date(muokattuAjastus).toISOString() : null;
 
-            if (Object.keys(paivitysobjekti).length > 0) {
-                await supabaseClient
-                    .from('demopostaukset')
-                    .update(paivitysobjekti)
-                    .eq('id', id);
-            }
+            // 1. Tallennetaan muutokset kantaan
+            await supabaseClient
+                .from('demopostaukset')
+                .update(paivitysobjekti)
+                .eq('id', id);
 
-            // Lähetetään käsky Makeen
+            // 2. Lähetetään käsky Makeen
             try {
                 await fetch(MAKE_WEBHOOK_URL, {
                     method: 'POST',
@@ -579,7 +580,7 @@
             haePostaukset(); 
         }
 
-        // --- 5. REALTIME REALIAIKASEURANTA ---
+        // --- 5. REALTIME REALIAIKASEURANTA (KORJATTU: Mukana puuttunut alkuosa) ---
         supabaseClient
             .channel('demomuutokset')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'demopostaukset' }, (payload) => {
