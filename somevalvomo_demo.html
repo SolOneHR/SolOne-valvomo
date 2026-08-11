@@ -399,14 +399,14 @@
             }
         }
 
-        // --- 3. DATAN HAKU (KORJATTU: Suodatetaan vain kirjautuneen tunnuksen tiedot) ---
+      // --- 3. DATAN HAKU (KORJATTU: Etsii tunnusta alusta-sarakkeesta) ---
         async function haePostaukset() {
             if (!kirjautunutTunnus) return;
 
             const { data, error } = await supabaseClient
                 .from('demopostaukset')
                 .select('*')
-                .eq('alusta', kirjautunutTunnus) // Käyttäjäkohtainen suodatus
+                .ilike('alusta', `%${kirjautunutTunnus}%`)
                 .order('id', { ascending: false })
                 .limit(10);
 
@@ -500,6 +500,15 @@
                     <div style="font-size: 12px; font-weight: bold; color: var(--text-muted); margin-bottom: 5px;">Postauksen kuva:</div>
                     ${kuvaHTML}
 
+                    <div class="scheduling-box" style="flex-direction: column; align-items: stretch; gap: 6px; margin-bottom: 12px;">
+                        <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">Valitse kohdekanava (Simulointi):</label>
+                        <select id="alusta-${rivi.id}" style="padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; background: white; width: 100%;">
+                            <option value="(Molemmat FB & IG)">Molemmat (FB & IG)</option>
+                            <option value="(Vain Facebook)">Vain Facebook</option>
+                            <option value="(Vain Instagram)">Vain Instagram</option>
+                        </select>
+                    </div>
+
                     <div class="scheduling-box">
                         <span>📅 <strong>Ajastushallinta:</strong> Kai haluat ajastaa viestin tulevaisuuteen?</span>
                         <input type="datetime-local" id="ajastus-${rivi.id}" value="${rivi.ajastettu_aika ? rivi.ajastettu_aika.substring(0,16) : ''}">
@@ -524,16 +533,23 @@
             haePostaukset();
         }
 
-        // --- 4. PAINIKKEIDEN TOIMINNALLISUUS (KORJATTU: Tilaa ei muuteta enää selaimessa) ---
+        // --- 4. PAINIKKEIDEN TOIMINNALLISUUS ---
         async function paivitaStatus(id, uusiStatus) {
             const tekstiElem = document.getElementById(`teksti-${id}`);
             const ajastusElem = document.getElementById(`ajastus-${id}`);
+            const alustaElem = document.getElementById(`alusta-${id}`);
 
             const muokattuTeksti = tekstiElem ? tekstiElem.value : null;
             const muokattuAjastus = ajastusElem ? ajastusElem.value : null;
+            const valittuKanava = alustaElem ? alustaElem.value : '(Molemmat FB & IG)';
 
-            // Tallennetaan muokattu teksti ja aika Supabaseen ilman tilan muutosta
-            const paivitysobjekti = {};
+            // Yhdistetään tunnus ja valittu alusta, jotta tunnus säilyy kanta-haussa
+            const yhdistettyAlusta = `${kirjautunutTunnus} ${valittuKanava}`;
+
+            const paivitysobjekti = {
+                alusta: yhdistettyAlusta
+            };
+            
             if (muokattuTeksti !== null) paivitysobjekti.teksti = muokattuTeksti;
             if (muokattuAjastus !== null) paivitysobjekti.ajastettu_aika = muokattuAjastus ? new Date(muokattuAjastus).toISOString() : null;
 
@@ -544,12 +560,17 @@
                     .eq('id', id);
             }
 
-            // Lähetetään käsky Makeen, joka tekee varsinaisen tilapäivityksen
+            // Lähetetään käsky Makeen
             try {
                 await fetch(MAKE_WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: id, status: uusiStatus, tunnus: kirjautunutTunnus })
+                    body: JSON.stringify({ 
+                        id: id, 
+                        status: uusiStatus, 
+                        tunnus: kirjautunutTunnus,
+                        alusta: valittuKanava 
+                    })
                 });
             } catch (e) {
                 console.log("Webhook lähetetty Makeen.");
@@ -558,7 +579,7 @@
             haePostaukset(); 
         }
 
-        // --- 5. REALTIME REALIAIKASEURANTA (KORJATTU) ---
+        // --- 5. REALTIME REALIAIKASEURANTA ---
         supabaseClient
             .channel('demomuutokset')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'demopostaukset' }, (payload) => {
