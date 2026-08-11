@@ -634,7 +634,7 @@ if (onHistoria) {
 
         // 3. Muotoiltu Julkaisuteksti (julkaisuteksti)
         htmlSisalto += '<label class="field-label">Julkaisuteksti (FB / IG):</label>';
-        htmlSisalto += '<textarea id="teksti-' + julkaisu.id + '" class="teksti-alue" rows="5"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.julkaisuteksti || '') + '</textarea>'
+        htmlSisalto += '<textarea id="teksti-' + julkaisu.id + '" class="teksti-alue" rows="5"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.julkaisuteksti || '') + '</textarea>';
        
         // 4. LinkedIn (Tulossa)
         htmlSisalto += '<div class="linkedin-osio">';
@@ -881,27 +881,7 @@ if (onHistoria) {
         }
     }, 5 * 60 * 1000);
 
-    window.addEventListener('load', alustaNakyma);
-    async function paivitaProfiiliKantaan(id, uusiProfiili) {
-    const db = haeSupabaseAsiakas();
-    try {
-        await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}`, {
-            method: 'PATCH',
-            headers: {
-                'apikey': db.key,
-                'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
-                'Content-Type': 'application/json',
-                'Prefer': 'return=minimal'
-            },
-            body: JSON.stringify({
-                julkaisuprofiili: uusiProfiili,
-                profile_id: uusiProfiili
-            })
-        });
-    } catch (e) {
-        console.error("Profiilin tallennus epäonnistui:", e);
-    }
-}
+
 window.addEventListener('load', alustaNakyma);
 
     async function paivitaProfiiliKantaan(id, uusiProfiili) {
