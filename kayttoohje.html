@@ -3,233 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Käyttöohje: SolOne AutoPublish & Valvomo</title>
+    <title>SolOne - Somevalvomon Käyttöohje</title>
     <style>
-        @page {
-            size: A4;
-            margin: 20mm 15mm;
-            background-color: #ffffff;
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --secondary: #64748b;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: #334155;
             line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-color);
             margin: 0;
-            padding: 20px;
-            background-color: #f8fafc;
-            font-size: 11pt;
+            padding: 20px 15px;
         }
 
-        .page-container {
-            max-width: 800px;
+        @media (min-width: 600px) {
+            body { padding: 40px 20px; }
+        }
+
+        .container {
+            max-width: 850px;
             margin: 0 auto;
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-            border: 1px solid #e2e8f0;
         }
 
         .header-banner {
-            background-color: #0f172a;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: #ffffff;
-            padding: 30px 25px;
-            margin-bottom: 25px;
-            border-radius: 8px;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
         }
 
-        h1 {
-            margin: 0 0 10px 0;
-            font-size: 22pt;
-            font-weight: bold;
+        .header-banner h1 {
+            font-size: 1.6rem;
+            margin: 0 0 8px 0;
             color: #ffffff;
-            line-height: 1.2;
         }
 
-        .subtitle {
+        .header-banner p {
             margin: 0;
-            font-size: 11pt;
             color: #94a3b8;
+            font-size: 1rem;
         }
 
-        .demo-link-box {
-            background-color: #eff6ff;
-            border: 1px solid #bfdbfe;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
+        .osio-otsikko {
+            font-size: 1.2rem;
+            color: var(--text-main);
+            margin: 35px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
         }
 
-        .demo-link-btn {
-            background-color: #2563eb;
-            color: #ffffff;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 13px;
-            transition: background-color 0.2s;
-        }
-
-        .demo-link-btn:hover {
-            background-color: #1d4ed8;
-        }
-
-        h2 {
-            font-size: 14pt;
-            color: #0f172a;
-            border-left: 4px solid #10b981;
-            padding-left: 12px;
-            margin-top: 30px;
-            margin-bottom: 15px;
-        }
-
-        p {
-            margin: 0 0 12px 0;
-        }
-
-        .info-box {
-            background-color: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-radius: 8px;
-            padding: 16px 20px;
-            margin-bottom: 25px;
-            color: #166534;
-        }
-
-        .example-box {
-            background-color: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 16px 20px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 10pt;
-            white-space: pre-line;
+        .ohje-kortti {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            padding: 20px 24px;
             margin-bottom: 20px;
-            color: #0f172a;
+            border: 1px solid var(--border-color);
         }
+
+        .vaihe-numero {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            text-align: center;
+            line-height: 28px;
+            margin-right: 10px;
+            font-size: 0.9rem;
+        }
+
+        .vaihe-otsikko {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .vinkki-laatikko {
+            background-color: #f0fdf4;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            color: #166534;
+            font-size: 0.95rem;
+        }
+
+        .huomio-laatikko {
+            background-color: #fef2f2;
+            border-left: 4px solid var(--danger);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            color: #991b1b;
+            font-size: 0.95rem;
+        }
+
+        .odotus-laatikko {
+            background-color: #fffbeb;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            color: #92400e;
+            font-size: 0.95rem;
+        }
+
+        .nappi-esimerkki {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: white;
+            margin: 2px 0;
+        }
+        .btn-reformat { background-color: #6366f1; }
+        .btn-reset { background-color: var(--secondary); }
+        .btn-hyvaksy { background-color: var(--success); }
+        .btn-pika { background-color: var(--primary); }
+        .btn-hylkaa { background-color: var(--danger); }
 
         ul, ol {
-            margin: 0 0 20px 0;
-            padding-left: 22px;
+            padding-left: 20px;
+            margin-bottom: 0;
         }
 
         li {
             margin-bottom: 8px;
         }
-
-        strong {
-            color: #0f172a;
-        }
-
-        code {
-            background-color: #f1f5f9;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 10pt;
-        }
-
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-            .page-container {
-                padding: 20px;
-            }
-            .demo-link-box {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-        }
     </style>
 </head>
 <body>
 
-    <div class="page-container">
-        <!-- Banneri -->
-        <div class="header-banner">
-            <h1>Käyttöohje: SolOne AutoPublish & Valvomo</h1>
-            <p class="subtitle">Pikaopas somejulkaisujen luomiseen, tekoälyn ohjeistamiseen ja julkaisujen hallintaan suoraan sähköpostistasi.</p>
+<div class="container">
+
+    <div class="header-banner">
+        <h1>SolOne Somevalvomo – Käyttöohje</h1>
+        <p>Tämä ohje opastaa uuden käyttäjän somejulkaisujen automaattiseen seurantaan, muokkaukseen, AI-muotoiluun ja julkaisuun.</p>
+    </div>
+
+    <div class="vinkki-laatikko">
+        <strong>💡 Miten julkaisut tulevat Valvomoon?</strong><br>
+        Kun lähetät sähköpostia (ja mahollisen kuvan) järjestelmään liitettyyn osoitteeseen, se siirtyy automaattisesti Somevalvomoon käsiteltäväksi. <strong>Sivua ei tarvitse päivittää käsin</strong> – Valvomo päivittää ruudun itsekseen taustalla! Kun muokkaat tekstikenttää, automaattipäivitys vetäytyy heti syrjään, ettei työsi ylikirjoituta kesken kaiken.
+    </div>
+
+    <div class="osio-otsikko">📱 Julkaisun käsittely vaihe vaiheelta</div>
+
+    <!-- VAIHE 1 -->
+    <div class="ohje-kortti">
+        <div class="vaihe-otsikko">
+            <span class="vaihe-numero">1</span>
+            Kirjautuminen ja automaattinen taustaseuranta
         </div>
-
-        <!-- Pikalinkki Demo-Valvomoon -->
-        <div class="demo-link-box">
-            <span style="color: #1e40af; font-size: 14px;"><strong>🧪 Haluatko kokeilla järjestelmää heti?</strong> Siirry interaktiiviseen demoon:</span>
-            <a href="somevalvomo_demo.html" class="demo-link-btn" target="_blank">🚀 Avaa Demo-Valvomo &rarr;</a>
+        <p>Avaa Somevalvomo selaimessasi ja kirjaudu sisään sähköpostillasi ja salasanallasi. Valvomo aloittaa heti saapuvien viestien automaattisen seurannan.</p>
+        
+        <div class="odotus-laatikko">
+            <strong>⏳ Uusi julkaisu käsittelyssä -vaihe:</strong><br>
+            Kun lähetät sähköpostin, Valvomoon ilmestyy ensin keltainen katkoviiva-kortti. Tämä tarkoittaa, että tekoäly ja kuvalinkit valmistuvat taustalla. Kun valmista tulee (noin 15–20 sekunnissa), keltainen kortti muuttuu <strong>itsekseen vihreäksi muokkaustilaksi</strong> ilman, että kosket ruutuun!
         </div>
+    </div>
 
-        <!-- Tervetuloa-boxi -->
-        <div class="info-box">
-            <strong>Tervetuloa käyttämään SolOne AutoPublish -järjestelmää!</strong><br>
-            Tämän järjestelmän avulla voit luoda valmiita ammattimaisia somejulkaisuja suoraan sähköpostistasi. Järjestelmän integroitu tekoäly huolehtii tekstin viimeistelystä ja hastageista, mutta julkaisu ei koskaan lähtevän liveksi ilman sinun hyväksyntääsi sähköisestä Valvomosta.
+    <!-- VAIHE 2 -->
+    <div class="ohje-kortti">
+        <div class="vaihe-otsikko">
+            <span class="vaihe-numero">2</span>
+            Sisällön ja kuvan tarkistus
         </div>
-
-        <!-- Osio 1 -->
-        <h2>1. Julkaisun luominen sähköpostitse</h2>
-        <p>Kun haluat luoda uuden somepostauksen, lähetä sähköposti järjestelmän omaan vastaanotto-osoitteeseen seuraavilla määrityksillä:</p>
+        <p>Kun kortti on valmis, tarkista sen tiedot:</p>
         <ul>
-            <li><strong>Vastaanottaja (To):</strong> Sinulle toimitettu järjestelmän oma sähköpostiosoite.</li>
-            <li><strong>Aihe (Subject):</strong> Määrittää kanavan, johon haluat julkaista. Kirjoita aiheeksi jokin seuraavista (Huom! Kirjoitetaan isolla alkukirjaimella):
-                <ul>
-                    <li><code>Molemmat</code> (Julkaistaan sekä Facebookiin että Instagramiin)</li>
-                    <li><code>Facebook</code> (Julkaistaan vain Facebookiin)</li>
-                    <li><code>Instagram</code> (Julkaistaan vain Instagramiin)</li>
-                </ul>
-            </li>
-            <li><strong>Liitteet:</strong> Liitä sähköpostiin mukaan kuva, jonka haluat julkaista tekstin yhteydessä.</li>
-        </ul>
-
-        <!-- Osio 2 -->
-        <h2>2. Tekoälyn ohjeistaminen ja "Promptaus"</h2>
-        <p>Järjestelmän tekoäly on opetettu muotoilemaan raakatekstisi automaattisesti sujuvaksi some-kieleksi ja lisäämään loppuun osuvat hastagit. Voit kuitenkin <strong>antaa tekoälylle erillisiä ohjeita</strong> suoraan sähköpostiviestissäsi erottamalla ohjeet selkeästi omalle rivilleen.</p>
-
-        <p><strong>Miten syötät ohjeita tekoälylle:</strong></p>
-        <div class="example-box"><strong>Aihe:</strong> Molemmat
-<strong>Viesti:</strong>
-Meillä oli tänään aivan mahtava asiakastapaaminen ja esittelimme uutta julkaisuautomaatiota! Asiakas oli todella innoissaan tehokkuudesta.
-
-[OHJE TEKOÄLYLLE: Kirjoita tämä teksti erittäin innostavalla ja energisellä sävyllä. Lisää mukaan aiheeseen sopivia emojeita ja käännä tekstin loppuun sama lyhyesti englanniksi.]</div>
-
-        <p><strong>Suositeltuja ohjeita, joita voit kokeilla:</strong></p>
-        <ul>
-            <li><code>[OHJE: Säilytä antamani teksti ilman muokkauksia, lisää vain hastagit loppuun.]</code></li>
-            <li><code>[OHJE: Kirjoita asiallisella / hauskalla / rennolla / asiantuntevalla sävyllä.]</code></li>
-            <li><code>[OHJE: Tee tekstistä hyvin lyhyt ja ytimekäs tiivistys.]</code></li>
-            <li><code>[OHJE: Käännä julkaisu myös ruotsiksi/englanniksi tekstin alle.]</code></li>
-            <li><code>[OHJE: Muuta tämä listamuotoon ja lisää loppuun selkeä toimintakehote (CTA).]</code></li>
-        </ul>
-
-        <!-- Osio 3 -->
-        <h2>3. Julkaisujen hallinta Somevalvomossa</h2>
-        <p>Kun olet lähettänyt sähköpostin, järjestelmä käsittelee sen sekunneissa ja siirtää sen luonnokseksi sähköiseen valvomoosi. Avaa valvomo selaimellasi suorittaaksesi seuraavat vaiheet:</p>
-        <ol>
-            <li><strong>Tarkista teksti:</strong> Näet tekoälyn viimeistelemän tekstin tekstilaatikossa. Voit klikata laatikkoa ja korjata tai muuttaa tekstiä vapaasti.</li>
-            <li><strong>Tarkista kuva:</strong> Valvomo näyttää esikatselun sähköpostissa lähettämästäsi kuvasta.</li>
-            <li><strong>Muuta kanavaa tarvittaessa:</strong> Voit vielä valvomossakin vaihtaa julkaisukanavaa pudotusvalikosta (esim. jos päätätkin lähettää viestin vain Facebookiin).</li>
-            <li><strong>Valitse toiminto painikkeilla:</strong>
-                <ul>
-                    <li><strong>🚀 Julkaise välittömästi:</strong> Lähettää julkaisun live-kanaviin heti.</li>
-                    <li><strong>Hyväksy julkaistavaksi:</strong> Siirtää julkaisun valmiustilaan automaattista ajastettua julkaisua varten.</li>
-                    <li><strong>Hylkää:</strong> Poistaa julkaisun jonosta, eikä sitä lähetetä eteenpäin.</li>
-                </ul>
-            </li>
-        </ol>
-
-        <!-- Osio 4 -->
-        <h2>4. Turvallinen testaaminen (Testitila)</h2>
-        <p>Jos haluat kokeilla järjestelmää tai uutta ohjetta ilman riskiä siitä, että viesti karkaa julkisuuteen:</p>
-        <ul>
-            <li>Kirjoita sähköpostin aiheeksi <code>Molemmat testi</code> tai valitse valvomon pudotusvalikosta jokin <strong>🛠️ TESTI</strong>-vaihtoehdoista.</li>
-            <li>Tällöin viesti kulkee koko ketjun läpi ja näet sen toiminnan, mutta järjestelmän turvasuodattimet estävät sen päätymisen sosiaalisen median kanaviin.</li>
+            <li><strong>Kuvan esikatselu:</strong> Varmista, että kuva on latautunut oikein.</li>
+            <li><strong>Alkuperäinen teksti (Raw Text):</strong> Sähköpostista saapunut alkuperäinen viesti. Voit muokata tätä raakatekstiä suoraan laatikossa ennen uutta AI-muotoilua.</li>
+            <li><strong>Julkaisuteksti (FB / IG):</strong> Tekoälyn muotoilema teksti, joka tulee näkymään sosiaalisessa mediassa. Voit muokata tätä tekstikenttää myös täysin vapaasti käsin.</li>
+            <li><strong>LinkedIn-teksti (Tulossa):</strong> Varaus tulevalle LinkedIn-integraatiolle.</li>
         </ul>
     </div>
+
+    <!-- VAIHE 3 -->
+    <div class="ohje-kortti">
+        <div class="vaihe-otsikko">
+            <span class="vaihe-numero">3</span>
+            AI-uudelleenmuotoilu ja 1. versioon palauttaminen
+        </div>
+        <p>Jos haluat muuttaa julkaisun sävyä tekoälyn avulla tai nollata tekemäsi kokeilut:</p>
+        <ol>
+            <li><strong>Uusi muotoilu:</strong> Valitse sävy valikosta <strong>Julkaisuprofiili</strong> (esim. <em>Yritys & B2B</em>, <em>Yritys & B2C</em> tai <em>Somesisällöntuottaja</em>). Valittu profiili tallentuu automaattisesti taustalla. Paina sitten <span class="nappi-esimerkki btn-reformat">🔄 Muotoile AI:lla</span>. Tekoäly luo tekstin uudelleen heti.</li>
+            <li><strong>Ensimmäisen AI-version palauttaminen:</strong> Jos muotoilit tekstiä uudelleen, mutta haluatkin palata takaisin siihen aivan ensimmäiseen tekoälyn tekemään versioon, paina harmaata painiketta <span class="nappi-esimerkki btn-reset">↩️ Palauta 1. versio</span>. Ensimmäinen versio palautuu kenttään ja tallentuu välittömästi kantaan ilman eri odottelua!</li>
+        </ol>
+    </div>
+
+    <!-- VAIHE 4 -->
+    <div class="ohje-kortti">
+        <div class="vaihe-otsikko">
+            <span class="vaihe-numero">4</span>
+            Kohdekanavan ja ajastuksen valinta
+        </div>
+        <p>Ennen hyväksyntää valitse kortin alaosasta:</p>
+        <ul>
+            <li><strong>Kohdekanava:</strong> Valitse julkaistaanko viesti molempiin (Facebook & Instagram) vai vain toiseen. (<em>Huom: Testiasetukset ovat vain järjestelmän kehitystestausta varten!</em>)</li>
+            <li><strong>Ajasta julkaisu (valinnainen):</strong> Jos haluat julkaisun ilmestyvän tiettynä päivänä ja kellonaikana, valitse se ajastuskentästä. Jos jätät kentän tyhjäksi, julkaisu tapahtuu heti kun ajastin ajaa jonon.</li>
+        </ul>
+    </div>
+
+    <!-- VAIHE 5 -->
+    <div class="ohje-kortti">
+        <div class="vaihe-otsikko">
+            <span class="vaihe-numero">5</span>
+            Julkaisun hyväksyntä, hylkäys ja historia
+        </div>
+        <p>Kun teksti ja asetukset ovat kunnossa, valitse toiminto:</p>
+        <ul>
+            <li><span class="nappi-esimerkki btn-hyvaksy">✓ Hyväksy jonoon</span>: Tallentaa julkaisun valmiiksi jonoon automaattista ajastusta varten.</li>
+            <li><span class="nappi-esimerkki btn-pika">🚀 Julkaise välittömästi</span>: Lähettää julkaisun välittömästi tuotantoon (Facebookiin ja Instagramiin)!</li>
+            <li><span class="nappi-esimerkki btn-hylkaa">✕ Hylkää</span>: Hylkää julkaisun. Kortti siirtyy alaspäin <strong>Julkaisuhistoriaan</strong> punaisella kehyksellä ja <span class="nappi-esimerkki btn-hylkaa">✕ HYLÄTTY</span> -leimalla varustettuna.</li>
+        </ul>
+    </div>
+
+    <div class="huomio-laatikko">
+        <strong>⚠️ Tärkeää muistaa:</strong><br>
+        Ennen kuin painat <em>Hyväksy jonoon</em> tai <em>Julkaise välittömästi</em>, lue aina läpi <strong>Julkaisuteksti (FB / IG)</strong> -laatikon sisältö, sillä se on se lopullinen teksti, jonka asiakkaasi näkevät somessa!
+    </div>
+
+</div>
 
 </body>
 </html>
