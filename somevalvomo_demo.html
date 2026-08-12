@@ -281,7 +281,6 @@
             <p>Julkinen Esikatselu & Demoalusta</p>
         </div>
 
-        <!-- Pikalinkki Demo-Käyttöohjeeseen -->
         <div class="guide-link-box">
             <span style="color: #1e40af; font-size: 14px;"><strong>📖 Tarvitsetko apua testaamisessa?</strong> Katso demo-käyttöohje:</span>
             <a href="kayttoohje_demo.html" class="guide-link-btn" target="_blank">📖 Avaa Demo-Käyttöohje &rarr;</a>
@@ -323,7 +322,6 @@
     </div>
 
     <script>
-        // --- 1. SUPABASE JA MAKE ASETUKSET ---
         const SUPABASE_URL = "https://urdyprqepkkxdohrzkpv.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZHlwcnFlcGtreGRvaHJ6a3B2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDY2NTIsImV4cCI6MjA5Mjc4MjY1Mn0.jlryhbO8t0tZaJnuV9FzEok3p3DBdGPSfygibKKDD5A"; 
         const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/et10ahhrv29t167e0uyt0px3zv2wgcml"; 
@@ -339,7 +337,6 @@
             }
         });
 
-        // --- 2. TUNNUKSEN TARKISTUS & PYYNTÖ ---
         async function tarkistaTunnus(automaattiTunnus = null) {
             const syotetty = automaattiTunnus || document.getElementById('syotetty-tunnus').value.trim();
             const virheElem = document.getElementById('virhe-viesti');
@@ -349,7 +346,6 @@
 
             if (!syotetty) return;
 
-            // Tarkistetaan Supabasen demotunnukset-taulusta
             const { data, error } = await supabaseClient
                 .from('demotunnukset')
                 .select('*')
@@ -367,6 +363,7 @@
                 onnistuiElem.style.display = 'block';
 
                 haePostaukset();
+                kaynnistaRealtime();
             } else {
                 virheElem.style.display = 'block';
                 localStorage.removeItem('demo_kirjautunut_tunnus');
@@ -399,7 +396,6 @@
             }
         }
 
-      // --- 3. DATAN HAKU (KORJATTU: Etsii tunnusta alusta-sarakkeesta) ---
         async function haePostaukset() {
             if (!kirjautunutTunnus) return;
 
@@ -418,7 +414,6 @@
             paivitaKayttoliittyma(data || []);
         }
 
-       
         function paivitaKayttoliittyma(postaukset) {
             const aktiivinenElem = document.getElementById('aktiivinen-luonnos');
             const historiaElem = document.getElementById('julkaistut-historia');
@@ -426,7 +421,7 @@
             aktiivinenElem.innerHTML = '';
             historiaElem.innerHTML = '';
 
-            const luonnokset = postaukset.filter(r => r.status === 'odotetaan' || !r.status);
+            const luonnokset = postaukset.filter(r => (r.status === 'odotetaan' || r.status === 'kasitellaan' || !r.status) && !kuitatutIds.includes(r.id));
             const julkaistut = postaukset.filter(r => r.status === 'julkaistu_demo' || r.status === 'julkaistu' || r.status === 'hyvaksytty');
 
             const uusinLuonnos = luonnokset[0];
@@ -458,11 +453,30 @@
                 });
             }
         }
-        
+
         function luoKorttiHTML(rivi, onJulkaistu, onHistoriaKortti = false) {
             const kortti = document.createElement('div');
             kortti.className = `post-card ${onJulkaistu ? 'published-demo' : ''}`;
             
+            // KÄSITTELYSSÄ OLEVA ERIKOISKORTTI
+            if (rivi.status === 'kasitellaan') {
+                kortti.innerHTML = `
+                    <div class="post-meta">
+                        <div>Kanava: <span class="badge">${rivi.alusta || 'Määrittelemätön'}</span></div>
+                        <div>Tila: <span class="badge demo" style="background-color: #e0f2fe; color: #0369a1;">⚡ KÄSITELTÄÄN</span></div>
+                    </div>
+                    <div style="text-align: center; padding: 20px; background-color: #f0f9ff; border-radius: 8px; border: 2px dashed #0284c7;">
+                        <div style="font-size: 16px; font-weight: bold; color: #0369a1; margin-bottom: 6px;">
+                            ${rivi.teksti || '🤖 Julkaisua käsitellään ja sisältöä muokataan, odota hetki...'}
+                        </div>
+                        <div style="font-size: 13px; color: #0284c7;">
+                            Teksti ja kuva päivittyvät tähän automaattisesti n. 15–30 sekunnin kuluttua.
+                        </div>
+                    </div>
+                `;
+                return kortti;
+            }
+
             let kuvaHTML = '<div class="media-preview" style="display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 14px;">📷 [ Ei kuvaa ]</div>';
             
             if (rivi.kuva_url) {
@@ -544,8 +558,6 @@
             haePostaukset();
         }
 
-        
-        // --- 4. PAINIKKEIDEN TOIMINNALLISUUS ---
         async function paivitaStatus(id, uusiStatus) {
             const tekstiElem = document.getElementById(`teksti-${id}`);
             const ajastusElem = document.getElementById(`ajastus-${id}`);
@@ -555,24 +567,28 @@
             const muokattuAjastus = ajastusElem ? ajastusElem.value : null;
             const valittuKanava = alustaElem ? alustaElem.value : '(Molemmat FB & IG)';
 
-            // Yhdistetään tunnus ja valittu alusta
             const yhdistettyAlusta = `${kirjautunutTunnus} ${valittuKanava}`;
+
+            if (uusiStatus === 'hylatty') {
+                if (!kuitatutIds.includes(id)) {
+                    kuitatutIds.push(id);
+                    localStorage.setItem('kuitatutIds', JSON.stringify(kuitatutIds));
+                }
+            }
 
             const paivitysobjekti = {
                 alusta: yhdistettyAlusta,
-                status: uusiStatus // Tallennetaan tila (julkaistu_demo) heti Supabaseen
+                status: uusiStatus
             };
             
             if (muokattuTeksti !== null) paivitysobjekti.teksti = muokattuTeksti;
             if (muokattuAjastus !== null) paivitysobjekti.ajastettu_aika = muokattuAjastus ? new Date(muokattuAjastus).toISOString() : null;
 
-            // 1. Tallennetaan muutokset kantaan
             await supabaseClient
                 .from('demopostaukset')
                 .update(paivitysobjekti)
                 .eq('id', id);
 
-            // 2. Lähetetään käsky Makeen
             try {
                 await fetch(MAKE_WEBHOOK_URL, {
                     method: 'POST',
@@ -591,21 +607,41 @@
             haePostaukset(); 
         }
 
-        // --- 5. REALTIME REALIAIKASEURANTA (KORJATTU: Mukana puuttunut alkuosa) ---
-        supabaseClient
-            .channel('demomuutokset')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'demopostaukset' }, (payload) => {
-                // Tarkistetaan, kirjoittaako käyttäjä parhaillaan lomakkeelle
-                const aktiivinenElementti = document.activeElement;
-                const kirjoittaaParhaillaan = aktiivinenElementti && 
-                    ['TEXTAREA', 'INPUT', 'SELECT'].includes(aktiivinenElementti.tagName);
+        // --- REALTIME & VARAJÄRJESTELMÄ ---
+        let realtimeKanava = null;
 
-                // Jos käyttäjä ei ole kesken kirjoituksen ja tunnus on aktiivinen, päivitetään sivu automaattisesti!
-                if (!kirjoittaaParhaillaan && kirjautunutTunnus) {
-                    haePostaukset();
-                }
-            })
-            .subscribe();
+        function kaynnistaRealtime() {
+            if (!kirjautunutTunnus || realtimeKanava) return;
+
+            // Kuunnellaan kaikkia taulun muutoksia ilman tiukkaa suodatusta
+            realtimeKanava = supabaseClient
+                .channel(`demomuutokset-${kirjautunutTunnus}`)
+                .on('postgres_changes', { 
+                    event: '*', 
+                    schema: 'public', 
+                    table: 'demopostaukset'
+                }, (payload) => {
+                    const aktiivinenElementti = document.activeElement;
+                    const kirjoittaaParhaillaan = aktiivinenElementti && 
+                        ['TEXTAREA', 'INPUT', 'SELECT'].includes(aktiivinenElementti.tagName);
+
+                    if (!kirjoittaaParhaillaan) {
+                        haePostaukset();
+                    }
+                })
+                .subscribe();
+        }
+
+        // Varmistuskysely 3 sekunnin välein
+        setInterval(() => {
+            const aktiivinenElementti = document.activeElement;
+            const kirjoittaaParhaillaan = aktiivinenElementti && 
+                ['TEXTAREA', 'INPUT', 'SELECT'].includes(aktiivinenElementti.tagName);
+
+            if (!kirjoittaaParhaillaan && kirjautunutTunnus) {
+                haePostaukset();
+            }
+        }, 3000);
 
     </script>
 </body>
