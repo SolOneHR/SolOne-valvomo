@@ -957,7 +957,7 @@
 
             if (automaattiPaivitysAjastin) clearTimeout(automaattiPaivitysAjastin);
             const onKasittelyssa = dataOdottavat && dataOdottavat.some(j => j.status === 'kasittelyssa' || j.status === 'kasitellaan');
-            const viive = onKasittelyssa ? 2500 : 5000;
+            const viive = onKasittelyssa ? 1500 : 3000;
             automaattiPaivitysAjastin = setTimeout(haeValvomonTiedot, viive);
 
         } catch (error) {
