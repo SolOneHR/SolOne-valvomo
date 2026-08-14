@@ -110,7 +110,6 @@
             background-color: #1d4ed8;
         }
 
-        /* Kirjautuneen käyttäjän yläkulman infokortti */
         .user-info {
             text-align: left;
             font-size: 0.85rem;
@@ -142,7 +141,7 @@
             background: rgba(255,255,255,0.1); 
         }
 
-        /* Demo-infolaatikko ja kirjautumisosio */
+        /* Demo-infolaatikko ja kirjautumisosio vanhasta versiosta */
         .demo-info {
             background-color: #eff6ff;
             border: 1px solid #bfdbfe;
@@ -169,7 +168,6 @@
             border-radius: 8px;
             font-size: 14px;
             box-sizing: border-box;
-            background: white;
         }
 
         .btn-auth {
@@ -210,10 +208,16 @@
             display: none;
         }
 
+        .alert-success {
+            color: #065f46;
+            font-weight: bold;
+            margin-top: 10px;
+            display: none;
+        }
+
         /* Osio-otsikko */
         .osio-otsikko {
-            font-size: 1.2rem;
-            font-weight: bold;
+            font-size: 1.1rem;
             color: var(--text-main);
             margin: 30px 0 15px 0;
             padding-bottom: 8px;
@@ -225,6 +229,7 @@
 
         @media (min-width: 600px) {
             .osio-otsikko {
+                font-size: 1.2rem;
                 flex-direction: row;
                 align-items: center;
                 justify-content: space-between;
@@ -482,14 +487,13 @@
 <body>
 
 <div class="container">
-    <!-- YLÄBANNERI (Sisältää oikeassa yläkulmassa käyttäjätiedon ja uloskirjautumisen) -->
     <div class="header-banner">
         <div>
             <h1>SolOne HR & Business – Somevalvomo (DEMO)</h1>
             <p>Testaa, muokkaa ja simuloi odottavat somejulkaisut.</p>
         </div>
         <div id="kayttaja-kortti" class="user-info" style="display:none;">
-            <span>Kirjautunut: <strong id="kayttaja-email"></strong></span><br>
+            <span>Tunnus: <strong id="kayttaja-email"></strong></span><br>
             <button class="btn-ulos" onclick="kirjauduUlos()">Kirjaudu ulos</button>
         </div>
     </div>
@@ -499,7 +503,7 @@
         <a href="kayttoohje_demo.html" class="guide-link-btn" target="_blank">📖 Avaa Demo-Käyttöohje &rarr;</a>
     </div>
 
-    <!-- SININEN ALOITUS- JA KIRJAUTUMISNÄKYMÄ (Piiloutuu kirjautumisen jälkeen) -->
+    <!-- VANHAN MALLIN MUKAINEN ALOITUS- JA KIRJAUTUMISNÄKYMÄ -->
     <div class="demo-info" id="kirjautumis-ikkuna">
         <div id="tunnus-status-osio">
             <strong>ℹ️ Tervetuloa kokeilemaan järjestelmää livenä!</strong><br>
@@ -512,6 +516,7 @@
             </div>
 
             <div id="login-virhe" class="alert-error"> Virheellinen tai vanhentunut tunnus. Pyydä uusi tunnus painikkeesta!</div>
+            <div id="onnistui-viesti" class="alert-success"> Virheettömästi kirjauduttu! Tunnuksesi: <span id="aktiivinen-tunnus-naytto"></span></div>
 
             <div class="request-form" id="pyynto-lomake">
                 <strong>Pyydä henkilökohtainen demo-tunnus:</strong><br>
@@ -523,20 +528,19 @@
         </div>
     </div>
 
-    <!-- VALVOMO-OSIO (Aina näkyvissä: ennen kirjautumista esimerkit, kirjautuneena oikeat tiedot) -->
-    <div id="valvomo-sisalto">
+    <div id="valvomo-sisalto" style="display:none;">
         <div id="ilmoitus-alue" class="ilmoitus"></div>
 
         <div class="osio-otsikko">
-            <span>Aktiivinen luonnos valvomossa</span>
+            <span>Odottavat julkaisut</span>
         </div>
-        <div id="julkaisut-lista"></div>
+        <div id="julkaisut-lista">Ladataan odottavia julkaisuja...</div>
 
         <div class="osio-otsikko">
-            <span>Jo julkaistut & hyväksytyt</span>
+            <span>Julkaisuhistoria</span>
             <span class="osio-infoteksti">Näytetään viimeisimmät julkaisut</span>
         </div>
-        <div id="historia-lista"></div>
+        <div id="historia-lista">Ladataan historiaa...</div>
     </div>
 </div>
 
@@ -544,6 +548,7 @@
     const SUPABASE_URL = 'https://urdyprqepkkxdohrzkpv.supabase.co';
     const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZHlwcnFlcGtreGRvaHJ6a3B2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDY2NTIsImV4cCI6MjA5Mjc4MjY1Mn0.jlryhbO8t0tZaJnuV9FzEok3p3DBdGPSfygibKKDD5A';
     
+    // Webhookit Make-skenaarioihin
     const MAKE_WEBHOOK_JULKAISU = 'https://hook.eu1.make.com/0bgi3brk58gsrglpverviw38rbntn1f5'; 
     const MAKE_WEBHOOK_AI = 'https://hook.eu1.make.com/jp8bcuqtpbagjvoa3zotgi27fgwyau9p'; 
 
@@ -608,8 +613,7 @@
             if (data && !error) {
                 nykyinenAsiakastunnus = syotetty;
                 localStorage.setItem('demo_kirjautunut_tunnus', nykyinenAsiakastunnus);
-                paivitaKirjautumistilaNakyma(true);
-                haeValvomonTiedot();
+                alustaNakyma();
             } else {
                 virheAlue.style.display = 'block';
             }
@@ -623,101 +627,28 @@
         localStorage.removeItem('demo_kirjautunut_tunnus');
         nykyinenAsiakastunnus = null;
         if (automaattiPaivitysAjastin) clearTimeout(automaattiPaivitysAjastin);
-        paivitaKirjautumistilaNakyma(false);
-        naytaEsimerkkiNakyma();
+        naytaKirjautumisIkkuna();
     }
 
-    function paivitaKirjautumistilaNakyma(onKirjautunut) {
-        if (onKirjautunut) {
-            document.getElementById('kirjautumis-ikkuna').style.display = 'none';
-            document.getElementById('kayttaja-email').textContent = nykyinenAsiakastunnus;
-            document.getElementById('kayttaja-kortti').style.display = 'block';
-        } else {
-            document.getElementById('kayttaja-kortti').style.display = 'none';
-            document.getElementById('kirjautumis-ikkuna').style.display = 'block';
-            document.getElementById('login-virhe').style.display = 'none';
-            document.getElementById('syotetty-tunnus').value = '';
+    function naytaKirjautumisIkkuna() {
+        document.getElementById('kayttaja-kortti').style.display = 'none';
+        document.getElementById('valvomo-sisalto').style.display = 'none';
+        document.getElementById('kirjautumis-ikkuna').style.display = 'block';
+        document.getElementById('kirjautumis-kentat').style.display = 'flex';
+        document.getElementById('onnistui-viesti').style.display = 'none';
+    }
+
+    function tarkistaIstunto() {
+        if (!nykyinenAsiakastunnus) {
+            naytaKirjautumisIkkuna();
+            return false;
         }
-    }
 
-    // --- ESIMERKKINÄKYMÄ ENNEN KIRJAUTUMISTA ---
-    function naytaEsimerkkiNakyma() {
-        const odottavatLista = document.getElementById('julkaisut-lista');
-        const historiaLista = document.getElementById('historia-lista');
-
-        odottavatLista.innerHTML = `
-            <div class="julkaisu-card">
-                <div class="meta-info">
-                    <span><strong>Luotu:</strong> Tänään klo 09:15</span>
-                    <span><strong>Profiili:</strong> Yritys & B2B</span>
-                </div>
-                
-                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=60" class="kuva-esikatselu" alt="Esimerkkikuva">
-
-                <label class="field-label">Alkuperäinen teksti (Raw Text):</label>
-                <textarea class="teksti-alue" readonly>Asiakasprojekti saatiin tänään onnistuneesti maaliin. Rutiinityöt automatisoitiin ja säästetään jatkossa useita tunteja viikossa!</textarea>
-
-                <div class="grid-valinnat">
-                    <div>
-                        <label class="field-label">Julkaisuprofiili:</label>
-                        <select class="valinta-kentta">
-                            <option selected>Yritys & B2B</option>
-                            <option>Yritys & B2C</option>
-                            <option>Yleinen</option>
-                        </select>
-                    </div>
-                    <div>
-                        <button type="button" class="btn-reformat" onclick="naytaKirjauduKehote()">🔄 Muotoile AI:lla</button>
-                    </div>
-                </div>
-
-                <label class="field-label">Julkaisuteksti (FB / IG):</label>
-                <textarea class="teksti-alue" rows="5" readonly>🚀 Asiakkaamme rutiinityöt on nyt automatisoitu! Modernit integraatiot ja fiksut työnkulut säästävät tiimiltä tunteja joka viikko tuottavaan työhön.
-
-#automaatio #tuottavuus #solone #digiratkaisut</textarea>
-
-                <div class="linkedin-osio">
-                    <label class="field-label" style="color: #64748b;">LinkedIn-teksti (Tulossa):</label>
-                    <textarea class="teksti-alue" style="margin-bottom:0;" disabled placeholder="LinkedIn-integraatio aktivoituu myöhemmin..."></textarea>
-                </div>
-
-                <div class="grid-valinnat">
-                    <div>
-                        <label class="field-label">Kohdekanava (Simulointi):</label>
-                        <select class="valinta-kentta">
-                            <option selected>Molemmat (FB & IG)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="field-label">Ajasta julkaisu (valinnainen):</label>
-                        <input type="datetime-local" class="aika-kentta">
-                    </div>
-                </div>
-
-                <div class="nappi-ryhma">
-                    <button class="btn-hyvaksy" onclick="naytaKirjauduKehote()">✓ Hyväksy jonoon</button>
-                    <button class="btn-pika" onclick="naytaKirjauduKehote()">🚀 Julkaise heti (Simuloi)</button>
-                    <button class="btn-hylkaa" onclick="naytaKirjauduKehote()">✕ Hylkää</button>
-                </div>
-            </div>
-        `;
-
-        historiaLista.innerHTML = `
-            <div class="julkaisu-card historia">
-                <div class="tilamerkinta">✓ JULKAISTU (SIMULOITU)</div>
-                <div class="meta-info">
-                    <span><strong>Luotu:</strong> Eilen klo 14:20</span>
-                    <span><strong>Profiili:</strong> Yleinen</span>
-                </div>
-                <label class="field-label">Julkaistu teksti:</label>
-                <textarea class="teksti-alue" readonly>Tehosta liiketoimintasi viestintää tekoälyn avulla. Tutustu ratkaisuihimme sivuillamme!</textarea>
-            </div>
-        `;
-    }
-
-    function naytaKirjauduKehote() {
-        naytaIlmoitus('ℹ️ Syötä yläpuolelle demo-tunnuksesi kokeillaksesi toimintoja livenä!', 'error');
-        document.getElementById('tunnus-status-osio').scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('kayttaja-email').textContent = nykyinenAsiakastunnus;
+        document.getElementById('kayttaja-kortti').style.display = 'block';
+        document.getElementById('kirjautumis-ikkuna').style.display = 'none';
+        document.getElementById('valvomo-sisalto').style.display = 'block';
+        return true;
     }
 
     function luoKorttiHtml(julkaisu, onHistoria = false) {
@@ -891,8 +822,6 @@
     }
 
     async function haeValvomonTiedot() {
-        if (!nykyinenAsiakastunnus) return;
-
         const aktiivinenElementti = document.activeElement;
         const kirjoittaaParhaillaan = aktiivinenElementti && 
             ['TEXTAREA', 'INPUT', 'SELECT'].includes(aktiivinenElementti.tagName);
@@ -907,6 +836,7 @@
         const historiaLista = document.getElementById('historia-lista');
 
         try {
+            // Haetaan odottavat ja käsittelyssä olevat
             const { data: dataOdottavat, error: errOdottavat } = await supabaseClient
                 .from('somepostaukset')
                 .select('*')
@@ -914,6 +844,7 @@
                 .or(`asiakastunnus.eq.${nykyinenAsiakastunnus},alusta.ilike.%${nykyinenAsiakastunnus}%`)
                 .order('luotu_aika', { ascending: false });
 
+            // Haetaan historia (julkaistut ja hylätyt)
             const { data: dataHistoria, error: errHistoria } = await supabaseClient
                 .from('somepostaukset')
                 .select('*')
@@ -923,19 +854,20 @@
                 .limit(10);
 
             if (!dataOdottavat || dataOdottavat.length === 0) {
-                odottavatLista.innerHTML = '<div class="tyhja-tila">Ei odottavia somejulkaisuja. Lähetä sähköposti kokeillaksesi!</div>';
+                odottavatLista.innerHTML = '<div class="tyhja-tila">Ei odottavia somejulkaisuja. Kaikki valmiina!</div>';
             } else {
                 odottavatLista.innerHTML = '';
                 dataOdottavat.forEach(julkaisu => odottavatLista.appendChild(luoKorttiHtml(julkaisu, false)));
             }
 
             if (!dataHistoria || dataHistoria.length === 0) {
-                historiaLista.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 14px; padding: 20px 0;">Ei aiemmin julkaistuja viestejä historiassa.</div>';
+                historiaLista.innerHTML = '<div class="tyhja-tila">Ei aiemmin julkaistuja viestejä historiassa.</div>';
             } else {
                 historiaLista.innerHTML = '';
                 dataHistoria.forEach(julkaisu => historiaLista.appendChild(luoKorttiHtml(julkaisu, true)));
             }
 
+            // Automaattipäivitys
             if (automaattiPaivitysAjastin) clearTimeout(automaattiPaivitysAjastin);
             const onKasittelyssa = dataOdottavat && dataOdottavat.some(j => j.status === 'kasittelyssa' || j.status === 'kasitellaan');
             const viive = onKasittelyssa ? 2500 : 5000;
@@ -972,6 +904,7 @@
             if (error) throw error;
 
             if (kaynnistaPika) {
+                // Lähetetään simulaatiopyyntö Makeen
                 fetch(MAKE_WEBHOOK_JULKAISU, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1033,12 +966,8 @@
     }
 
     function alustaNakyma() {
-        if (nykyinenAsiakastunnus) {
-            paivitaKirjautumistilaNakyma(true);
+        if (tarkistaIstunto()) {
             haeValvomonTiedot();
-        } else {
-            paivitaKirjautumistilaNakyma(false);
-            naytaEsimerkkiNakyma();
         }
     }
 

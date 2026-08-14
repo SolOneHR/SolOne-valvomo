@@ -37,7 +37,7 @@
             padding: 20px;
         }
 
-        /* Kirjautumispalkki ja -lomake yläreunassa */
+        /* UUSI: Kirjautumispalkki ja -lomake yläreunassa */
         .asiakasportaalipalkki {
             display: flex;
             justify-content: flex-end;
@@ -111,7 +111,7 @@
             font-weight: bold;
         }
 
-        /* Hero / Banneri */
+        /* Hero / Banneri ilman kuvalogoa */
         .hero {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             color: white;
@@ -158,7 +158,7 @@
             font-size: 20px;
             color: var(--text-main);
             margin-bottom: 20px;
-            border-left: 4px solid var(--border-color);
+            border-left: 4px solid var(--success);
             padding-left: 10px;
         }
 
@@ -176,22 +176,6 @@
             background-color: #ffffff;
         }
 
-        /* Harmaannetut tulevat palvelukortit */
-        .card-disabled {
-            background-color: #f1f5f9;
-            border: 1px dashed #cbd5e1;
-            box-shadow: none;
-            opacity: 0.82;
-        }
-
-        .card-disabled h3 {
-            color: #475569;
-        }
-
-        .card-disabled p, .card-disabled ul {
-            color: #64748b;
-        }
-
         .badge {
             display: inline-block;
             background-color: #dbeafe;
@@ -201,12 +185,6 @@
             padding: 4px 8px;
             border-radius: 6px;
             margin-bottom: 10px;
-        }
-
-        .badge-disabled {
-            background-color: #e2e8f0;
-            color: #475569;
-            border: 1px solid #cbd5e1;
         }
 
         .badge-live {
@@ -255,7 +233,7 @@
             <button style="width: 100%; background: var(--primary); color: white; border: none; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="suoritaKirjautuminen()">Kirjaudu</button>
         </div>
 
-        <!-- Hero Section tekstiotsikolla ja päivitetyllä lauseella -->
+        <!-- Hero Section tekstiotsikolla -->
         <header class="hero">
             <h1>SolOne HR & Business</h1>
             <p>Älykästä automaatiota ja helppoja digitaalisia ratkaisuja liiketoiminnan ja arjen tueksi.</p>
@@ -289,30 +267,30 @@
             </div>
         </div>
 
-        <!-- Palvelualueet (Harmaannettu / Kehityksessä) -->
-        <h2 class="section-title">Palvelualueet <span style="font-size: 13px; font-weight: normal; color: var(--text-muted);">(Kehitysvaiheessa)</span></h2>
+        <!-- Palvelualueet -->
+        <h2 class="section-title">Palvelualueet</h2>
         <div class="grid">
             <!-- Kortti 1: Prosessit ja Automaatio -->
-            <div class="card card-disabled">
-                <span class="badge badge-disabled">PROSESSIT & AUTOMAATIO &bull; TULOSSA</span>
+            <div class="card">
+                <span class="badge">PROSESSIT & AUTOMAATIO</span>
                 <h3 style="margin-top: 0; font-size: 18px;">Digitaalinen arkkitehtuuri</h3>
-                <p style="font-size: 14px; margin-bottom: 0;">
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 0;">
                     Yrityksen prosessien ja rutiinityön automatisointi nykyaikaisilla, skaalautuvilla digiratkaisuilla ja rajapintaintegraatioilla (API). Vapautamme työaikaa rutiineista tuottavaan työhön.
                 </p>
             </div>
 
             <!-- Kortti 2: Tekoäly ja Viestintä -->
-            <div class="card card-disabled">
-                <span class="badge badge-disabled">TEKOÄLY & VIESTINTÄ &bull; TULOSSA</span>
+            <div class="card">
+                <span class="badge">TEKOÄLY & VIESTINTÄ</span>
                 <h3 style="margin-top: 0; font-size: 18px;">Jatkuvasti kehittyvä viestintäautomaatio</h3>
-                <p style="font-size: 14px; margin-bottom: 8px;">
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">
                     Tehosta asiakaspalvelua huolettomilla ja ylläpidetyillä tekoälyratkaisuilla:
                 </p>
-                <ul style="font-size: 14px; margin: 0 0 12px 0; padding-left: 18px; line-height: 1.5;">
+                <ul style="color: var(--text-muted); font-size: 14px; margin: 0 0 12px 0; padding-left: 18px; line-height: 1.5;">
                     <li><strong>Sähköpostiavustaja:</strong> Luonnostelee valmiit vastausviestit palvelutarjoomasi pohjalta.</li>
                     <li><strong>Verkkosivuchatbot:</strong> Vastaa asiakkaiden kysymyksiin sivustollasi 24/7.</li>
                 </ul>
-                <p style="font-size: 13px; margin: 0; background-color: #e2e8f0; color: #475569; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                <p style="color: var(--text-muted); font-size: 13px; margin: 0; background-color: var(--info-bg); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--info-border);">
                     🔄 <strong>Aina ajantasalla:</strong> Huolehdimme järjestelmien ylläpidosta ja päivityksistä palveluidesi muuttuessa.
                 </p>
             </div>

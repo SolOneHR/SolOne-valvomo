@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SolOne - Somejulkaisujen Valvomo (DEMO)</title>
+    <title>SolOne AutoPublish - Demo-Valvomo</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         
     <style>
@@ -42,45 +42,17 @@
         }
 
         /* Yläbanneri */
-        .header-banner {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #ffffff;
-            padding: 20px;
-            border-radius: 12px;
+        .header {
+            text-align: center;
             margin-bottom: 20px;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
-
-        @media (min-width: 600px) {
-            .header-banner {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-        }
-
-        .header-banner h1 {
-            font-size: 1.4rem;
-            margin: 0 0 6px 0;
-            color: #ffffff;
-            border: none;
-            padding: 0;
-        }
-
-        @media (min-width: 600px) {
-            .header-banner h1 { 
-                font-size: 1.6rem; 
-            }
-        }
-
-        .header-banner p {
-            margin: 0;
-            color: #94a3b8;
-            font-size: 0.95rem;
-        }
+        .header h1 { margin: 0 0 8px 0; font-size: 24px; }
+        .header p { margin: 0; color: #94a3b8; font-size: 14px; }
 
         .guide-link-box {
             background-color: #eff6ff;
@@ -108,38 +80,6 @@
 
         .guide-link-btn:hover {
             background-color: #1d4ed8;
-        }
-
-        /* Kirjautuneen käyttäjän yläkulman infokortti */
-        .user-info {
-            text-align: left;
-            font-size: 0.85rem;
-            color: #cbd5e1;
-            border-top: 1px solid #334155;
-            padding-top: 10px;
-        }
-
-        @media (min-width: 600px) {
-            .user-info {
-                text-align: right;
-                border-top: none;
-                padding-top: 0;
-            }
-        }
-
-        .btn-ulos {
-            background: transparent;
-            border: 1px solid #64748b;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            margin-top: 5px;
-        }
-
-        .btn-ulos:hover { 
-            background: rgba(255,255,255,0.1); 
         }
 
         /* Demo-infolaatikko ja kirjautumisosio */
@@ -196,6 +136,19 @@
         }
         .btn-request:hover { background-color: #dbeafe; }
 
+        .btn-ulos-pieni {
+            background: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .btn-ulos-pieni:hover { background: #fee2e2; }
+
         .request-form {
             display: none;
             margin-top: 15px;
@@ -205,6 +158,13 @@
 
         .alert-error {
             color: var(--danger);
+            font-weight: bold;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .alert-success {
+            color: #065f46;
             font-weight: bold;
             margin-top: 10px;
             display: none;
@@ -482,16 +442,9 @@
 <body>
 
 <div class="container">
-    <!-- YLÄBANNERI (Sisältää oikeassa yläkulmassa käyttäjätiedon ja uloskirjautumisen) -->
-    <div class="header-banner">
-        <div>
-            <h1>SolOne HR & Business – Somevalvomo (DEMO)</h1>
-            <p>Testaa, muokkaa ja simuloi odottavat somejulkaisut.</p>
-        </div>
-        <div id="kayttaja-kortti" class="user-info" style="display:none;">
-            <span>Kirjautunut: <strong id="kayttaja-email"></strong></span><br>
-            <button class="btn-ulos" onclick="kirjauduUlos()">Kirjaudu ulos</button>
-        </div>
+    <div class="header">
+        <h1>SolOne AutoPublish & Valvomo</h1>
+        <p>Julkinen Esikatselu & Demoalusta</p>
     </div>
 
     <div class="guide-link-box">
@@ -499,8 +452,8 @@
         <a href="kayttoohje_demo.html" class="guide-link-btn" target="_blank">📖 Avaa Demo-Käyttöohje &rarr;</a>
     </div>
 
-    <!-- SININEN ALOITUS- JA KIRJAUTUMISNÄKYMÄ (Piiloutuu kirjautumisen jälkeen) -->
-    <div class="demo-info" id="kirjautumis-ikkuna">
+    <!-- SININEN ALOITUS- JA KIRJAUTUMISNÄKYMÄ -->
+    <div class="demo-info">
         <div id="tunnus-status-osio">
             <strong>ℹ️ Tervetuloa kokeilemaan järjestelmää livenä!</strong><br>
             Syötä demo-tunnuksesi nähdäksesi valvomossa olevat luonnokset ja testataksesi julkaisua.
@@ -512,6 +465,11 @@
             </div>
 
             <div id="login-virhe" class="alert-error"> Virheellinen tai vanhentunut tunnus. Pyydä uusi tunnus painikkeesta!</div>
+            
+            <div id="onnistui-viesti" class="alert-success">
+                Virheettömästi kirjauduttu! Tunnuksesi: <strong id="aktiivinen-tunnus-naytto"></strong>
+                <button class="btn-ulos-pieni" onclick="kirjauduUlos()">Kirjaudu ulos</button>
+            </div>
 
             <div class="request-form" id="pyynto-lomake">
                 <strong>Pyydä henkilökohtainen demo-tunnus:</strong><br>
@@ -523,7 +481,7 @@
         </div>
     </div>
 
-    <!-- VALVOMO-OSIO (Aina näkyvissä: ennen kirjautumista esimerkit, kirjautuneena oikeat tiedot) -->
+    <!-- VALVOMO-OSIO -->
     <div id="valvomo-sisalto">
         <div id="ilmoitus-alue" class="ilmoitus"></div>
 
@@ -629,13 +587,14 @@
 
     function paivitaKirjautumistilaNakyma(onKirjautunut) {
         if (onKirjautunut) {
-            document.getElementById('kirjautumis-ikkuna').style.display = 'none';
-            document.getElementById('kayttaja-email').textContent = nykyinenAsiakastunnus;
-            document.getElementById('kayttaja-kortti').style.display = 'block';
-        } else {
-            document.getElementById('kayttaja-kortti').style.display = 'none';
-            document.getElementById('kirjautumis-ikkuna').style.display = 'block';
+            document.getElementById('kirjautumis-kentat').style.display = 'none';
+            document.getElementById('pyynto-lomake').style.display = 'none';
             document.getElementById('login-virhe').style.display = 'none';
+            document.getElementById('aktiivinen-tunnus-naytto').textContent = nykyinenAsiakastunnus;
+            document.getElementById('onnistui-viesti').style.display = 'block';
+        } else {
+            document.getElementById('kirjautumis-kentat').style.display = 'flex';
+            document.getElementById('onnistui-viesti').style.display = 'none';
             document.getElementById('syotetty-tunnus').value = '';
         }
     }
