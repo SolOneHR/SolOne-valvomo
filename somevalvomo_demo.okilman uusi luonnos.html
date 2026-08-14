@@ -505,10 +505,7 @@
         </div>
         <div id="kayttaja-kortti" class="user-info" style="display:none;">
             <span>Kirjautunut: <strong id="kayttaja-email"></strong></span><br>
-            <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 5px; flex-wrap: wrap;">
-                <button class="btn-auth" style="padding: 5px 12px; font-size: 0.8rem; width: auto;" onclick="avaaUusiPostausModaali()">➕ Uusi luonnos</button>
-                <button class="btn-ulos" style="margin-top: 0; width: auto;" onclick="kirjauduUlos()">Kirjaudu ulos</button>
-            </div>
+            <button class="btn-ulos" onclick="kirjauduUlos()">Kirjaudu ulos</button>
         </div>
     </div>
 
@@ -541,46 +538,6 @@
                     <input type="email" id="pyynto-email" placeholder="Sähköpostiosoitteesi">
                     <button class="btn-auth" onclick="lahetaTunnusPyynto()">Lähetä pyyntö</button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- UUSI JULKAISU -MODAALI -->
-    <div id="uusi-postaus-modaali" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center; padding: 15px; box-sizing: border-box;">
-        <div style="background:white; border-radius:12px; padding:25px; width:100%; max-width:550px; box-shadow:0 10px 25px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto; box-sizing: border-box;">
-            <h3 style="margin-top:0; color:var(--text-main); font-size: 1.2rem;">➕ Luo uusi somejulkaisu</h3>
-            
-            <label class="field-label">Julkaisun aihe / Alkuperäinen teksti (Raw text):</label>
-            <textarea id="uusi-raw-teksti" class="teksti-alue" placeholder="Kirjoita aihe, ajatus tai luonnos tähän..." style="min-height:100px;"></textarea>
-
-            <label class="field-label">Valitse kuva (puhelimesta tai koneelta):</label>
-            <input type="file" id="uusi-kuva-tiedosto" accept="image/*" class="valinta-kentta" style="margin-bottom:15px; background: white;">
-
-            <div class="grid-valinnat">
-                <div>
-                    <label class="field-label">Julkaisuprofiili:</label>
-                    <select id="uusi-profiili" class="valinta-kentta">
-                        <option value="Yleinen">Yleinen</option>
-                        <option value="Yritys & B2B">Yritys & B2B</option>
-                        <option value="Yritys & B2C">Yritys & B2C</option>
-                        <option value="Somesisällöntuottaja">Somesisällöntuottaja</option>
-                        <option value="Yhdistys/yhteisö">Yhdistys/yhteisö</option>
-                        <option value="Blogi">Blogi</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="field-label">Kohdekanava:</label>
-                    <select id="uusi-kanava" class="valinta-kentta">
-                        <option value="FB_IG">Molemmat (FB & IG)</option>
-                        <option value="FB">Vain Facebook</option>
-                        <option value="IG">Vain Instagram</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="nappi-ryhma" style="margin-top:20px;">
-                <button class="btn-hyvaksy" id="btn-luo-luonnos" onclick="luoUusiPostausKantaan()">🚀 Luo ja käsittele AI:lla</button>
-                <button type="button" class="btn-ulos" style="color:var(--text-main); border: 1px solid #cbd5e1; background: #f1f5f9;" onclick="suljeUusiPostausModaali()">Peruuta</button>
             </div>
         </div>
     </div>
@@ -699,105 +656,6 @@
             document.getElementById('kirjautumis-ikkuna').style.display = 'block';
             document.getElementById('login-virhe').style.display = 'none';
             document.getElementById('syotetty-tunnus').value = '';
-        }
-    }
-
-    // --- UUDEN POSTAUKSEN MODAALIN TOIMINNOT ---
-    function avaaUusiPostausModaali() {
-        document.getElementById('uusi-raw-teksti').value = '';
-        const kuvaInput = document.getElementById('uusi-kuva-tiedosto');
-        if (kuvaInput) kuvaInput.value = '';
-        document.getElementById('uusi-postaus-modaali').style.display = 'flex';
-    }
-
-    function suljeUusiPostausModaali() {
-        document.getElementById('uusi-postaus-modaali').style.display = 'none';
-    }
-
-    async function luoUusiPostausKantaan() {
-        const rawTeksti = document.getElementById('uusi-raw-teksti').value.trim();
-        const kuvaInput = document.getElementById('uusi-kuva-tiedosto');
-        const valittuTiedosto = kuvaInput && kuvaInput.files ? kuvaInput.files[0] : null;
-        const profiili = document.getElementById('uusi-profiili').value;
-        const kanava = document.getElementById('uusi-kanava').value;
-        const nappi = document.getElementById('btn-luo-luonnos');
-
-        if (!rawTeksti) {
-            alert("Kirjoita julkaisun aihe tai teksti!");
-            return;
-        }
-
-        nappi.disabled = true;
-        nappi.textContent = '⏳ Ladataan ja luodaan...';
-
-        try {
-            let lopullinenKuvaUrl = null;
-
-            // 1. Jos käyttäjä valitsi kuvan tiedostosta / puhelimesta -> Ladataan se Supabase Storageen
-            if (valittuTiedosto) {
-                const tiedostoPaate = valittuTiedosto.name.split('.').pop();
-                const tiedostoNimi = `${nykyinenAsiakastunnus}_${Date.now()}.${tiedostoPaate}`;
-
-                const { data: uploadData, error: uploadError } = await supabaseClient
-                    .storage
-                    .from('somekuvat')
-                    .upload(tiedostoNimi, valittuTiedosto);
-
-                if (uploadError) {
-                    console.error("Kuvan latausvirhe:", uploadError);
-                    throw new Error("Kuvan lataus epäonnistui: " + uploadError.message);
-                }
-
-                // Haetaan kuvan julkinen URL
-                const { data: publicUrlData } = supabaseClient
-                    .storage
-                    .from('somekuvat')
-                    .getPublicUrl(tiedostoNimi);
-
-                lopullinenKuvaUrl = publicUrlData.publicUrl;
-            }
-
-            // 2. Tallennetaan suoraan kantaan tilassa 'kasittelyssa'
-            const { data, error } = await supabaseClient
-                .from('somepostaukset')
-                .insert([{
-                    raw_text: rawTeksti,
-                    kuva_url: lopullinenKuvaUrl,
-                    julkaisuprofiili: profiili,
-                    profile_id: profiili,
-                    target_channel: kanava,
-                    alusta: `${nykyinenAsiakastunnus} ${kanava}`,
-                    asiakastunnus: nykyinenAsiakastunnus,
-                    status: 'odotetaan',
-                    luotu_aika: new Date().toISOString()
-                }])
-                .select()
-                .single();
-
-            if (error) throw error;
-
-            suljeUusiPostausModaali();
-            naytaIlmoitus('🚀 Uusi julkaisu luotu käsittelyyn!');
-            
-            // Päivitetään Valvomo välittömästi -> Keltainen laatikko pomppaa heti näkyviin!
-            haeValvomonTiedot();
-
-            // 3. Kutsutaan Make.comin AI-webhookia taustalla muotoilemaan teksti valmiiksi
-            fetch(MAKE_WEBHOOK_AI, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id: data.id,
-                    tyyli: profiili,
-                    rawTeksti: rawTeksti
-                })
-            });
-
-        } catch (err) {
-            alert("Virhe luonnoksen luonnissa: " + err.message);
-        } finally {
-            nappi.disabled = false;
-            nappi.textContent = '🚀 Luo ja käsittele AI:lla';
         }
     }
 
