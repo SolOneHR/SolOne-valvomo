@@ -3,41 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SolOne AutoPublish - Demo-Valvomo</title>
+    <title>SolOne - Somejulkaisujen Valvomo (DEMO)</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        
     <style>
         :root {
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --success-hover: #059669;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
             --text-main: #0f172a;
             --text-muted: #64748b;
-            --primary: #3b82f6;
-            --success: #10b981;
-            --danger: #ef4444;
-            --border: #e2e8f0;
+            --border-color: #e2e8f0;
         }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 15px 10px; 
+            line-height: 1.5;
+        }
+
+        @media (min-width: 600px) {
+            body { 
+                padding: 30px 20px; 
+            }
+        }
+
+        .container { 
+            max-width: 850px; 
+            margin: 0 auto; 
+        }
+
+        /* Yläbanneri */
+        .header-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
             padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 20px;
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            color: white;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            margin-bottom: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-        .header h1 { margin: 0 0 10px 0; font-size: 24px; }
-        .header p { margin: 0; color: #94a3b8; font-size: 14px; }
+
+        @media (min-width: 600px) {
+            .header-banner {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .header-banner h1 {
+            font-size: 1.4rem;
+            margin: 0 0 6px 0;
+            color: #ffffff;
+            border: none;
+            padding: 0;
+        }
+
+        @media (min-width: 600px) {
+            .header-banner h1 { 
+                font-size: 1.6rem; 
+            }
+        }
+
+        .header-banner p {
+            margin: 0;
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
 
         .guide-link-box {
             background-color: #eff6ff;
@@ -66,286 +109,458 @@
         .guide-link-btn:hover {
             background-color: #1d4ed8;
         }
-        
-        .demo-info {
-            background-color: #eff6ff;
-            border: 1px solid #bfdbfe;
-            color: #1e40af;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            font-size: 14px;
-            line-height: 1.5;
+
+        .user-info {
+            text-align: left;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            border-top: 1px solid #334155;
+            padding-top: 10px;
         }
 
-        .login-box {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
+        @media (min-width: 600px) {
+            .user-info {
+                text-align: right;
+                border-top: none;
+                padding-top: 0;
+            }
         }
-        .login-box input {
-            flex: 1;
-            min-width: 200px;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        .btn-auth {
-            background-color: var(--primary);
+
+        .btn-ulos {
+            background: transparent;
+            border: 1px solid #64748b;
             color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 6px;
             cursor: pointer;
+            font-size: 0.8rem;
+            margin-top: 5px;
         }
-        .btn-request {
-            background-color: transparent;
-            color: var(--primary);
-            border: 1px solid var(--primary);
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
+
+        .btn-ulos:hover { 
+            background: rgba(255,255,255,0.1); 
+        }
+
+        /* Demo-kirjautumislaatikko */
+        #kirjautumis-ikkuna {
+            background: white;
+            border-radius: 12px;
+            padding: 25px 20px;
+            max-width: 480px;
+            margin: 20px auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+        }
+
+        .login-kentta {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
         }
 
         .request-form {
             display: none;
             margin-top: 15px;
             padding-top: 15px;
-            border-top: 1px dashed #bfdbfe;
+            border-top: 1px dashed #cbd5e1;
         }
 
-        .alert-error {
-            color: var(--danger);
-            font-weight: bold;
-            margin-top: 10px;
-            display: none;
-        }
-        .alert-success {
-            color: #065f46;
-            font-weight: bold;
-            margin-top: 10px;
-            display: none;
+        /* Osio-otsikko */
+        .osio-otsikko {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin: 30px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
-        .post-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
+        @media (min-width: 600px) {
+            .osio-otsikko {
+                font-size: 1.2rem;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .osio-infoteksti {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: normal;
+        }
+
+        /* Postauskortti */
+        .julkaisu-card { 
+            background: var(--card-bg); 
+            border-radius: 12px; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); 
+            padding: 16px; 
+            margin-bottom: 25px; 
+            border: 1px solid var(--border-color); 
             transition: all 0.3s ease;
         }
-        .post-card.published-demo {
+
+        @media (min-width: 600px) {
+            .julkaisu-card { 
+                padding: 24px; 
+            }
+        }
+
+        .julkaisu-card.historia {
             border: 2px solid var(--success);
             background-color: #f0fdf4;
         }
 
-        .published-banner {
-            background-color: #d1fae5;
-            border: 1px solid #6ee7b7;
-            color: #065f46;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .julkaisu-card.hylatty-kortti {
+            border: 2px solid var(--danger);
+            background-color: #fef2f2;
         }
 
-        .post-meta {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            font-size: 13px;
-            color: var(--text-muted);
+        .tilamerkinta.hylatty-badge {
+            background-color: var(--danger);
         }
-        .badge {
-            background-color: #e2e8f0;
-            color: var(--text-main);
-            padding: 4px 8px;
+
+        .julkaisu-card.kasittelyssa {
+            border: 2px dashed #f59e0b;
+            background-color: #fffbeb;
+        }
+
+        .tilamerkinta {
+            display: inline-block;
+            background-color: var(--success);
+            color: white;
+            padding: 4px 10px;
             border-radius: 6px;
-            font-weight: bold;
-            font-size: 12px;
-        }
-        .badge.demo { background-color: #fef3c7; color: #92400e; }
-        .badge.success { background-color: #d1fae5; color: #065f46; }
-        
-        textarea {
-            width: 100%;
-            height: 100px;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 14px;
-            box-sizing: border-box;
-            resize: vertical;
-            margin-bottom: 15px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            text-transform: uppercase;
         }
 
-        .published-text {
-            background-color: #ffffff;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 14px;
-            white-space: pre-wrap;
-            margin-bottom: 15px;
+        .tilamerkinta.kasittelyssa-badge {
+            background-color: #f59e0b;
         }
-        
-        .media-preview {
-            width: 100%;
-            max-height: 300px;
-            object-fit: cover;
+
+        .meta-info { 
+            font-size: 0.85rem; 
+            color: var(--text-muted); 
+            margin-bottom: 18px; 
+            display: flex; 
+            flex-direction: column;
+            gap: 6px; 
+            background: #f1f5f9;
+            padding: 10px 14px;
             border-radius: 8px;
-            margin-bottom: 15px;
-            background-color: #f1f5f9;
         }
-        .media-preview img {
-            width: 100%;
-            max-height: 300px;
+
+        @media (min-width: 600px) {
+            .meta-info { 
+                flex-direction: row; 
+                gap: 15px; 
+            }
+        }
+
+        .kuva-esikatselu { 
+            width: 100%; 
+            height: 280px; 
+            border-radius: 8px; 
+            margin-bottom: 18px; 
+            display: block; 
+            background: #e2e8f0; 
+            border: 1px solid var(--border-color); 
             object-fit: contain;
-            border-radius: 8px;
         }
 
-        .scheduling-box {
-            background-color: #f8fafc;
-            border: 1px solid var(--border);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-        }
-        .scheduling-box input[type="datetime-local"] {
-            padding: 6px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-family: inherit;
+        @media (min-width: 600px) {
+            .kuva-esikatselu { 
+                height: 380px; 
+            }
         }
 
-        .actions {
-            display: flex;
-            gap: 10px;
-        }
-        button.action-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .btn-direct { background-color: var(--primary); color: white; }
-        .btn-direct:hover { background-color: #2563eb; }
-        .btn-queue { background-color: var(--success); color: white; }
-        .btn-queue:hover { background-color: #059669; }
-        .btn-reject { background-color: #f1f5f9; color: var(--danger); }
-        .btn-reject:hover { background-color: #fee2e2; }
-        .btn-reset { background-color: #e2e8f0; color: var(--text-main); }
-        .btn-reset:hover { background-color: #cbd5e1; }
-
-        .no-data {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-muted);
-            border: 2px dashed var(--border);
-            border-radius: 12px;
-            background-color: white;
-            margin-bottom: 20px;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin: 25px 0 15px 0;
+        .field-label {
+            font-weight: 600;
+            font-size: 0.9rem;
             color: var(--text-main);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .teksti-alue { 
+            width: 100%; 
+            min-height: 90px; 
+            padding: 12px; 
+            border: 1px solid #cbd5e1; 
+            border-radius: 8px; 
+            font-size: 0.95rem; 
+            font-family: inherit;
+            resize: vertical; 
+            box-sizing: border-box; 
+            margin-bottom: 18px; 
+        }
+
+        .grid-valinnat {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        @media (min-width: 600px) {
+            .grid-valinnat { 
+                grid-template-columns: 1fr 1fr; 
+                gap: 15px; 
+            }
+        }
+
+        .valinta-kentta, .aika-kentta { 
+            width: 100%;
+            padding: 10px 12px; 
+            border: 1px solid #cbd5e1; 
+            border-radius: 8px; 
+            font-size: 0.9rem; 
+            background-color: white; 
+            box-sizing: border-box;
+        }
+
+        .nappi-ryhma { 
+            display: flex; 
+            flex-direction: column;
+            gap: 10px; 
+            margin-top: 15px;
+        }
+
+        @media (min-width: 600px) {
+            .nappi-ryhma { 
+                flex-direction: row; 
+                flex-wrap: wrap; 
+            }
+        }
+
+        button { 
+            padding: 11px 18px; 
+            font-size: 0.95rem; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            transition: all 0.2s ease; 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+        }
+
+        @media (min-width: 600px) {
+            button { 
+                width: auto; 
+            }
+        }
+
+        .btn-hyvaksy { 
+            background-color: var(--success); 
+            color: white; 
+        }
+        .btn-hyvaksy:hover { 
+            background-color: var(--success-hover); 
+        }
+
+        .btn-pika { 
+            background-color: var(--primary); 
+            color: white; 
+        }
+        .btn-pika:hover { 
+            background-color: var(--primary-hover); 
+        }
+
+        .btn-reformat { 
+            background-color: #6366f1; 
+            color: white; 
+            margin-top: 24px;
+            height: 42px;
+        }
+        .btn-reformat:hover { 
+            background-color: #4f46e5; 
+        }
+
+        .btn-hylkaa { 
+            background-color: var(--danger); 
+            color: white; 
+        }
+        .btn-hylkaa:hover { 
+            background-color: var(--danger-hover); 
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        .btn-secondary:hover {
+            background-color: #eff6ff;
+        }
+
+        .tyhja-tila { 
+            text-align: center; 
+            padding: 30px 20px; 
+            color: var(--text-muted); 
+            background: white; 
+            border-radius: 12px; 
+            border: 2px dashed #cbd5e1; 
+            font-size: 0.95rem;
+        }
+
+        .ilmoitus { 
+            padding: 14px 18px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            display: none; 
+            font-weight: 600; 
+            font-size: 0.95rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .ilmoitus.success { 
+            background-color: #d1fae5; 
+            color: #065f46; 
+            border: 1px solid #a7f3d0; 
+        }
+        .ilmoitus.error { 
+            background-color: #fee2e2; 
+            color: #991b1b; 
+            border: 1px solid #fecaca; 
+        }
+
+        .linkedin-osio {
+            opacity: 0.6;
+            background-color: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 18px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <h1>SolOne AutoPublish & Valvomo</h1>
-            <p>Julkinen Esikatselu & Demoalusta</p>
+<div class="container">
+    <div class="header-banner">
+        <div>
+            <h1>SolOne HR & Business – Somevalvomo (DEMO)</h1>
+            <p>Testaa, muokkaa ja simuloi odottavat somejulkaisut.</p>
         </div>
-
-        <div class="guide-link-box">
-            <span style="color: #1e40af; font-size: 14px;"><strong>📖 Tarvitsetko apua testaamisessa?</strong> Katso demo-käyttöohje:</span>
-            <a href="kayttoohje_demo.html" class="guide-link-btn" target="_blank">📖 Avaa Demo-Käyttöohje &rarr;</a>
-        </div>
-
-        <div class="demo-info">
-            <div id="tunnus-status-osio">
-                <strong>ℹ️ Tervetuloa kokeilemaan järjestelmää livenä!</strong><br>
-                Syötä demo-tunnuksesi nähdäksesi valvomossa olevat luonnokset ja testataksesi julkaisua.
-                
-                <div class="login-box" id="kirjautumis-kentat">
-                    <input type="text" id="syotetty-tunnus" placeholder="Syötä demo-tunnus (esim. DEMO-12345)">
-                    <button class="btn-auth" onclick="tarkistaTunnus()">Kirjaudu</button>
-                    <button class="btn-request" onclick="naytaPyyntoLomake()">Pyydä demo-tunnus</button>
-                </div>
-
-                <div id="virhe-viesti" class="alert-error"> Virheellinen tai vanhentunut tunnus. Pyydä uusi tunnus painikkeesta!</div>
-                <div id="onnistui-viesti" class="alert-success"> Virheettömästi kirjauduttu! Tunnuksesi: <span id="aktiivinen-tunnus-naytto"></span></div>
-
-                <div class="request-form" id="pyynto-lomake">
-                    <strong>Pyydä henkilökohtainen demo-tunnus:</strong><br>
-                    <div class="login-box">
-                        <input type="email" id="pyynto-email" placeholder="Sähköpostiosoitteesi">
-                        <button class="btn-auth" onclick="lahetaTunnusPyynto()">Lähetä pyyntö</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <h2>Aktiivinen luonnos valvomossa</h2>
-        <div id="aktiivinen-luonnos">
-            <div class="no-data" id="odotetaan-teksti">Syötä voimassa oleva demo-tunnus nähdäksesi valvomosisällön...</div>
-        </div>
-
-        <div class="section-title">Jo julkaistut & hyväksytyt</div>
-        <div id="julkaistut-historia">
-            <div style="text-align: center; color: var(--text-muted); font-size: 14px;">Ei aikaisempia julkaisuja.</div>
+        <div id="kayttaja-kortti" class="user-info" style="display:none;">
+            <span>Tunnus: <strong id="kayttaja-email"></strong></span><br>
+            <button class="btn-ulos" onclick="kirjauduUlos()">Kirjaudu ulos</button>
         </div>
     </div>
 
-    <script>
-        const SUPABASE_URL = "https://urdyprqepkkxdohrzkpv.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZHlwcnFlcGtreGRvaHJ6a3B2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDY2NTIsImV4cCI6MjA5Mjc4MjY1Mn0.jlryhbO8t0tZaJnuV9FzEok3p3DBdGPSfygibKKDD5A"; 
-        const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/et10ahhrv29t167e0uyt0px3zv2wgcml"; 
+    <div class="guide-link-box">
+        <span style="color: #1e40af; font-size: 14px;"><strong>📖 Tarvitsetko apua testaamisessa?</strong> Katso demo-käyttöohje:</span>
+        <a href="kayttoohje_demo.html" class="guide-link-btn" target="_blank">📖 Avaa Demo-Käyttöohje &rarr;</a>
+    </div>
 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <div id="kirjautumis-ikkuna">
+        <h2 style="margin-top:0; font-size: 1.3rem;">Kirjaudu Demo-Valvomoon</h2>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">Syötä saamasi demo-tunnus nähdäksesi omat luonnoksesi.</p>
+        <div id="login-virhe" class="ilmoitus error" style="display:none; margin-bottom:10px;"></div>
+        
+        <input type="text" id="syotetty-tunnus" class="login-kentta" placeholder="Syötä demo-tunnus (esim. DEMO-12345)">
+        
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <button class="btn-pika" style="flex: 1;" onclick="suoritaKirjautuminen()">Kirjaudu sisään</button>
+            <button class="btn-secondary" style="flex: 1;" onclick="togglePyyntoLomake()">Pyydä uusi tunnus</button>
+        </div>
 
-        let kuitatutIds = JSON.parse(localStorage.getItem('kuitatutIds') || '[]');
-        let kirjautunutTunnus = localStorage.getItem('demo_kirjautunut_tunnus') || null;
+        <div class="request-form" id="pyynto-lomake">
+            <strong style="font-size: 0.9rem; color: var(--text-main);">Tilaa henkilökohtainen demo-tunnus:</strong>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 4px 0 10px 0;">Saat vapaana olevan testikoodin heti sähköpostiisi.</p>
+            <input type="email" id="pyynto-email" class="login-kentta" placeholder="Sähköpostiosoitteesi">
+            <button class="btn-pika" style="width:100%;" onclick="lahetaTunnusPyynto()">Lähetä tunnus sähköpostiin</button>
+        </div>
+    </div>
 
-        window.addEventListener('DOMContentLoaded', () => {
-            if (kirjautunutTunnus) {
-                tarkistaTunnus(kirjautunutTunnus);
-            }
-        });
+    <div id="valvomo-sisalto" style="display:none;">
+        <div id="ilmoitus-alue" class="ilmoitus"></div>
 
-        async function tarkistaTunnus(automaattiTunnus = null) {
-            const syotetty = automaattiTunnus || document.getElementById('syotetty-tunnus').value.trim();
-            const virheElem = document.getElementById('virhe-viesti');
-            const onnistuiElem = document.getElementById('onnistui-viesti');
-            
-            virheElem.style.display = 'none';
+        <div class="osio-otsikko">
+            <span>Odottavat julkaisut</span>
+        </div>
+        <div id="julkaisut-lista">Ladataan odottavia julkaisuja...</div>
 
-            if (!syotetty) return;
+        <div class="osio-otsikko">
+            <span>Julkaisuhistoria</span>
+            <span class="osio-infoteksti">Näytetään viimeisimmät julkaisut</span>
+        </div>
+        <div id="historia-lista">Ladataan historiaa...</div>
+    </div>
+</div>
 
+<script>
+    const SUPABASE_URL = 'https://urdyprqepkkxdohrzkpv.supabase.co';
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZHlwcnFlcGtreGRvaHJ6a3B2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDY2NTIsImV4cCI6MjA5Mjc4MjY1Mn0.jlryhbO8t0tZaJnuV9FzEok3p3DBdGPSfygibKKDD5A';
+    
+    // Webhookit Make-skenaarioihin
+    const MAKE_WEBHOOK_JULKAISU = 'https://hook.eu1.make.com/0bgi3brk58gsrglpverviw38rbntn1f5'; 
+    const MAKE_WEBHOOK_AI = 'https://hook.eu1.make.com/jp8bcuqtpbagjvoa3zotgi27fgwyau9p'; 
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, ANON_KEY);
+
+    let nykyinenAsiakastunnus = localStorage.getItem('demo_kirjautunut_tunnus') || null;
+    let automaattiPaivitysAjastin = null;
+
+    function naytaIlmoitus(viesti, tyyppi = 'success') {
+        const alue = document.getElementById('ilmoitus-alue');
+        alue.textContent = viesti;
+        alue.className = 'ilmoitus ' + tyyppi;
+        alue.style.display = 'block';
+        alue.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        setTimeout(() => { 
+            alue.style.display = 'none'; 
+        }, 6000);
+    }
+
+    function togglePyyntoLomake() {
+        const lomake = document.getElementById('pyynto-lomake');
+        lomake.style.display = lomake.style.display === 'block' ? 'none' : 'block';
+    }
+
+    async function lahetaTunnusPyynto() {
+        const email = document.getElementById('pyynto-email').value.trim();
+        if (!email) {
+            alert("Syötä sähköpostiosoitteesi!");
+            return;
+        }
+
+        try {
+            await fetch(MAKE_WEBHOOK_JULKAISU, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tyyppi: 'tunnuspyynto', sahkoposti: email })
+            });
+            alert("Pyyntö lähetetty! Saat demo-tunnuksen sähköpostiisi hetken kuluttua.");
+            document.getElementById('pyynto-email').value = '';
+            document.getElementById('pyynto-lomake').style.display = 'none';
+        } catch (e) {
+            alert("Virhe pyynnön lähetyksessä. Yritä uudelleen.");
+        }
+    }
+
+    async function suoritaKirjautuminen() {
+        const syotetty = document.getElementById('syotetty-tunnus').value.trim();
+        const virheAlue = document.getElementById('login-virhe');
+        virheAlue.style.display = 'none';
+
+        if (!syotetty) return;
+
+        try {
             const { data, error } = await supabaseClient
                 .from('demotunnukset')
                 .select('*')
@@ -354,295 +569,367 @@
                 .single();
 
             if (data && !error) {
-                kirjautunutTunnus = syotetty;
-                localStorage.setItem('demo_kirjautunut_tunnus', kirjautunutTunnus);
-                
-                document.getElementById('kirjautumis-kentat').style.display = 'none';
-                document.getElementById('pyynto-lomake').style.display = 'none';
-                document.getElementById('aktiivinen-tunnus-naytto').innerText = kirjautunutTunnus;
-                onnistuiElem.style.display = 'block';
-
-                haePostaukset();
-                kaynnistaRealtime();
+                nykyinenAsiakastunnus = syotetty;
+                localStorage.setItem('demo_kirjautunut_tunnus', nykyinenAsiakastunnus);
+                alustaNakyma();
             } else {
-                virheElem.style.display = 'block';
-                localStorage.removeItem('demo_kirjautunut_tunnus');
+                virheAlue.textContent = "Virheellinen tai vanhentunut demo-tunnus.";
+                virheAlue.style.display = 'block';
             }
+        } catch (err) {
+            virheAlue.textContent = "Yhteysvirhe: " + err.message;
+            virheAlue.style.display = 'block';
+        }
+    }
+
+    function kirjauduUlos() {
+        localStorage.removeItem('demo_kirjautunut_tunnus');
+        nykyinenAsiakastunnus = null;
+        if (automaattiPaivitysAjastin) clearTimeout(automaattiPaivitysAjastin);
+        naytaKirjautumisIkkuna();
+    }
+
+    function naytaKirjautumisIkkuna() {
+        document.getElementById('kayttaja-kortti').style.display = 'none';
+        document.getElementById('valvomo-sisalto').style.display = 'none';
+        document.getElementById('kirjautumis-ikkuna').style.display = 'block';
+    }
+
+    function tarkistaIstunto() {
+        if (!nykyinenAsiakastunnus) {
+            naytaKirjautumisIkkuna();
+            return false;
         }
 
-        function naytaPyyntoLomake() {
-            const lomake = document.getElementById('pyynto-lomake');
-            lomake.style.display = lomake.style.display === 'block' ? 'none' : 'block';
+        document.getElementById('kayttaja-email').textContent = nykyinenAsiakastunnus;
+        document.getElementById('kayttaja-kortti').style.display = 'block';
+        document.getElementById('kirjautumis-ikkuna').style.display = 'none';
+        document.getElementById('valvomo-sisalto').style.display = 'block';
+        return true;
+    }
+
+    function luoKorttiHtml(julkaisu, onHistoria = false) {
+        const pvm = julkaisu.luotu_aika ? new Date(julkaisu.luotu_aika).toLocaleString('fi-FI') : '-';
+        const card = document.createElement('div');
+        
+        if (julkaisu.status === 'kasittelyssa' || julkaisu.status === 'kasitellaan') {
+            card.className = 'julkaisu-card kasittelyssa';
+            card.id = 'card-' + julkaisu.id;
+            let htmlK = '';
+            htmlK += '<div class="tilamerkinta kasittelyssa-badge">⏳ Uusi julkaisu käsittelyssä (valmis hetken päästä)</div>';
+            htmlK += '<div class="meta-info"><span><strong>Luotu:</strong> ' + pvm + '</span></div>';
+            htmlK += '<label class="field-label">Alkuperäinen teksti:</label>';
+            htmlK += '<textarea class="teksti-alue" readonly>' + (julkaisu.raw_text || '') + '</textarea>';
+            card.innerHTML = htmlK;
+            return card;
         }
 
-        async function lahetaTunnusPyynto() {
-            const email = document.getElementById('pyynto-email').value.trim();
-            if (!email) {
-                alert("Syötä sähköpostiosoitteesi!");
-                return;
-            }
+        const onHylatty = julkaisu.status === 'hylatty';
 
-            try {
-                await fetch(MAKE_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ tyyppi: 'tunnuspyynto', sahkoposti: email })
-                });
-                alert("Pyyntö lähetetty! Saat demo-tunnuksen sähköpostiisi pian.");
-                document.getElementById('pyynto-email').value = '';
-                document.getElementById('pyynto-lomake').style.display = 'none';
-            } catch (e) {
-                alert("Virhe pyynnön lähetyksessä. Yritä uudelleen.");
-            }
-        }
+        card.className = 'julkaisu-card' + (onHistoria ? (onHylatty ? ' hylatty-kortti' : ' historia') : '');
+        card.id = 'card-' + julkaisu.id;
 
-        async function haePostaukset() {
-            if (!kirjautunutTunnus) return;
+        const nykyinenAlusta = (julkaisu.target_channel || julkaisu.alusta || 'FB_IG').trim();
+        const nykyinenProfiili = (julkaisu.julkaisuprofiili || julkaisu.profile_id || 'Yleinen').trim();
 
-            const { data, error } = await supabaseClient
-                .from('demopostaukset')
-                .select('*')
-                .ilike('alusta', `%${kirjautunutTunnus}%`)
-                .order('id', { ascending: false })
-                .limit(10);
+        let htmlSisalto = '';
 
-            if (error) {
-                console.error("Virhe haettaessa dataa:", error);
-                return;
-            }
-
-            paivitaKayttoliittyma(data || []);
-        }
-
-        function paivitaKayttoliittyma(postaukset) {
-            const aktiivinenElem = document.getElementById('aktiivinen-luonnos');
-            const historiaElem = document.getElementById('julkaistut-historia');
-            
-            aktiivinenElem.innerHTML = '';
-            historiaElem.innerHTML = '';
-
-            const luonnokset = postaukset.filter(r => (r.status === 'odotetaan' || r.status === 'kasitellaan' || !r.status) && !kuitatutIds.includes(r.id));
-            const julkaistut = postaukset.filter(r => r.status === 'julkaistu_demo' || r.status === 'julkaistu' || r.status === 'hyvaksytty');
-
-            const uusinLuonnos = luonnokset[0];
-            const uusinJulkaistuEiKuitattu = julkaistut.find(r => !kuitatutIds.includes(r.id));
-
-            if (uusinLuonnos) {
-                aktiivinenElem.appendChild(luoKorttiHTML(uusinLuonnos, false));
-            } else if (uusinJulkaistuEiKuitattu) {
-                aktiivinenElem.appendChild(luoKorttiHTML(uusinJulkaistuEiKuitattu, true));
+        if (onHistoria) {
+            if (onHylatty) {
+                htmlSisalto += '<div class="tilamerkinta hylatty-badge">✕ HYLÄTTY</div>';
             } else {
-                aktiivinenElem.innerHTML = `
-                    <div class="no-data" style="background-color: #f0f9ff; border: 2px dashed #0284c7; padding: 25px;">
-                        <div style="font-size: 16px; font-weight: bold; color: #0369a1; margin-bottom: 8px;">
-                            ⏳ Valvomo valmiudessa – Odotetaan uutta julkaisua sähköpostista...
-                        </div>
-                        <div style="font-size: 13px; color: #0284c7;">
-                            Kun lähetät sähköpostin, Maken ja tekoälyn käsittely kestää n. 15–30 sekuntia.<br>
-                            <strong>Sivu päivittyy automaattisesti, kun postaus on valmis!</strong>
-                        </div>
-                    </div>
-                `;
-            }
-
-            if (julkaistut.length === 0) {
-                historiaElem.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 14px;">Ei aikaisempia julkaisuja.</div>`;
-            } else {
-                julkaistut.forEach(rivi => {
-                    historiaElem.appendChild(luoKorttiHTML(rivi, true, true));
-                });
+                htmlSisalto += '<div class="tilamerkinta">✓ JULKAISTU (SIMULOITU)</div>';
             }
         }
+        
+        htmlSisalto += '<div class="meta-info">';
+        htmlSisalto += '<span><strong>Luotu:</strong> ' + pvm + '</span>';
+        htmlSisalto += '<span><strong>Profiili:</strong> ' + nykyinenProfiili + '</span>';
+        htmlSisalto += '</div>';
 
-        function luoKorttiHTML(rivi, onJulkaistu, onHistoriaKortti = false) {
-            const kortti = document.createElement('div');
-            kortti.className = `post-card ${onJulkaistu ? 'published-demo' : ''}`;
-            
-            // KÄSITTELYSSÄ OLEVA ERIKOISKORTTI
-            if (rivi.status === 'kasitellaan') {
-                kortti.innerHTML = `
-                    <div class="post-meta">
-                        <div>Kanava: <span class="badge">${rivi.alusta || 'Määrittelemätön'}</span></div>
-                        <div>Tila: <span class="badge demo" style="background-color: #e0f2fe; color: #0369a1;">⚡ KÄSITELTÄÄN</span></div>
-                    </div>
-                    <div style="text-align: center; padding: 20px; background-color: #f0f9ff; border-radius: 8px; border: 2px dashed #0284c7;">
-                        <div style="font-size: 16px; font-weight: bold; color: #0369a1; margin-bottom: 6px;">
-                            ${rivi.teksti || '🤖 Julkaisua käsitellään ja sisältöä muokataan, odota hetki...'}
-                        </div>
-                        <div style="font-size: 13px; color: #0284c7;">
-                            Teksti ja kuva päivittyvät tähän automaattisesti n. 15–30 sekunnin kuluttua.
-                        </div>
-                    </div>
-                `;
-                return kortti;
-            }
-
-            let kuvaHTML = '<div class="media-preview" style="display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 14px;">📷 [ Ei kuvaa ]</div>';
-            
-            if (rivi.kuva_url) {
-                let korjattuUrl = rivi.kuva_url;
-                if (korjattuUrl.includes('drive.google.com')) {
-                    const fileIdMatch = korjattuUrl.match(/d\/([a-zA-Z0-9_-]+)/) || korjattuUrl.match(/id=([a-zA-Z0-9_-]+)/);
-                    if (fileIdMatch && fileIdMatch[1]) {
-                        korjattuUrl = `https://lh3.googleusercontent.com/d/${fileIdMatch[1]}`;
-                    }
-                }
-                kuvaHTML = `<div class="media-preview"><img src="${korjattuUrl}" alt="Esikatselukuva" onerror="this.parentElement.innerHTML='📷 Kuva latautuu tai vaatii Drive-oikeudet...'"></div>`;
-            }
-
-            const tekstiSisalto = rivi.teksti || '';
-
-            if (onJulkaistu) {
-                kortti.innerHTML = `
-                    ${!onHistoriaKortti ? '<div class="published-banner">🚀 Postaus on julkaistu / hyväksytty onnistuneesti!</div>' : ''}
-                    <div class="post-meta">
-                        <div>Kanava: <span class="badge">${rivi.alusta || 'Määrittelemätön'}</span></div>
-                        <div>Tila: <span class="badge success">${(rivi.status || 'JULKAISTU').toUpperCase()}</span></div>
-                    </div>
-                    
-                    <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">Julkaistu teksti:</label>
-                    <div class="published-text">${tekstiSisalto}</div>
-                    
-                    <div style="font-size: 12px; font-weight: bold; color: var(--text-muted); margin-bottom: 5px;">Postauksen kuva:</div>
-                    ${kuvaHTML}
-
-                    ${!onHistoriaKortti ? `
-                        <div class="actions" style="margin-top: 15px;">
-                            <button class="action-btn btn-reset" onclick="kuittaaValvomoon(${rivi.id})">↩️ Palaa valvomoon</button>
-                        </div>
-                    ` : ''}
-                `;
-            } else {
-                kortti.innerHTML = `
-                    <div class="post-meta">
-                        <div>Kanava: <span class="badge">${rivi.alusta || 'Määrittelemätön'}</span></div>
-                        <div>Tila: <span class="badge demo">${(rivi.status || 'odotetaan').toUpperCase()}</span></div>
-                    </div>
-                    
-                    <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">Tekoälyn muotoilema teksti (Voit muokata):</label>
-                    <textarea id="teksti-${rivi.id}">${tekstiSisalto}</textarea>
-                    
-                    <div style="font-size: 12px; font-weight: bold; color: var(--text-muted); margin-bottom: 5px;">Postauksen kuva:</div>
-                    ${kuvaHTML}
-
-                    <div class="scheduling-box" style="flex-direction: column; align-items: stretch; gap: 6px; margin-bottom: 12px;">
-                        <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">Valitse kohdekanava (Simulointi):</label>
-                        <select id="alusta-${rivi.id}" style="padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; background: white; width: 100%;">
-                            <option value="(Molemmat FB & IG)">Molemmat (FB & IG)</option>
-                            <option value="(Vain Facebook)">Vain Facebook</option>
-                            <option value="(Vain Instagram)">Vain Instagram</option>
-                        </select>
-                    </div>
-
-                    <div class="scheduling-box">
-                        <span>📅 <strong>Ajastushallinta:</strong> Kai haluat ajastaa viestin tulevaisuuteen?</span>
-                        <input type="datetime-local" id="ajastus-${rivi.id}" value="${rivi.ajastettu_aika ? rivi.ajastettu_aika.substring(0,16) : ''}">
-                    </div>
-
-                    <div class="actions">
-                        <button class="action-btn btn-direct" onclick="paivitaStatus(${rivi.id}, 'julkaistu_demo')">🚀 Julkaise välittömästi</button>
-                        <button class="action-btn btn-queue" onclick="paivitaStatus(${rivi.id}, 'hyvaksytty')">✅ Hyväksy julkaistavaksi</button>
-                        <button class="action-btn btn-reject" onclick="paivitaStatus(${rivi.id}, 'hylatty')">🗑️ Hylkää</button>
-                    </div>
-                `;
-            }
-
-            return kortti;
+        if (julkaisu.kuva_url) {
+            htmlSisalto += '<img src="' + julkaisu.kuva_url + '" class="kuva-esikatselu" alt="Esikatselukuva">';
         }
 
-        function kuittaaValvomoon(id) {
-            if (!kuitatutIds.includes(id)) {
-                kuitatutIds.push(id);
-                localStorage.setItem('kuitatutIds', JSON.stringify(kuitatutIds));
+        // 1. Alkuperäinen teksti (raw_text)
+        htmlSisalto += '<label class="field-label">Alkuperäinen teksti (Raw Text):</label>';
+        htmlSisalto += '<textarea id="raw-teksti-' + julkaisu.id + '" class="teksti-alue"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.raw_text || '') + '</textarea>';
+
+        if (!onHistoria) {
+            // 2. Profiilivalikko ja AI-uudelleenmuotoilunappi
+            htmlSisalto += '<div class="grid-valinnat">';
+            htmlSisalto += '<div>';
+            htmlSisalto += '<label class="field-label">Julkaisuprofiili:</label>';
+            const prof = julkaisu.julkaisuprofiili || 'Yleinen';
+            htmlSisalto += '<select id="profiili-' + julkaisu.id + '" class="valinta-kentta" onchange="paivitaProfiiliKantaan(\'' + julkaisu.id + '\', this.value)">';
+            htmlSisalto += '  <option value="Yleinen"' + (prof === 'Yleinen' ? ' selected' : '') + '>Yleinen</option>';
+            htmlSisalto += '  <option value="Yritys & B2B"' + (prof === 'Yritys & B2B' ? ' selected' : '') + '>Yritys & B2B</option>';
+            htmlSisalto += '  <option value="Yritys & B2C"' + (prof === 'Yritys & B2C' ? ' selected' : '') + '>Yritys & B2C</option>';
+            htmlSisalto += '  <option value="Somesisällöntuottaja"' + (prof === 'Somesisällöntuottaja' ? ' selected' : '') + '>Somesisällöntuottaja</option>';
+            htmlSisalto += '  <option value="Yhdistys/yhteisö"' + (prof === 'Yhdistys/yhteisö' ? ' selected' : '') + '>Yhdistys/yhteisö</option>';
+            htmlSisalto += '  <option value="Blogi"' + (prof === 'Blogi' ? ' selected' : '') + '>Blogi</option>';
+            htmlSisalto += '</select>';
+            htmlSisalto += '</div>';
+
+            htmlSisalto += '<div style="display: flex; gap: 8px;">';
+            htmlSisalto += '<button type="button" id="btn-reformat-' + julkaisu.id + '" class="btn-reformat" onclick="muotoileAIlla(\'' + julkaisu.id + '\')">🔄 Muotoile AI:lla</button>';
+            
+            if (julkaisu.alkuperainen_ai_teksti) {
+                htmlSisalto += '<button type="button" class="btn-reformat" style="background-color: #64748b;" onclick="palautaEnsimmainenVersio(\'' + julkaisu.id + '\')">↩️ Palauta 1. versio</button>';
             }
-            haePostaukset();
+            htmlSisalto += '</div>';
+            htmlSisalto += '</div>';
         }
 
-        async function paivitaStatus(id, uusiStatus) {
-            const tekstiElem = document.getElementById(`teksti-${id}`);
-            const ajastusElem = document.getElementById(`ajastus-${id}`);
-            const alustaElem = document.getElementById(`alusta-${id}`);
+        // 3. Muotoiltu Julkaisuteksti
+        htmlSisalto += '<label class="field-label">Julkaisuteksti (FB / IG):</label>';
+        htmlSisalto += '<textarea id="teksti-' + julkaisu.id + '" class="teksti-alue" rows="5"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.julkaisuteksti || '') + '</textarea>';
+       
+        // 4. LinkedIn (Tulossa)
+        htmlSisalto += '<div class="linkedin-osio">';
+        htmlSisalto += '<label class="field-label" style="color: #64748b;">LinkedIn-teksti (Tulossa):</label>';
+        htmlSisalto += '<textarea class="teksti-alue" style="margin-bottom:0;" disabled placeholder="LinkedIn-integraatio aktivoituu myöhemmin...">' + (julkaisu.draft_text_linkedin || '') + '</textarea>';
+        htmlSisalto += '</div>';
 
-            const muokattuTeksti = tekstiElem ? tekstiElem.value : null;
-            const muokattuAjastus = ajastusElem ? ajastusElem.value : null;
-            const valittuKanava = alustaElem ? alustaElem.value : '(Molemmat FB & IG)';
-
-            const yhdistettyAlusta = `${kirjautunutTunnus} ${valittuKanava}`;
-
-            if (uusiStatus === 'hylatty') {
-                if (!kuitatutIds.includes(id)) {
-                    kuitatutIds.push(id);
-                    localStorage.setItem('kuitatutIds', JSON.stringify(kuitatutIds));
-                }
-            }
-
-            const paivitysobjekti = {
-                alusta: yhdistettyAlusta,
-                status: uusiStatus
-            };
+        if (!onHistoria) {
+            const valmisAika = julkaisu.ajastettu_aika ? new Date(julkaisu.ajastettu_aika).toISOString().slice(0,16) : '';
             
-            if (muokattuTeksti !== null) paivitysobjekti.teksti = muokattuTeksti;
-            if (muokattuAjastus !== null) paivitysobjekti.ajastettu_aika = muokattuAjastus ? new Date(muokattuAjastus).toISOString() : null;
+            // 5. Kanava ja Ajastus
+            htmlSisalto += '<div class="grid-valinnat">';
+            htmlSisalto += '<div>';
+            htmlSisalto += '<label class="field-label">Kohdekanava (Simulointi):</label>';
+            htmlSisalto += '<select id="alusta-' + julkaisu.id + '" class="valinta-kentta">';
+            htmlSisalto += '<option value="FB_IG"' + (nykyinenAlusta.includes('FB_IG') || nykyinenAlusta.includes('Molemmat') ? ' selected' : '') + '>Molemmat (FB & IG)</option>';
+            htmlSisalto += '<option value="FB"' + (nykyinenAlusta.includes('FB') && !nykyinenAlusta.includes('FB_IG') ? ' selected' : '') + '>Vain Facebook</option>';
+            htmlSisalto += '<option value="IG"' + (nykyinenAlusta.includes('IG') && !nykyinenAlusta.includes('FB_IG') ? ' selected' : '') + '>Vain Instagram</option>';
+            htmlSisalto += '</select>';
+            htmlSisalto += '</div>';
 
+            htmlSisalto += '<div>';
+            htmlSisalto += '<label class="field-label">Ajasta julkaisu (valinnainen):</label>';
+            htmlSisalto += '<input type="datetime-local" id="ajastus-' + julkaisu.id + '" class="aika-kentta" value="' + valmisAika + '">';
+            htmlSisalto += '</div>';
+            htmlSisalto += '</div>';
+
+            htmlSisalto += '<div class="nappi-ryhma">';
+            htmlSisalto += '<button class="btn-hyvaksy" onclick="paivitaStatus(\'' + julkaisu.id + '\', \'hyvaksytty\')">✓ Hyväksy jonoon</button>';
+            htmlSisalto += '<button class="btn-pika" onclick="paivitaStatus(\'' + julkaisu.id + '\', \'julkaistu\', true)">🚀 Julkaise heti (Simuloi)</button>';
+            htmlSisalto += '<button class="btn-hylkaa" onclick="paivitaStatus(\'' + julkaisu.id + '\', \'hylatty\')">✕ Hylkää</button>';
+            htmlSisalto += '</div>';
+        }
+
+        card.innerHTML = htmlSisalto;
+        return card;
+    }
+
+    async function muotoileAIlla(id) {
+        const rawTeksti = document.getElementById('raw-teksti-' + id) ? document.getElementById('raw-teksti-' + id).value : '';
+        const profiiliSelect = document.getElementById('profiili-' + id);
+        const profiili = profiiliSelect ? profiiliSelect.value : 'Yleinen';
+        const reformatNappi = document.getElementById('btn-reformat-' + id);
+
+        if (!rawTeksti) {
+            naytaIlmoitus('⚠️ Alkuperäinen teksti ei voi olla tyhjä!', 'error');
+            return;
+        }
+
+        if (reformatNappi) {
+            reformatNappi.disabled = true;
+            reformatNappi.textContent = '⏳ Muotoillaan...';
+        }
+
+        try {
             await supabaseClient
-                .from('demopostaukset')
-                .update(paivitysobjekti)
+                .from('somepostaukset')
+                .update({
+                    julkaisuprofiili: profiili,
+                    profile_id: profiili,
+                    raw_text: rawTeksti
+                })
                 .eq('id', id);
 
-            try {
-                await fetch(MAKE_WEBHOOK_URL, {
+            const response = await fetch(MAKE_WEBHOOK_AI, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: id,
+                    tyyli: profiili,
+                    rawTeksti: rawTeksti
+                })
+            });
+
+            if (response.ok) {
+                naytaIlmoitus('Muotoilupyyntö lähetetty AI:lle! Sivu päivittyy hetken kuluttua.', 'success');
+                setTimeout(haeValvomonTiedot, 8000);
+            } else {
+                naytaIlmoitus('❌ Virhe AI-muotoilupyynnössä.', 'error');
+                if (reformatNappi) {
+                    reformatNappi.disabled = false;
+                    reformatNappi.textContent = '🔄 Muotoile AI:lla';
+                }
+            }
+        } catch (err) {
+            console.error('Virhe:', err);
+            naytaIlmoitus('❌ Verkkovirhe AI-muotoilussa.', 'error');
+            if (reformatNappi) {
+                reformatNappi.disabled = false;
+                reformatNappi.textContent = '🔄 Muotoile AI:lla';
+            }
+        }
+    }
+
+    async function haeValvomonTiedot() {
+        const aktiivinenElementti = document.activeElement;
+        const kirjoittaaParhaillaan = aktiivinenElementti && 
+            ['TEXTAREA', 'INPUT', 'SELECT'].includes(aktiivinenElementti.tagName);
+
+        if (kirjoittaaParhaillaan) {
+            if (automaattiPaivitysAjastin) clearTimeout(automaattiPaivitysAjastin);
+            automaattiPaivitysAjastin = setTimeout(haeValvomonTiedot, 2000);
+            return;
+        }
+
+        const odottavatLista = document.getElementById('julkaisut-lista');
+        const historiaLista = document.getElementById('historia-lista');
+
+        try {
+            // Haetaan odottavat ja käsittelyssä olevat
+            const { data: dataOdottavat, error: errOdottavat } = await supabaseClient
+                .from('somepostaukset')
+                .select('*')
+                .in('status', ['odotetaan', 'kasittelyssa', 'kasitellaan'])
+                .or(`asiakastunnus.eq.${nykyinenAsiakastunnus},alusta.ilike.%${nykyinenAsiakastunnus}%`)
+                .order('luotu_aika', { ascending: false });
+
+            // Haetaan historia (julkaistut ja hylätyt)
+            const { data: dataHistoria, error: errHistoria } = await supabaseClient
+                .from('somepostaukset')
+                .select('*')
+                .not('status', 'in', '("odotetaan","kasittelyssa","kasitellaan")')
+                .or(`asiakastunnus.eq.${nykyinenAsiakastunnus},alusta.ilike.%${nykyinenAsiakastunnus}%`)
+                .order('luotu_aika', { ascending: false })
+                .limit(10);
+
+            if (!dataOdottavat || dataOdottavat.length === 0) {
+                odottavatLista.innerHTML = '<div class="tyhja-tila">Ei odottavia somejulkaisuja. Kaikki valmiina!</div>';
+            } else {
+                odottavatLista.innerHTML = '';
+                dataOdottavat.forEach(julkaisu => odottavatLista.appendChild(luoKorttiHtml(julkaisu, false)));
+            }
+
+            if (!dataHistoria || dataHistoria.length === 0) {
+                historiaLista.innerHTML = '<div class="tyhja-tila">Ei aiemmin julkaistuja viestejä historiassa.</div>';
+            } else {
+                historiaLista.innerHTML = '';
+                dataHistoria.forEach(julkaisu => historiaLista.appendChild(luoKorttiHtml(julkaisu, true)));
+            }
+
+            // Automaattipäivitys
+            if (automaattiPaivitysAjastin) clearTimeout(automaattiPaivitysAjastin);
+            const onKasittelyssa = dataOdottavat && dataOdottavat.some(j => j.status === 'kasittelyssa' || j.status === 'kasitellaan');
+            const viive = onKasittelyssa ? 2500 : 5000;
+            automaattiPaivitysAjastin = setTimeout(haeValvomonTiedot, viive);
+
+        } catch (error) {
+            console.error("Valvomo-virhe:", error);
+        }
+    }
+
+    async function paivitaStatus(id, uusiStatus, kaynnistaPika = false) {
+        const muokattuRawTeksti = document.getElementById('raw-teksti-' + id).value;
+        const muokattuTeksti = document.getElementById('teksti-' + id).value;
+        const valittuProfiili = document.getElementById('profiili-' + id).value;
+        const valittuKanava = document.getElementById('alusta-' + id).value;
+        const valittuAika = document.getElementById('ajastus-' + id).value;
+
+        try {
+            const updatePayload = {
+                status: uusiStatus,
+                raw_text: muokattuRawTeksti,
+                julkaisuteksti: muokattuTeksti,
+                profile_id: valittuProfiili,
+                target_channel: valittuKanava,
+                alusta: `${nykyinenAsiakastunnus} ${valittuKanava}`,
+                ajastettu_aika: valittuAika ? new Date(valittuAika).toISOString() : null
+            };
+
+            const { error } = await supabaseClient
+                .from('somepostaukset')
+                .update(updatePayload)
+                .eq('id', id);
+
+            if (error) throw error;
+
+            if (kaynnistaPika) {
+                // Lähetetään simulaatiopyyntö Makeen
+                fetch(MAKE_WEBHOOK_JULKAISU, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        id: id, 
-                        status: uusiStatus, 
-                        tunnus: kirjautunutTunnus,
-                        alusta: valittuKanava 
-                    })
+                    body: JSON.stringify({ id: id, status: 'julkaistu', tunnus: nykyinenAsiakastunnus })
                 });
-            } catch (e) {
-                console.log("Webhook lähetetty Makeen.");
+                naytaIlmoitus('🚀 Julkaisu simuloitu onnistuneesti!');
+            } else if (uusiStatus === 'hyvaksytty') {
+                naytaIlmoitus('✓ Julkaisu hyväksytty jonoon!');
+            } else {
+                naytaIlmoitus('✕ Julkaisu hylätty.', 'error');
             }
 
-            haePostaukset(); 
+            setTimeout(haeValvomonTiedot, 1000);
+        } catch (error) {
+            naytaIlmoitus('Toiminto epäonnistui: ' + error.message, 'error');
         }
+    }
 
-        // --- REALTIME & VARAJÄRJESTELMÄ ---
-        let realtimeKanava = null;
-
-        function kaynnistaRealtime() {
-            if (!kirjautunutTunnus || realtimeKanava) return;
-
-            // Kuunnellaan kaikkia taulun muutoksia ilman tiukkaa suodatusta
-            realtimeKanava = supabaseClient
-                .channel(`demomuutokset-${kirjautunutTunnus}`)
-                .on('postgres_changes', { 
-                    event: '*', 
-                    schema: 'public', 
-                    table: 'demopostaukset'
-                }, (payload) => {
-                    const aktiivinenElementti = document.activeElement;
-                    const kirjoittaaParhaillaan = aktiivinenElementti && 
-                        ['TEXTAREA', 'INPUT', 'SELECT'].includes(aktiivinenElementti.tagName);
-
-                    if (!kirjoittaaParhaillaan) {
-                        haePostaukset();
-                    }
+    async function paivitaProfiiliKantaan(id, uusiProfiili) {
+        try {
+            await supabaseClient
+                .from('somepostaukset')
+                .update({
+                    julkaisuprofiili: uusiProfiili,
+                    profile_id: uusiProfiili
                 })
-                .subscribe();
+                .eq('id', id);
+        } catch (e) {
+            console.error("Profiilin tallennus epäonnistui:", e);
         }
+    }
 
-        // Varmistuskysely 3 sekunnin välein
-        setInterval(() => {
-            const aktiivinenElementti = document.activeElement;
-            const kirjoittaaParhaillaan = aktiivinenElementti && 
-                ['TEXTAREA', 'INPUT', 'SELECT'].includes(aktiivinenElementti.tagName);
+    async function palautaEnsimmainenVersio(id) {
+        if (!confirm("Haluatko varmasti palauttaa ensimmäisen AI-generoidun tekstiversion?")) return;
 
-            if (!kirjoittaaParhaillaan && kirjautunutTunnus) {
-                haePostaukset();
+        try {
+            const { data, error } = await supabaseClient
+                .from('somepostaukset')
+                .select('alkuperainen_ai_teksti')
+                .eq('id', id)
+                .single();
+
+            if (data && data.alkuperainen_ai_teksti) {
+                await supabaseClient
+                    .from('somepostaukset')
+                    .update({ julkaisuteksti: data.alkuperainen_ai_teksti })
+                    .eq('id', id);
+
+                const tekstikentta = document.getElementById('teksti-' + id);
+                if (tekstikentta) tekstikentta.value = data.alkuperainen_ai_teksti;
+
+                naytaIlmoitus('✓ Ensimmäinen versio palautettu!', 'success');
+            } else {
+                naytaIlmoitus('⚠️ Alkuperäistä versiota ei löytynyt.', 'error');
             }
-        }, 3000);
+        } catch (err) {
+            naytaIlmoitus('❌ Virhe: ' + err.message, 'error');
+        }
+    }
 
-    </script>
+    function alustaNakyma() {
+        if (tarkistaIstunto()) {
+            haeValvomonTiedot();
+        }
+    }
+
+    window.addEventListener('load', alustaNakyma);
+</script>
+
 </body>
 </html>
