@@ -110,21 +110,6 @@
             background-color: #1d4ed8;
         }
 
-        .guide-feedback-btn {
-            background-color: #059669;
-            color: #ffffff;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 13px;
-            transition: background-color 0.2s;
-        }
-
-        .guide-feedback-btn:hover {
-            background-color: #047857;
-        }
-
         /* Kirjautuneen käyttäjän yläkulman infokortti */
         .user-info {
             text-align: left;
@@ -497,7 +482,7 @@
 <body>
 
 <div class="container">
-    <!-- YLÄBANNERI -->
+    <!-- YLÄBANNERI (Sisältää oikeassa yläkulmassa käyttäjätiedon ja uloskirjautumisen) -->
     <div class="header-banner">
         <div>
             <h1>SolOne HR & Business – Somevalvomo (DEMO)</h1>
@@ -509,16 +494,12 @@
         </div>
     </div>
 
-    <!-- OHJE- JA PALAUTELAATIKKO -->
     <div class="guide-link-box">
-        <span style="color: #1e40af; font-size: 14px;"><strong>📖 Ohjeet ja Palaute:</strong></span>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a href="kayttoohje_demo.html" class="guide-link-btn" target="_blank">📖 Avaa Käyttöohje &rarr;</a>
-            <a href="palaute_demo.html" class="guide-feedback-btn" target="_blank">💬 Anna Palautetta &rarr;</a>
-        </div>
+        <span style="color: #1e40af; font-size: 14px;"><strong>📖 Tarvitsetko apua testaamisessa?</strong> Katso demo-käyttöohje:</span>
+        <a href="kayttoohje_demo.html" class="guide-link-btn" target="_blank">📖 Avaa Demo-Käyttöohje &rarr;</a>
     </div>
 
-    <!-- SININEN ALOITUS- JA KIRJAUTUMISNÄKYMÄ -->
+    <!-- SININEN ALOITUS- JA KIRJAUTUMISNÄKYMÄ (Piiloutuu kirjautumisen jälkeen) -->
     <div class="demo-info" id="kirjautumis-ikkuna">
         <div id="tunnus-status-osio">
             <strong>ℹ️ Tervetuloa kokeilemaan järjestelmää livenä!</strong><br>
@@ -542,7 +523,7 @@
         </div>
     </div>
 
-    <!-- VALVOMO-OSIO -->
+    <!-- VALVOMO-OSIO (Aina näkyvissä: ennen kirjautumista esimerkit, kirjautuneena oikeat tiedot) -->
     <div id="valvomo-sisalto">
         <div id="ilmoitus-alue" class="ilmoitus"></div>
 

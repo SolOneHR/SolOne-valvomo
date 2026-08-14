@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SolOne - Anna Palautetta Demosta</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --success-hover: #059669;
+            --danger: #ef4444;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 15px 10px; 
+            line-height: 1.5;
+        }
+
+        @media (min-width: 600px) {
+            body { 
+                padding: 30px 20px; 
+            }
+        }
+
+        .container { 
+            max-width: 850px; 
+            margin: 0 auto; 
+        }
+
+        /* Yläbanneri */
+        .header-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        .header-banner h1 {
+            font-size: 1.4rem;
+            margin: 0 0 6px 0;
+            color: #ffffff;
+        }
+
+        @media (min-width: 600px) {
+            .header-banner h1 { 
+                font-size: 1.6rem; 
+            }
+        }
+
+        .header-banner p {
+            margin: 0;
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        .guide-link-box {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .guide-link-btn {
+            background-color: #2563eb;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            transition: background-color 0.2s;
+        }
+
+        .guide-link-btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Lomakekortti */
+        .form-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        @media (min-width: 600px) {
+            .form-card {
+                padding: 30px;
+            }
+        }
+
+        .osio-otsikko {
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: var(--text-main);
+            margin: 25px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .osio-otsikko:first-of-type {
+            margin-top: 0;
+        }
+
+        .kysymys-ryhma {
+            margin-bottom: 20px;
+        }
+
+        .kysymys-otsikko {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .asteikko-valinnat {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+
+        .asteikko-valinta {
+            flex: 1;
+            min-width: 45px;
+            text-align: center;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 10px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .asteikko-valinta input {
+            display: none;
+        }
+
+        .asteikko-valinta.valittu {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .selite-teksti {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .teksti-kentta, .teksti-alue {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .teksti-alue {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .monivalinta-optio {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .monivalinta-optio input {
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        .btn-laheta {
+            background-color: var(--success);
+            color: white;
+            padding: 14px 24px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: background-color 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn-laheta:hover {
+            background-color: var(--success-hover);
+        }
+
+        .ilmoitus {
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .ilmoitus.success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        .ilmoitus.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-banner">
+        <h1>SolOne AutoPublish & Valvomo – Palautelomake</h1>
+        <p>Kiitos ajastasi! Palautteesi auttaa kehittämään palvelusta entistä paremman.</p>
+    </div>
+
+    <div class="guide-link-box">
+        <span style="color: #1e40af; font-size: 14px;"><strong>Palaa takaisin:</strong></span>
+        <a href="somevalvomo_demo.html" class="guide-link-btn">&larr; Avaa Valvomo</a>
+    </div>
+
+    <div id="ilmoitus-alue" class="ilmoitus"></div>
+
+    <form id="palauteLomake" class="form-card" onsubmit="lahetaPalaute(event)">
+        
+        <!-- YHTEYSTIEDOT (VAPAAEHTOINEN) -->
+        <div class="kysymys-ryhma">
+            <label class="kysymys-otsikko">Testitunnuksesi tai nimesi/sähköpostisi (valinnainen):</label>
+            <input type="text" id="vastaaja" class="teksti-kentta" placeholder="esim. DEMO-12345 tai oma nimesi">
+        </div>
+
+        <!-- OSA 1 -->
+        <div class="osio-otsikko">1. Käyttökokemus ja helppous</div>
+
+        <div class="kysymys-ryhma">
+            <label class="kysymys-otsikko">Miten selkeäksi koit testauksen aloittamisen ja demotunnuksen tilaamisen?</label>
+            <div class="asteikko-valinnat">
+                <label class="asteikko-valinta"><input type="radio" name="aloitus" value="1"> 1</label>
+                <label class="asteikko-valinta"><input type="radio" name="aloitus" value="2"> 2</label>
+                <label class="asteikko-valinta"><input type="radio" name="aloitus" value="3"> 3</label>
+                <label class="asteikko-valinta"><input type="radio" name="aloitus" value="4"> 4</label>
+                <label class="asteikko-valinta"><input type="radio" name="aloitus" value="5"> 5</label>
+            </div>
+            <div class="selite-teksti">
+                <span>1 = Erittäin hankalaa</span>
+                <span>5 = Erittäin helppoa</span>
+            </div>
+        </div>
+
+        <div class="kysymys-ryhma">
+            <label class="kysymys-otsikko">Kuinka sujuvasti sähköpostin lähetys ja luonnoksen ilmestyminen valvomoon toimi?</label>
+            <div class="asteikko-valinnat">
+                <label class="asteikko-valinta"><input type="radio" name="sahkoposti" value="1"> 1</label>
+                <label class="asteikko-valinta"><input type="radio" name="sahkoposti" value="2"> 2</label>
+                <label class="asteikko-valinta"><input type="radio" name="sahkoposti" value="3"> 3</label>
+                <label class="asteikko-valinta"><input type="radio" name="sahkoposti" value="4"> 4</label>
+                <label class="asteikko-valinta"><input type="radio" name="sahkoposti" value="5"> 5</label>
+            </div>
+            <div class="selite-teksti">
+                <span>1 = Ei toiminut ollenkaan</span>
+                <span>5 = Täysin saumattomasti</span>
+            </div>
+        </div>
+
+        <div class="kysymys-ryhma">
+            <label class="kysymys-otsikko">Miten selkeä ja helppokäyttöinen Valvomon käyttöliittymä oli?</label>
+            <div class="asteikko-valinnat">
+                <label class="asteikko-valinta"><input type="radio" name="valvomo" value="1"> 1</label>
+                <label class="asteikko-valinta"><input type="radio" name="valvomo" value="2"> 2</label>
+                <label class="asteikko-valinta"><input type="radio" name="valvomo" value="3"> 3</label>
+                <label class="asteikko-valinta"><input type="radio" name="valvomo" value="4"> 4</label>
+                <label class="asteikko-valinta"><input type="radio" name="valvomo" value="5"> 5</label>
+            </div>
+            <div class="selite-teksti">
+                <span>1 = Sekava</span>
+                <span>5 = Erittäin selkeä ja looginen</span>
+            </div>
+        </div>
+
+        <!-- OSA 2 -->
+        <div class="osio-otsikko">2. Tekoälyn laatu ja sisällöntuotanto</div>
+
+        <div class="kysymys-ryhma">
+            <label class="kysymys-otsikko">Vastasiko tekoälyn luoma julkaisuteksti hyvin alkuperäistä ajatustasi?</label>
+            <div class="asteikko-valinnat">
+                <label class="asteikko-valinta"><input type="radio" name="laatu" value="1"> 1</label>
+                <label class="asteikko-valinta"><input type="radio" name="laatu" value="2"> 2</label>
+                <label class="asteikko-valinta"><input type="radio" name="laatu" value="3"> 3</label>
+                <label class="asteikko-valinta"><input type="radio" name="laatu" value="4"> 4</label>
+                <label class="asteikko-valinta"><input type="radio" name="laatu" value="5"> 5</label>
+            </div>
+            <div class="selite-teksti">
+                <span>1 = Huonosti</span>
+                <span>5 = Erittäin hyvin</span>
+            </div>
+        </div>
+
+        <div class="kysymys-ryhma">
+            <label class="kysymys-otsikko">Kokeilitko eri julkaisuprofiileja (esim. Yritys & B2B, Blogi)? Miten tyylin vaihto toimi?</label>
+            <textarea id="tyyli_kommentti" class="teksti-alue" placeholder="Kerro lyhyesti huomioistasi tyylien ja AI-muotoilun osalta..."></textarea>
+        </div>
+
+        <!-- OSA 3 -->
+        <div class="osio-otsikko">3. Hyödyllisyys ja jatkokehitys</div>
+
+        <div class="kysymys-ryhma">
+            <label class="kysymys-otsikko">Voisitko kuvitella käyttäväsi tällaista työkalua omassa arjessasi tai liiketoiminnassasi?</label>
+            <label class="monivalinta-optio">
+                <input type="radio" name="tarve" value="Kyllä, ehdottomasti"> Kyllä, ehdottomasti
+            </label>
+            <label class="monivalinta-optio">
+                <input type="radio" name="tarve" value="Ehkä, lisäominaisuuksilla"> Ehkä, jos tiettyjä ominaisuuksia lisätään
+            </label>
+            <label class="monivalinta-optio">
+                <input type="radio" name="tarve" value="Ei tarvetta"> En usko, minulla ei ole tälle tarvetta
+            </label>
+        </div>
+
+        <div class="kysymys-ryhma">
+            <label class="kysymys-otsikko">Mikä oli mielestäsi parasta tai toimivinta järjestelmässä?</label>
+            <textarea id="paras_ominaisuus" class="teksti-alue" placeholder="Mikä toimi erityisen hyvin?"></textarea>
+        </div>
+
+        <div class="kysymys-ryhma">
+            <label class="kysymys-otsikko">Mitä parantaisit tai mitä lisäominaisuuksia toivoisit jatkossa?</label>
+            <textarea id="kehityskohteet" class="teksti-alue" placeholder="Kehitysideat, puutteet tai toiveet..."></textarea>
+        </div>
+
+        <button type="submit" id="btnSubmit" class="btn-laheta">✉️ Lähetä palaute</button>
+    </form>
+</div>
+
+<script>
+    const SUPABASE_URL = 'https://urdyprqepkkxdohrzkpv.supabase.co';
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZHlwcnFlcGtreGRvaHJ6a3B2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDY2NTIsImV4cCI6MjA5Mjc4MjY1Mn0.jlryhbO8t0tZaJnuV9FzEok3p3DBdGPSfygibKKDD5A';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, ANON_KEY);
+
+    // Esitäytä tunnus, jos käyttäjä oli valvomossa kirjautuneena
+    const tallennettuTunnus = localStorage.getItem('demo_kirjautunut_tunnus');
+    if (tallennettuTunnus) {
+        document.getElementById('vastaaja').value = tallennettuTunnus;
+    }
+
+    // Asteikkonappien visuaalinen valintalogiikka
+    document.querySelectorAll('.asteikko-valinta').forEach(label => {
+        label.addEventListener('click', function() {
+            const container = this.closest('.asteikko-valinnat');
+            container.querySelectorAll('.asteikko-valinta').forEach(l => l.classList.remove('valittu'));
+            this.classList.add('valittu');
+        });
+    });
+
+    async function lahetaPalaute(event) {
+        event.preventDefault();
+        
+        const btn = document.getElementById('btnSubmit');
+        btn.disabled = true;
+        btn.textContent = '⏳ Tallennetaan palautetta...';
+
+        const payload = {
+            vastaaja: document.getElementById('vastaaja').value.trim() || 'Anonyymi',
+            aloituksen_helppous: document.querySelector('input[name="aloitus"]:checked')?.value || null,
+            sahkopostin_sujuvuus: document.querySelector('input[name="sahkoposti"]:checked')?.value || null,
+            valvomon_selkeys: document.querySelector('input[name="valvomo"]:checked')?.value || null,
+            tekstin_laatu: document.querySelector('input[name="laatu"]:checked')?.value || null,
+            tyyli_kommentti: document.getElementById('tyyli_kommentti').value.trim() || null,
+            tarve: document.querySelector('input[name="tarve"]:checked')?.value || null,
+            paras_ominaisuus: document.getElementById('paras_ominaisuus').value.trim() || null,
+            kehityskohteet: document.getElementById('kehityskohteet').value.trim() || null
+        };
+
+        try {
+            const { error } = await supabaseClient
+                .from('demopalautteet')
+                .insert([payload]);
+
+            if (error) throw error;
+
+            const ilmoitus = document.getElementById('ilmoitus-alue');
+            ilmoitus.textContent = '✓ Suurkiitos palautteestasi! Se on tallennettu onnistuneesti.';
+            ilmoitus.className = 'ilmoitus success';
+            ilmoitus.style.display = 'block';
+            ilmoitus.scrollIntoView({ behavior: 'smooth' });
+
+            document.getElementById('palauteLomake').reset();
+            document.querySelectorAll('.asteikko-valinta').forEach(l => l.classList.remove('valittu'));
+            btn.style.display = 'none';
+
+        } catch (err) {
+            console.error('Palautteen tallennusvirhe:', err);
+            const ilmoitus = document.getElementById('ilmoitus-alue');
+            ilmoitus.textContent = '❌ Tallennus epäonnistui: ' + err.message;
+            ilmoitus.className = 'ilmoitus error';
+            ilmoitus.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = '✉️ Lähetä palaute';
+        }
+    }
+</script>
+
+</body>
+</html>
