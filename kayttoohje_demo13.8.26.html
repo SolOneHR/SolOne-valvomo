@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testaajan opas: SolOne AutoPublish Demo</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm 15mm;
+            background-color: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #334155;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8fafc;
+            font-size: 11pt;
+        }
+
+        .page-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .header-banner {
+            background-color: #1e293b;
+            color: #ffffff;
+            padding: 30px 25px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 22pt;
+            font-weight: bold;
+            color: #ffffff;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            margin: 0;
+            font-size: 11pt;
+            color: #94a3b8;
+        }
+
+        h2 {
+            font-size: 14pt;
+            color: #0f172a;
+            border-left: 4px solid #3b82f6;
+            padding-left: 12px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin: 0 0 12px 0;
+        }
+
+        .info-box {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 25px;
+            color: #1e40af;
+        }
+
+        .alert-box {
+            background-color: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 25px;
+            color: #92400e;
+        }
+
+        .comparison-box {
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 18px 20px;
+            margin-bottom: 25px;
+        }
+
+        .comparison-box h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 12pt;
+            color: #0f172a;
+        }
+
+        .example-box {
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 16px 20px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 10pt;
+            white-space: pre-line;
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+
+        ul, ol {
+            margin: 0 0 20px 0;
+            padding-left: 22px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            color: #0f172a;
+        }
+
+        code {
+            background-color: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 10pt;
+            color: #0f172a;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .page-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-container">
+        <div class="header-banner">
+            <h1>Testaajan opas: SolOne AutoPublish Demo</h1>
+            <p class="subtitle">Pikaopas somejulkaisuautomaation testaamiseen, harjoitteluun ja tekoälyn ohjeistamiseen demo-alustalla.</p>
+        </div>
+
+        <div class="info-box">
+            <strong>🧪 Tervetuloa kokeilemaan ja harjoittelemaan AutoPublish-järjestelmää!</strong><br>
+            Tämä demoversio on suunniteltu matalan kynnyksen kokeilualustaksi. Pääset harjoittelemaan, kuinka helppoa tekoälyavusteinen somesisällön luonti on suoraan omasta sähköpostistasi, miten tekoälyä ohjataan ja miten luonnoksia hallitaan ilman kiirettä.
+        </div>
+
+        <div class="alert-box">
+            <strong>🔒 100 % Turvallinen harjoitteluympäristö</strong><br>
+            Kaikki demossa tekemäsi kokeilut ovat täysin turvallisia. Vaikka klikkaat valvomossa "Julkaise", viestit <strong>eivät koskaan päädy oikeisiin sosiaalisen median kanaviin</strong>, vaan ne simuloidaan ja arkistoidaan suoraan demon "Jo julkaistut" -osioon. Voit siis kokeilla eri ideoita ja testata järjestelmää täysin vapaasti!
+        </div>
+
+        <div class="comparison-box">
+            <h3>💡 Demo-versio vs. Täysi Live-versio</h3>
+            <p>Tämä demo tarjoaa nopean tuntuman perustoimintoihin. Tuotantokäyttöön tarkoitetussa <strong>Live-versiossa</strong> on lisäksi käytössä:</p>
+            <ul>
+                <li><strong>Kattavammat automaattiset julkaisuprofiilit:</strong> Voit valita valmiista tyyliprofiileista (<em>Yleinen, Yritys & B2B, Yritys & B2C, Somesisällöntuottaja, Yhdistys/yhteisö tai Blogi</em>), jolloin tekoäly säätää tekstin sävyn ja rakenteen automaattisesti kohderyhmällesi sopivaksi.</li>
+                <li><strong>Suorat monikanavakytkennät:</strong> Automaattiset julkaisut suoraan yrityksen virallisille Facebook- ja Instagram-sivuille.</li>
+                <li><strong>Monipuolisempi versiointi:</strong> Pikanäppäimet 1. versioon palautukselle ja lennosta tehtävälle tekoäly-uudelleenmuotoilulle.</li>
+            </ul>
+        </div>
+
+        <h2>1. Kirjautuminen ja demo-tunnus</h2>
+        <p>Jotta näet omat lähettämäsi testiluonnokset valvomossa, tarvitset voimassa olevan istuntotunnuksen:</p>
+        <ol>
+            <li>Avaa demoalusta osoitteessa: <code>somevalvomo_demo.html</code>.</li>
+            <li>Klikkaa kirjautumisruudun vierestä painiketta <strong>"Pyydä demo-tunnus"</strong>.</li>
+            <li>Saat henkilökohtaisen testitunnuksen (muotoa <code>DEMO-12345</code>), kun pyyntösi on käsitelty. Ota tämä tunnus talteen seuraavaa vaihetta varten!</li>
+        </ol>
+
+        <h2>2. Testijulkaisun luominen sähköpostitse</h2>
+        <p>Kun haluat luoda uuden somepostauksen tekoälylle käsiteltäväksi, lähetä tavallinen sähköposti seuraavilla tiedoilla:</p>
+        <ul>
+            <li><strong>Vastaanottaja (To):</strong> Lähetä viesti osoitteeseen: <code style="color: #4a3df5; font-weight: bold;">demo@solone.fi</code></li>
+            <li><strong>Aihe (Subject):</strong> Kirjoita aihe-kenttään <strong>oma demo-tunnuksesi</strong>, jonka pyysit ensimmäisessä vaiheessa (esim. <code>DEMO-12345</code>). Tämän perusteella järjestelmä osaa ohjata luonnoksen juuri sinun näkymääsi!</li>
+            <li><strong>Viestiosa (Body):</strong> Kirjoita tähän ajatuksesi, raakatekstisi tai uutisesi, josta haluat julkaisun.</li>
+            <li><strong>Liitteet:</strong> Voit liittää sähköpostiin mukaan minkä tahansa kuvan (esim. työpöydältä tai puhelimen rullasta) testataksesi kuva-automaatiota.</li>
+        </ul>
+
+        <h2>3. Tekoälyn ohjeistaminen eli "Promptaus"</h2>
+        <p>Järjestelmän tekoäly muotoilee raakatekstisi automaattisesti sujuvaksi ja houkuttelevaksi some-kieleksi sekä lisää loppuun osuvat hastagit. Voit harjoitella tekoälyn ohjaamista syöttämällä sähköpostiviestisi loppuun <strong>erillisiä ohjeita hakasulkeissa</strong>:</p>
+
+        <div class="example-box"><strong>Vastaanottaja:</strong> demo@solonehr.fi
+<strong>Aihe:</strong> DEMO-12345
+<strong>Viesti:</strong>
+Testataan uutta SolOne-automaatiojärjestelmää. Tämä on sähköpostista lähetetty raakateksti, joka pitäisi muokata valmiiksi postaukseksi.
+
+[OHJE TEKOÄLYLLE: Kirjoita tästä asiantunteva ja innostava päivitys. Lisää mukaan aiheeseen sopivia emojeita ja 3-5 hashtagia loppuun.]</div>
+
+        <p><strong>Suositeltuja ohjeita, joita voit kokeilla demossa:</strong></p>
+        <ul>
+            <li><code>[OHJE: Kirjoita asiallisella / hauskalla / rennolla / asiantuntevalla sävyllä.]</code></li>
+            <li><code>[OHJE: Tee tekstistä hyvin lyhyt ja ytimekäs tiivistys.]</code></li>
+            <li><code>[OHJE: Käännä julkaisu myös englanniksi suomenkielisen tekstin alle.]</code></li>
+            <li><code>[OHJE: Muuta annettu teksti selkeäksi bullet-listaksi.]</code></li>
+        </ul>
+
+        <h2>4. Luonnosten hallinta ja simulointi Valvomossa</h2>
+        <p>Kun olet lähettänyt sähköpostin, järjestelmä käsittelee sen ja siirtää sen sekunneissa näkyviin demo-valvomoosi. Päivitä sivu tarvittaessa ja suorita testaus:</p>
+        <ol>
+            <li><strong>Muokkaa tekstiä:</strong> Klikkaa tekoälyn luomaa tekstiä laatikossa. Voit vapaasti korjata tai kirjoittaa siihen omaa tekstiäsi.</li>
+            <li><strong>Esikatsele kuva:</strong> Valvomo poimii sähköpostiliitteesi ja näyttää sen esikatseluruudussa.</li>
+            <li><strong>Testaa toimintoja painikkeilla:</strong>
+                <ul>
+                    <li><strong>🚀 Julkaise välittömästi:</strong> Simuloi julkaisun. Viesti siirtyy onnistuneesti arkistoon "Jo julkaistut" -osion alle.</li>
+                    <li><strong>✓ Hyväksy jonoon:</strong> Siirtää julkaisun odotustilaan ajastusta varten.</li>
+                    <li><strong>✕ Hylkää:</strong> Poistaa luonnoksen näkymästäsi kokonaan.</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+
+</body>
+</html>
