@@ -733,7 +733,7 @@
         try {
             let lopullinenKuvaUrl = null;
 
-            // 1. Jos käyttäjä valitsi kuvan tiedostosta / puhelimesta -> Ladataan se Supabase Storageen
+            // 1. Jos käyttäjä valitsi kuvan tiedostosta / puhelimesta -> Ladataan Supabase Storageen
             if (valittuTiedosto) {
                 const tiedostoPaate = valittuTiedosto.name.split('.').pop();
                 const tiedostoNimi = `${nykyinenAsiakastunnus}_${Date.now()}.${tiedostoPaate}`;
@@ -757,7 +757,7 @@
                 lopullinenKuvaUrl = publicUrlData.publicUrl;
             }
 
-            // 2. Tallennetaan suoraan kantaan tilassa 'kasittelyssa'
+            // 2. Tallennetaan kantaan tilassa 'kasittelyssa'
             const { data, error } = await supabaseClient
                 .from('somepostaukset')
                 .insert([{
@@ -768,7 +768,7 @@
                     target_channel: kanava,
                     alusta: `${nykyinenAsiakastunnus} ${kanava}`,
                     asiakastunnus: nykyinenAsiakastunnus,
-                    status: 'odotetaan',
+                    status: 'kasittelyssa',
                     luotu_aika: new Date().toISOString()
                 }])
                 .select()
@@ -777,12 +777,12 @@
             if (error) throw error;
 
             suljeUusiPostausModaali();
-            naytaIlmoitus('🚀 Uusi julkaisu luotu käsittelyyn!');
+            naytaIlmoitus('🚀 Uusi julkaisu luotu, tekoäly käsittelee tekstiä...');
             
-            // Päivitetään Valvomo välittömästi -> Keltainen laatikko pomppaa heti näkyviin!
+            // Päivitetään Valvomo heti -> Keltainen laatikko ilmestyy näkyviin
             haeValvomonTiedot();
 
-            // 3. Kutsutaan Make.comin AI-webhookia taustalla muotoilemaan teksti valmiiksi
+            // 3. Kutsutaan Make.comin AI-webhookia taustalla tekemään muotoilu
             fetch(MAKE_WEBHOOK_AI, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

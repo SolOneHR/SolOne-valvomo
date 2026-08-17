@@ -420,14 +420,10 @@
         </div>
         <div id="kayttaja-kortti" class="user-info" style="display:none;">
             <span id="kayttaja-email"></span><br>
-            <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 5px; flex-wrap: wrap;">
-                <button class="btn-pika" style="padding: 5px 12px; font-size: 0.8rem; width: auto;" onclick="avaaUusiPostausModaali()">➕ Uusi luonnos</button>
-                <button class="btn-ulos" style="margin-top: 0; width: auto;" onclick="kirjauduUlos()">Kirjaudu ulos</button>
-            </div>
+            <button class="btn-ulos" onclick="kirjauduUlos()">Kirjaudu ulos</button>
         </div>
     </div>
 
-    <!-- SISÄÄNKIRJAUTUMISRUUTU -->
     <div id="kirjautumis-ikkuna">
         <h2 style="margin-top:0;">Kirjaudu Valvomoon</h2>
         <div id="login-virhe" class="ilmoitus error" style="display:none; margin-bottom:10px;"></div>
@@ -436,47 +432,6 @@
         <button class="btn-pika" style="width:100%;" onclick="suoritaKirjautuminen()">Kirjaudu sisään</button>
     </div>
 
-    <!-- UUSI JULKAISU -MODAALI -->
-    <div id="uusi-postaus-modaali" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center; padding: 15px; box-sizing: border-box;">
-        <div style="background:white; border-radius:12px; padding:25px; width:100%; max-width:550px; box-shadow:0 10px 25px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto; box-sizing: border-box;">
-            <h3 style="margin-top:0; color:var(--text-main); font-size: 1.2rem;">➕ Luo uusi somejulkaisu</h3>
-            
-            <label class="field-label">Julkaisun aihe / Alkuperäinen teksti (Raw text):</label>
-            <textarea id="uusi-raw-teksti" class="teksti-alue" placeholder="Kirjoita aihe, ajatus tai luonnos tähän..." style="min-height:100px;"></textarea>
-
-            <label class="field-label">Valitse kuva (puhelimesta tai koneelta):</label>
-            <input type="file" id="uusi-kuva-tiedosto" accept="image/*" class="valinta-kentta" style="margin-bottom:15px; background: white;">
-
-            <div class="grid-valinnat">
-                <div>
-                    <label class="field-label">Julkaisuprofiili:</label>
-                    <select id="uusi-profiili" class="valinta-kentta">
-                        <option value="Yleinen">Yleinen</option>
-                        <option value="Yritys & B2B">Yritys & B2B</option>
-                        <option value="Yritys & B2C">Yritys & B2C</option>
-                        <option value="Somesisällöntuottaja">Somesisällöntuottaja</option>
-                        <option value="Yhdistys/yhteisö">Yhdistys/yhteisö</option>
-                        <option value="Blogi">Blogi</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="field-label">Kohdekanava:</label>
-                    <select id="uusi-kanava" class="valinta-kentta">
-                        <option value="FB_IG">Molemmat (FB & IG)</option>
-                        <option value="FB">Vain Facebook</option>
-                        <option value="IG">Vain Instagram</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="nappi-ryhma" style="margin-top:20px;">
-                <button class="btn-hyvaksy" id="btn-luo-luonnos" onclick="luoUusiPostausKantaan()">🚀 Luo ja käsittele AI:lla</button>
-                <button type="button" class="btn-ulos" style="color:var(--text-main); border: 1px solid #cbd5e1; background: #f1f5f9;" onclick="suljeUusiPostausModaali()">Peruuta</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- VALVOMO-OSIO -->
     <div id="valvomo-sisalto" style="display:none;">
         <div id="ilmoitus-alue" class="ilmoitus"></div>
 
@@ -513,12 +468,8 @@
     }
 
     function kaynnistaMakeSkenaario(id) {
-        const webhookUrl = 'https://hook.eu1.make.com/ebe5uv59ojh9khbq8k1ky5etysge4nx2';
-        fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: id })
-        })
+        const webhookUrl = 'https://hook.eu1.make.com/19dyks73yrgq8t3qbo3idoxt8p4i8t66?id=' + id; 
+        fetch(webhookUrl, { mode: 'no-cors' })
         .then(() => {
             naytaIlmoitus('🚀 Julkaisu hyväksytty ja lähetetty julkaisujärjestelmään!');
         })
@@ -592,110 +543,6 @@
         document.getElementById('kayttaja-kortti').style.display = 'none';
         document.getElementById('valvomo-sisalto').style.display = 'none';
         document.getElementById('kirjautumis-ikkuna').style.display = 'block';
-    }
-
-    // --- UUDEN POSTAUKSEN MODAALIN TOIMINNOT ---
-    function avaaUusiPostausModaali() {
-        document.getElementById('uusi-raw-teksti').value = '';
-        const kuvaInput = document.getElementById('uusi-kuva-tiedosto');
-        if (kuvaInput) kuvaInput.value = '';
-        document.getElementById('uusi-postaus-modaali').style.display = 'flex';
-    }
-
-    function suljeUusiPostausModaali() {
-        document.getElementById('uusi-postaus-modaali').style.display = 'none';
-    }
-
-    async function luoUusiPostausKantaan() {
-        const rawTeksti = document.getElementById('uusi-raw-teksti').value.trim();
-        const kuvaInput = document.getElementById('uusi-kuva-tiedosto');
-        const valittuTiedosto = kuvaInput && kuvaInput.files ? kuvaInput.files[0] : null;
-        const profiili = document.getElementById('uusi-profiili').value;
-        const kanava = document.getElementById('uusi-kanava').value;
-        const nappi = document.getElementById('btn-luo-luonnos');
-        const db = haeSupabaseAsiakas();
-        const token = localStorage.getItem('supabase_token');
-
-        if (!rawTeksti) {
-            alert("Kirjoita julkaisun aihe tai teksti!");
-            return;
-        }
-
-        nappi.disabled = true;
-        nappi.textContent = '⏳ Ladataan ja luodaan...';
-
-        try {
-            let lopullinenKuvaUrl = null;
-
-            if (valittuTiedosto) {
-                const tiedostoPaate = valittuTiedosto.name.split('.').pop();
-                const tiedostoNimi = `live_${Date.now()}.${tiedostoPaate}`;
-
-                const uploadRes = await fetch(`${db.url}/storage/v1/object/somekuvat/${tiedostoNimi}`, {
-                    method: 'POST',
-                    headers: {
-                        'apikey': db.key,
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': valittuTiedosto.type || 'image/jpeg',
-                        'x-upsert': 'true'
-                    },
-                    body: valittuTiedosto
-                });
-
-                if (!uploadRes.ok) {
-                    const errJson = await uploadRes.json().catch(() => ({}));
-                    throw new Error("Kuvan lataus epäonnistui: " + (errJson.message || uploadRes.statusText));
-                }
-
-                lopullinenKuvaUrl = `${db.url}/storage/v1/object/public/somekuvat/${tiedostoNimi}`;
-            }
-
-            const postRes = await fetch(`${db.url}/rest/v1/somepostaukset`, {
-                method: 'POST',
-                headers: {
-                    'apikey': db.key,
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                    'Prefer': 'return=representation'
-                },
-                body: JSON.stringify([{
-                    raw_text: rawTeksti,
-                    kuva_url: lopullinenKuvaUrl,
-                    julkaisuprofiili: profiili,
-                    profile_id: profiili,
-                    target_channel: kanava,
-                    alusta: kanava,
-                    asiakastunnus: nykyinenAsiakastunnus,
-                    status: 'kasittelyssa',
-                    luotu_aika: new Date().toISOString()
-                }])
-            });
-
-            if (!postRes.ok) throw new Error("Tietokantaan tallennus epäonnistui.");
-            const luodutRivit = await postRes.json();
-            const uusiRivi = luodutRivit[0];
-
-            suljeUusiPostausModaali();
-            naytaIlmoitus('🚀 Uusi julkaisu luotu, tekoäly käsittelee tekstiä...');
-            
-            haeValvomonTiedot();
-
-            fetch('https://hook.eu1.make.com/gy1aohydxbsuzftgrxekchsjh5v6nqma', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id: uusiRivi.id,
-                    tyyli: profiili,
-                    rawTeksti: rawTeksti
-                })
-            });
-
-        } catch (err) {
-            alert("Virhe luonnoksen luonnissa: " + err.message);
-        } finally {
-            nappi.disabled = false;
-            nappi.textContent = '🚀 Luo ja käsittele AI:lla';
-        }
     }
 
     function luoKorttiHtml(julkaisu, onHistoria = false) {
