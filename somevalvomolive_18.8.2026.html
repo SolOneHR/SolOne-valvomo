@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SolOne - Somejulkaisujen Valvomo</title>
-        
     <style>
         :root {
             --bg-color: #f8fafc;
@@ -19,7 +18,6 @@
             --text-muted: #64748b;
             --border-color: #e2e8f0;
         }
-
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             background-color: var(--bg-color); 
@@ -28,18 +26,11 @@
             padding: 15px 10px; 
             line-height: 1.5;
         }
-
         @media (min-width: 600px) {
-            body { 
-                padding: 30px 20px; 
-            }
+            body { padding: 30px 20px; }
         }
-
-        .container { 
-            max-width: 850px; 
-            margin: 0 auto; 
-        }
-
+        .container { max-width: 850px; margin: 0 auto; }
+        
         /* Yläbanneri */
         .header-banner {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -52,7 +43,6 @@
             flex-direction: column;
             gap: 15px;
         }
-
         @media (min-width: 600px) {
             .header-banner {
                 flex-direction: row;
@@ -60,7 +50,6 @@
                 align-items: center;
             }
         }
-
         .header-banner h1 {
             font-size: 1.4rem;
             margin: 0 0 6px 0;
@@ -68,19 +57,10 @@
             border: none;
             padding: 0;
         }
-
         @media (min-width: 600px) {
-            .header-banner h1 { 
-                font-size: 1.6rem; 
-            }
+            .header-banner h1 { font-size: 1.6rem; }
         }
-
-        .header-banner p {
-            margin: 0;
-            color: #94a3b8;
-            font-size: 0.95rem;
-        }
-
+        .header-banner p { margin: 0; color: #94a3b8; font-size: 0.95rem; }
         .user-info {
             text-align: left;
             font-size: 0.85rem;
@@ -88,7 +68,6 @@
             border-top: 1px solid #334155;
             padding-top: 10px;
         }
-
         @media (min-width: 600px) {
             .user-info {
                 text-align: right;
@@ -96,7 +75,6 @@
                 padding-top: 0;
             }
         }
-
         .btn-ulos {
             background: transparent;
             border: 1px solid #64748b;
@@ -107,14 +85,11 @@
             font-size: 0.8rem;
             margin-top: 5px;
         }
-
-        .btn-ulos:hover { 
-            background: rgba(255,255,255,0.1); 
-        }
-
+        .btn-ulos:hover { background: rgba(255,255,255,0.1); }
+        
         /* Sisäänrakennettu kirjautumisruutu */
         #kirjautumis-ikkuna {
-            display: block;
+            display: none;
             background: white;
             border-radius: 12px;
             padding: 25px 20px;
@@ -123,7 +98,6 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             border: 1px solid var(--border-color);
         }
-
         .login-kentta {
             width: 100%;
             padding: 10px;
@@ -132,7 +106,7 @@
             border-radius: 6px;
             box-sizing: border-box;
         }
-
+        
         /* Osio-otsikko */
         .osio-otsikko {
             font-size: 1.1rem;
@@ -144,7 +118,6 @@
             flex-direction: column;
             gap: 4px;
         }
-
         @media (min-width: 600px) {
             .osio-otsikko {
                 font-size: 1.2rem;
@@ -153,13 +126,12 @@
                 justify-content: space-between;
             }
         }
-
         .osio-infoteksti {
             font-size: 0.85rem;
             color: var(--text-muted);
             font-weight: normal;
         }
-
+        
         /* Postauskortti */
         .julkaisu-card { 
             background: var(--card-bg); 
@@ -170,32 +142,22 @@
             border: 1px solid var(--border-color); 
             transition: all 0.3s ease;
         }
-
         @media (min-width: 600px) {
-            .julkaisu-card { 
-                padding: 24px; 
-            }
+            .julkaisu-card { padding: 24px; }
         }
-
         .julkaisu-card.historia {
             border: 2px solid var(--success);
             background-color: #f0fdf4;
         }
-
         .julkaisu-card.hylatty-kortti {
             border: 2px solid var(--danger);
             background-color: #fef2f2;
         }
-
-        .tilamerkinta.hylatty-badge {
-            background-color: var(--danger);
-        }
-
+        .tilamerkinta.hylatty-badge { background-color: var(--danger); }
         .julkaisu-card.kasittelyssa {
             border: 2px dashed #f59e0b;
             background-color: #fffbeb;
         }
-
         .tilamerkinta {
             display: inline-block;
             background-color: var(--success);
@@ -207,11 +169,7 @@
             margin-bottom: 12px;
             text-transform: uppercase;
         }
-
-        .tilamerkinta.kasittelyssa-badge {
-            background-color: #f59e0b;
-        }
-
+        .tilamerkinta.kasittelyssa-badge { background-color: #f59e0b; }
         .meta-info { 
             font-size: 0.85rem; 
             color: var(--text-muted); 
@@ -223,14 +181,13 @@
             padding: 10px 14px;
             border-radius: 8px;
         }
-
         @media (min-width: 600px) {
-            .meta-info { 
+            .meta-info {
                 flex-direction: row; 
                 gap: 15px; 
+                flex-wrap: wrap;
             }
         }
-
         .kuva-esikatselu { 
             width: 100%; 
             height: 280px; 
@@ -241,13 +198,9 @@
             border: 1px solid var(--border-color); 
             object-fit: contain;
         }
-
         @media (min-width: 600px) {
-            .kuva-esikatselu { 
-                height: 380px; 
-            }
+            .kuva-esikatselu { height: 380px; }
         }
-
         .field-label {
             font-weight: 600;
             font-size: 0.9rem;
@@ -255,7 +208,6 @@
             margin-bottom: 6px;
             display: block;
         }
-
         .teksti-alue { 
             width: 100%; 
             min-height: 90px; 
@@ -268,21 +220,18 @@
             box-sizing: border-box; 
             margin-bottom: 18px; 
         }
-
         .grid-valinnat {
             display: grid;
             grid-template-columns: 1fr;
             gap: 12px;
             margin-bottom: 18px;
         }
-
         @media (min-width: 600px) {
-            .grid-valinnat { 
-                grid-template-columns: 1fr 1fr; 
-                gap: 15px; 
+            .grid-valinnat {
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
             }
         }
-
         .valinta-kentta, .aika-kentta { 
             width: 100%;
             padding: 10px 12px; 
@@ -292,21 +241,18 @@
             background-color: white; 
             box-sizing: border-box;
         }
-
         .nappi-ryhma { 
             display: flex; 
             flex-direction: column;
             gap: 10px; 
             margin-top: 15px;
         }
-
         @media (min-width: 600px) {
-            .nappi-ryhma { 
+            .nappi-ryhma {
                 flex-direction: row; 
                 flex-wrap: wrap; 
             }
         }
-
         button { 
             padding: 11px 18px; 
             font-size: 0.95rem; 
@@ -321,55 +267,17 @@
             gap: 6px;
             width: 100%;
         }
-
         @media (min-width: 600px) {
-            button { 
-                width: auto; 
-            }
+            button { width: auto; }
         }
-
-        .btn-hyvaksy { 
-            background-color: var(--success); 
-            color: white; 
-        }
-        .btn-hyvaksy:hover { 
-            background-color: var(--success-hover); 
-        }
-
-        .btn-pika { 
-            background-color: var(--primary); 
-            color: white; 
-        }
-        .btn-pika:hover { 
-            background-color: var(--primary-hover); 
-        }
-
-        .btn-reformat { 
-            background-color: #6366f1; 
-            color: white; 
-            margin-top: 24px;
-            height: 42px;
-        }
-        .btn-reformat:hover { 
-            background-color: #4f46e5; 
-        }
-
-        .btn-hylkaa { 
-            background-color: var(--danger); 
-            color: white; 
-        }
-        .btn-hylkaa:hover { 
-            background-color: var(--danger-hover); 
-        }
-
-        .btn-testi { 
-            background-color: #64748b; 
-            color: white; 
-        }
-        .btn-testi:hover { 
-            background-color: #475569; 
-        }
-
+        .btn-hyvaksy { background-color: var(--success); color: white; }
+        .btn-hyvaksy:hover { background-color: var(--success-hover); }
+        .btn-pika { background-color: var(--primary); color: white; }
+        .btn-pika:hover { background-color: var(--primary-hover); }
+        .btn-reformat { background-color: #6366f1; color: white; margin-top: 24px; height: 42px; }
+        .btn-reformat:hover { background-color: #4f46e5; }
+        .btn-hylkaa { background-color: var(--danger); color: white; }
+        .btn-hylkaa:hover { background-color: var(--danger-hover); }
         .tyhja-tila { 
             text-align: center; 
             padding: 30px 20px; 
@@ -379,7 +287,6 @@
             border: 2px dashed #cbd5e1; 
             font-size: 0.95rem;
         }
-
         .ilmoitus { 
             padding: 14px 18px; 
             border-radius: 8px; 
@@ -389,17 +296,8 @@
             font-size: 0.95rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .ilmoitus.success { 
-            background-color: #d1fae5; 
-            color: #065f46; 
-            border: 1px solid #a7f3d0; 
-        }
-        .ilmoitus.error { 
-            background-color: #fee2e2; 
-            color: #991b1b; 
-            border: 1px solid #fecaca; 
-        }
-
+        .ilmoitus.success { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .ilmoitus.error { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         .linkedin-osio {
             opacity: 0.6;
             background-color: #f8fafc;
@@ -411,7 +309,6 @@
     </style>
 </head>
 <body>
-
 <div class="container">
     <div class="header-banner">
         <div>
@@ -497,33 +394,35 @@
     const SUPABASE_URL = 'https://oajnnrrnatqqymmvncxf.supabase.co';
     const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
     
+    // Make.com Webhookit
+    const WEBHOOK_SKENAARIO1_AI = 'https://hook.eu1.make.com/kj0madw2lsdr6qdmer2eyhyfgsd246rg';
+    const WEBHOOK_SKENAARIO2_POST = 'https://hook.eu1.make.com/ebe5uv59ojh9khbq8k1ky5etysge4nx2';
+
     let nykyinenAsiakastunnus = null;
     let automaattiPäivitysAjastin = null;
 
-    function naytaIlmoitus(viesti, tyyppi) {
-        tyyppi = tyyppi || 'success';
+    function naytaIlmoitus(viesti, tyyppi = 'success') {
         const alue = document.getElementById('ilmoitus-alue');
         alue.textContent = viesti;
         alue.className = 'ilmoitus ' + tyyppi;
         alue.style.display = 'block';
         alue.scrollIntoView({ behavior: 'smooth', block: 'center' });
         
-        setTimeout(function() { 
+        setTimeout(() => { 
             alue.style.display = 'none'; 
         }, 6000);
     }
 
     function kaynnistaMakeSkenaario(id) {
-        const webhookUrl = 'https://hook.eu1.make.com/ebe5uv59ojh9khbq8k1ky5etysge4nx2';
-        fetch(webhookUrl, {
+        fetch(WEBHOOK_SKENAARIO2_POST, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: id })
         })
-        .then(function() {
+        .then(() => {
             naytaIlmoitus('🚀 Julkaisu hyväksytty ja lähetetty julkaisujärjestelmään!');
         })
-        .catch(function(error) {
+        .catch(error => {
             console.error('Virhe:', error);
             naytaIlmoitus('⚠️ Virhe yhdistettäessä julkaisujärjestelmään.', 'error');
         });
@@ -540,13 +439,13 @@
         const db = haeSupabaseAsiakas();
 
         try {
-            const res = await fetch(db.url + '/auth/v1/token?grant_type=password', {
+            const res = await fetch(`${db.url}/auth/v1/token?grant_type=password`, {
                 method: 'POST',
                 headers: {
                     'apikey': db.key,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email: email, password: password })
+                body: JSON.stringify({ email, password })
             });
 
             const data = await res.json();
@@ -595,7 +494,6 @@
         document.getElementById('kirjautumis-ikkuna').style.display = 'block';
     }
 
-    // --- UUDEN POSTAUKSEN MODAALIN TOIMINNOT ---
     function avaaUusiPostausModaali() {
         document.getElementById('uusi-raw-teksti').value = '';
         const kuvaInput = document.getElementById('uusi-kuva-tiedosto');
@@ -630,13 +528,13 @@
 
             if (valittuTiedosto) {
                 const tiedostoPaate = valittuTiedosto.name.split('.').pop();
-                const tiedostoNimi = 'live_' + Date.now() + '.' + tiedostoPaate;
+                const tiedostoNimi = `live_${Date.now()}.${tiedostoPaate}`;
 
-                const uploadRes = await fetch(db.url + '/storage/v1/object/somekuvat/' + tiedostoNimi, {
+                const uploadRes = await fetch(`${db.url}/storage/v1/object/somekuvat/${tiedostoNimi}`, {
                     method: 'POST',
                     headers: {
                         'apikey': db.key,
-                        'Authorization': 'Bearer ' + token,
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': valittuTiedosto.type || 'image/jpeg',
                         'x-upsert': 'true'
                     },
@@ -644,18 +542,18 @@
                 });
 
                 if (!uploadRes.ok) {
-                    const errJson = await uploadRes.json().catch(function() { return {}; });
+                    const errJson = await uploadRes.json().catch(() => ({}));
                     throw new Error("Kuvan lataus epäonnistui: " + (errJson.message || uploadRes.statusText));
                 }
 
-                lopullinenKuvaUrl = db.url + '/storage/v1/object/public/somekuvat/' + tiedostoNimi;
+                lopullinenKuvaUrl = `${db.url}/storage/v1/object/public/somekuvat/${tiedostoNimi}`;
             }
 
-            const postRes = await fetch(db.url + '/rest/v1/somepostaukset', {
+            const postRes = await fetch(`${db.url}/rest/v1/somepostaukset`, {
                 method: 'POST',
                 headers: {
                     'apikey': db.key,
-                    'Authorization': 'Bearer ' + token,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                     'Prefer': 'return=representation'
                 },
@@ -678,19 +576,18 @@
 
             suljeUusiPostausModaali();
             naytaIlmoitus('🚀 Uusi julkaisu luotu, tekoäly käsittelee tekstiä...');
-            
             haeValvomonTiedot();
 
-            fetch('https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi', {
+            // Kutsuu Skenaario 1:tä (Uusi Make.com webhook)
+            fetch(WEBHOOK_SKENAARIO1_AI, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     id: uusiRivi.id,
                     tyyli: profiili,
-                    rawTeksti: rawTeksti,
-                    kuvaUrl: lopullinenKuvaUrl
+                    rawTeksti: rawTeksti
                 })
-            });
+            }).catch(err => console.error('Skenaario 1 webhook-virhe:', err));
 
         } catch (err) {
             alert("Virhe luonnoksen luonnissa: " + err.message);
@@ -700,8 +597,15 @@
         }
     }
 
-    function luoKorttiHtml(julkaisu, onHistoria) {
-        onHistoria = onHistoria || false;
+    function muunnaKanavaNimi(kanavaKoodi) {
+        if (!kanavaKoodi) return 'FB & IG';
+        if (kanavaKoodi === 'FB_IG' || kanavaKoodi === 'Molemmat') return 'Molemmat (FB & IG)';
+        if (kanavaKoodi === 'FB' || kanavaKoodi === 'Facebook') return 'Vain Facebook';
+        if (kanavaKoodi === 'IG' || kanavaKoodi === 'Instagram') return 'Vain Instagram';
+        return kanavaKoodi;
+    }
+
+    function luoKorttiHtml(julkaisu, onHistoria = false) {
         const pvm = julkaisu.luotu_aika ? new Date(julkaisu.luotu_aika).toLocaleString('fi-FI') : '-';
         const card = document.createElement('div');
         
@@ -718,8 +622,7 @@
         }
 
         const onHylatty = julkaisu.status === 'hylatty';
-        const onVirhe = julkaisu.status === 'virhe';
-        card.className = 'julkaisu-card' + (onHistoria ? ((onHylatty || onVirhe) ? ' hylatty-kortti' : ' historia') : '');
+        card.className = 'julkaisu-card' + (onHistoria ? (onHylatty ? ' hylatty-kortti' : ' historia') : '');
         card.id = 'card-' + julkaisu.id;
 
         const nykyinenAlusta = (julkaisu.target_channel || julkaisu.alusta || 'FB_IG').trim();
@@ -728,38 +631,19 @@
         let htmlSisalto = '';
 
         if (onHistoria) {
-            if (onVirhe) {
-                htmlSisalto += '<div class="tilamerkinta hylatty-badge">❌ VIRHE JULKAISUSSA</div>';
-            } else if (onHylatty) {
+            if (onHylatty) {
                 htmlSisalto += '<div class="tilamerkinta hylatty-badge">✕ HYLÄTTY</div>';
             } else {
                 htmlSisalto += '<div class="tilamerkinta">✓ JULKAISTU / HYVÄKSYTTY</div>';
             }
         }
         
-        let kanavaTeksti = nykyinenAlusta;
-        if (nykyinenAlusta === 'FB_IG' || nykyinenAlusta === 'Molemmat') {
-            kanavaTeksti = 'Facebook & Instagram';
-        } else if (nykyinenAlusta === 'FB' || nykyinenAlusta === 'Facebook') {
-            kanavaTeksti = 'Vain Facebook';
-        } else if (nykyinenAlusta === 'IG' || nykyinenAlusta === 'Instagram') {
-            kanavaTeksti = 'Vain Instagram';
-        }
-
-        let aikaTeksti = '';
-        if (julkaisu.julkaistu_aika) {
-            aikaTeksti = '<span><strong>Julkaistu:</strong> ' + new Date(julkaisu.julkaistu_aika).toLocaleString('fi-FI') + '</span>';
-        } else if (julkaisu.ajastettu_aika) {
-            aikaTeksti = '<span><strong>Ajastettu:</strong> ' + new Date(julkaisu.ajastettu_aika).toLocaleString('fi-FI') + '</span>';
-        } else if (onHistoria) {
-            aikaTeksti = '<span><strong>Julkaisu:</strong> Välitön</span>';
-        }
-
         htmlSisalto += '<div class="meta-info">';
         htmlSisalto += '<span><strong>Luotu:</strong> ' + pvm + '</span>';
         htmlSisalto += '<span><strong>Profiili:</strong> ' + nykyinenProfiili + '</span>';
-        htmlSisalto += '<span><strong>Kanava:</strong> ' + kanavaTeksti + '</span>';
-        htmlSisalto += aikaTeksti;
+        if (onHistoria) {
+            htmlSisalto += '<span><strong>Kanava:</strong> ' + muunnaKanavaNimi(nykyinenAlusta) + '</span>';
+        }
         htmlSisalto += '</div>';
 
         if (julkaisu.kuva_url) {
@@ -779,10 +663,12 @@
             htmlSisalto += '<img src="' + toimivaKuvaUrl + '" class="kuva-esikatselu" alt="Esikatselukuva" style="object-fit: contain;">';
         }
 
+        // 1. Alkuperäinen teksti (raw_text)
         htmlSisalto += '<label class="field-label">Alkuperäinen teksti (Raw Text):</label>';
         htmlSisalto += '<textarea id="raw-teksti-' + julkaisu.id + '" class="teksti-alue"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.raw_text || '') + '</textarea>';
 
         if (!onHistoria) {
+            // 2. Profiilivalikko ja AI-uudelleenmuotoilunappi
             htmlSisalto += '<div class="grid-valinnat">';
             htmlSisalto += '<div>';
             htmlSisalto += '<label class="field-label">Julkaisuprofiili:</label>';
@@ -807,9 +693,11 @@
             htmlSisalto += '</div>';
         }
 
+        // 3. Muotoiltu Julkaisuteksti (julkaisuteksti)
         htmlSisalto += '<label class="field-label">Julkaisuteksti (FB / IG):</label>';
         htmlSisalto += '<textarea id="teksti-' + julkaisu.id + '" class="teksti-alue" rows="5"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.julkaisuteksti || '') + '</textarea>';
-       
+        
+        // 4. LinkedIn (Tulossa)
         htmlSisalto += '<div class="linkedin-osio">';
         htmlSisalto += '<label class="field-label" style="color: #64748b;">LinkedIn-teksti (Tulossa):</label>';
         htmlSisalto += '<textarea class="teksti-alue" style="margin-bottom:0;" disabled placeholder="LinkedIn-integraatio aktivoituu myöhemmin...">' + (julkaisu.draft_text_linkedin || '') + '</textarea>';
@@ -818,6 +706,7 @@
         if (!onHistoria) {
             const valmisAika = julkaisu.ajastettu_aika ? new Date(julkaisu.ajastettu_aika).toISOString().slice(0,16) : '';
             
+            // 5. Kanava ja Ajastus
             htmlSisalto += '<div class="grid-valinnat">';
             htmlSisalto += '<div>';
             htmlSisalto += '<label class="field-label">Kohdekanava:</label>';
@@ -866,53 +755,45 @@
         }
 
         try {
-            await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
+            await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}`, {
                 method: 'PATCH',
                 headers: {
                     'apikey': db.key,
-                    'Authorization': 'Bearer ' + localStorage.getItem('supabase_token'),
+                    'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
                     'Content-Type': 'application/json',
                     'Prefer': 'return=minimal'
                 },
                 body: JSON.stringify({
+                    julkaisuprofiili: profiili,
                     profile_id: profiili,
-                    raw_text: rawTeksti,
-                    kuvaUrl: document.querySelector('#card-' + id + ' .kuva-esikatselu')?.src || null
+                    raw_text: rawTeksti
                 })
             });
         } catch (e) {
             console.log("Esitallennus epäonnistui, jatketaan Make-pyyntöön.");
         }
-const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
-        const cardElem = document.getElementById('card-' + id) || document.querySelector('.julkaisu-card:not(.historia)');
-        const kuvaElem = cardElem ? cardElem.querySelector('.kuva-esikatselu') : null;
-        const kuvaUrlValmis = kuvaElem ? kuvaElem.src : null;
 
         try {
-            const response = await fetch(webhookUrl, {
+            const response = await fetch(WEBHOOK_SKENAARIO1_AI, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     id: id,
                     tyyli: profiili,
-                    rawTeksti: rawTeksti,
-                    kuvaUrl: kuvaUrlValmis
-                })     
+                    rawTeksti: rawTeksti
+                })
             });
 
             if (response.ok) {
                 naytaIlmoitus('Muotoilupyyntö lähetetty AI:lle! Sivu päivittyy hetken kuluttua.', 'success');
-                setTimeout(function() { haeValvomonTiedot(); }, 4000);
+                setTimeout(() => { haeValvomonTiedot(); }, 4000);
             } else {
                 naytaIlmoitus('❌ Virhe AI-muotoilupyynnössä.', 'error');
-                if (reformatNappi) {
-                    reformatNappi.disabled = false;
-                    reformatNappi.textContent = '🔄 Muotoile AI:lla';
-                }
             }
         } catch (err) {
             console.error('Virhe:', err);
             naytaIlmoitus('❌ Verkkovirhe AI-muotoilussa.', 'error');
+        } finally {
             if (reformatNappi) {
                 reformatNappi.disabled = false;
                 reformatNappi.textContent = '🔄 Muotoile AI:lla';
@@ -930,67 +811,56 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
             automaattiPäivitysAjastin = setTimeout(haeValvomonTiedot, 2000);
             return;
         }
+
         const odottavatLista = document.getElementById('julkaisut-lista');
         const historiaLista = document.getElementById('historia-lista');
         const db = haeSupabaseAsiakas();
-        const token = localStorage.getItem('supabase_token');
-
-        if (!token) {
-            naytaKirjautumisIkkuna();
-            return;
-        }
 
         try {
             const headers = {
                 'apikey': db.key,
-                'Authorization': 'Bearer ' + token,
+                'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
                 'Content-Type': 'application/json'
             };
 
             let asiakasSuodatus = '';
             if (nykyinenAsiakastunnus) {
-                asiakasSuodatus = '&or=(asiakastunnus.eq.' + nykyinenAsiakastunnus + ',asiakastunnus.is.null)';
+                asiakasSuodatus = `&or=(asiakastunnus.eq.${nykyinenAsiakastunnus},asiakastunnus.is.null)`;
             }
 
-            const resOdottavat = await fetch(db.url + '/rest/v1/somepostaukset?status=in.(odotetaan,kasittelyssa)' + asiakasSuodatus + '&order=luotu_aika.asc', { method: 'GET', headers: headers });
-            if (resOdottavat.status === 401) { 
-                kirjauduUlos(); 
-                return; 
-            }
+            const resOdottavat = await fetch(`${db.url}/rest/v1/somepostaukset?status=in.(odotetaan,kasittelyssa)${asiakasSuodatus}&order=luotu_aika.asc`, { method: 'GET', headers });
+            if (resOdottavat.status === 401) { naytaKirjautumisIkkuna(); return; }
             const dataOdottavat = await resOdottavat.json();
 
-            const resHistoria = await fetch(db.url + '/rest/v1/somepostaukset?status=not.in.(odotetaan,kasittelyssa)' + asiakasSuodatus + '&order=luotu_aika.desc&limit=10', { method: 'GET', headers: headers });
+            const resHistoria = await fetch(`${db.url}/rest/v1/somepostaukset?status=not.in.(odotetaan,kasittelyssa)${asiakasSuodatus}&order=luotu_aika.desc&limit=10`, { method: 'GET', headers });
             const dataHistoria = await resHistoria.json();
 
             if (!dataOdottavat || dataOdottavat.length === 0) {
                 odottavatLista.innerHTML = '<div class="tyhja-tila">Ei odottavia somejulkaisuja. Kaikki valmiina!</div>';
             } else {
                 odottavatLista.innerHTML = '';
-                dataOdottavat.forEach(function(julkaisu) { odottavatLista.appendChild(luoKorttiHtml(julkaisu, false)); });
+                dataOdottavat.forEach(julkaisu => odottavatLista.appendChild(luoKorttiHtml(julkaisu, false)));
             }
 
             if (!dataHistoria || dataHistoria.length === 0) {
                 historiaLista.innerHTML = '<div class="tyhja-tila">Ei aiemmin julkaistuja viestejä historiassa.</div>';
             } else {
                 historiaLista.innerHTML = '';
-                dataHistoria.forEach(function(julkaisu) { historiaLista.appendChild(luoKorttiHtml(julkaisu, true)); });
+                dataHistoria.forEach(julkaisu => historiaLista.appendChild(luoKorttiHtml(julkaisu, true)));
             }
 
             if (automaattiPäivitysAjastin) clearTimeout(automaattiPäivitysAjastin);
+            const onKäsittelyssä = dataOdottavat && dataOdottavat.some(j => j.status === 'kasittelyssa');
+            const viive = onKäsittelyssä ? 2000 : 4000;
 
-            const onKäsittelyssä = dataOdottavat && dataOdottavat.some(function(j) { return j.status === 'kasittelyssa'; });
-            const vive = onKäsittelyssä ? 2000 : 4000;
-
-            automaattiPäivitysAjastin = setTimeout(haeValvomonTiedot, vive);
-
+            automaattiPäivitysAjastin = setTimeout(haeValvomonTiedot, viive);
         } catch (error) {
             console.error("Valvomo-virhe:", error);
             naytaIlmoitus('Virhe ladattaessa tietoja: ' + error.message, 'error');
         }
     }
 
-    async function paivitaStatus(id, uusiStatus, kaynnistaPika) {
-        kaynnistaPika = kaynnistaPika || false;
+    async function paivitaStatus(id, uusiStatus, kaynnistaPika = false) {
         const muokattuRawTeksti = document.getElementById('raw-teksti-' + id).value;
         const muokattuTeksti = document.getElementById('teksti-' + id).value;
         const valittuProfiili = document.getElementById('profiili-' + id).value;
@@ -1006,15 +876,14 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
                 profile_id: valittuProfiili,
                 target_channel: valittuKanava,
                 alusta: valittuKanava,
-                ajastettu_aika: valittuAika ? new Date(valittuAika).toISOString() : null,
-                julkaistu_aika: (uusiStatus === 'hyvaksytty' && !valittuAika) ? new Date().toISOString() : null
+                ajastettu_aika: valittuAika ? new Date(valittuAika).toISOString() : null
             };
 
-            const response = await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
+            const response = await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}`, {
                 method: 'PATCH',
                 headers: {
                     'apikey': db.key,
-                    'Authorization': 'Bearer ' + localStorage.getItem('supabase_token'),
+                    'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
                     'Content-Type': 'application/json',
                     'Prefer': 'return=minimal'
                 },
@@ -1044,14 +913,37 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
         }
     }
 
+    setInterval(async () => {
+        const refreshToken = localStorage.getItem('supabase_refresh_token');
+        const db = haeSupabaseAsiakas();
+        if (refreshToken && db) {
+            try {
+                const res = await fetch(`${db.url}/auth/v1/token?grant_type=refresh_token`, {
+                    method: 'POST',
+                    headers: { 'apikey': db.key, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refresh_token: refreshToken })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    localStorage.setItem('supabase_token', data.access_token);
+                    localStorage.setItem('supabase_refresh_token', data.refresh_token);
+                }
+            } catch (e) {
+                console.log("Automaattipäivitys odottaa seuraavaa sykliä.");
+            }
+        }
+    }, 5 * 60 * 1000);
+
+    window.addEventListener('load', alustaNakyma);
+
     async function paivitaProfiiliKantaan(id, uusiProfiili) {
         const db = haeSupabaseAsiakas();
         try {
-            await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
+            await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}`, {
                 method: 'PATCH',
                 headers: {
                     'apikey': db.key,
-                    'Authorization': 'Bearer ' + localStorage.getItem('supabase_token'),
+                    'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
                     'Content-Type': 'application/json',
                     'Prefer': 'return=minimal'
                 },
@@ -1074,11 +966,11 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
         const token = localStorage.getItem('supabase_token');
 
         try {
-            const res = await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id + '&select=alkuperainen_ai_teksti', {
+            const res = await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}&select=alkuperainen_ai_teksti`, {
                 method: 'GET',
                 headers: {
                     'apikey': db.key,
-                    'Authorization': 'Bearer ' + token,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
@@ -1090,11 +982,11 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
                 return;
             }
 
-            const updateRes = await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
+            const updateRes = await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}`, {
                 method: 'PATCH',
                 headers: {
                     'apikey': db.key,
-                    'Authorization': 'Bearer ' + token,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                     'Prefer': 'return=minimal'
                 },
@@ -1113,36 +1005,11 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
             }
 
             naytaIlmoitus('✓ Ensimmäinen versio palautettu ja tallennettu!', 'success');
-
         } catch (err) {
             console.error("Virhe palautuksessa:", err);
             naytaIlmoitus('❌ Virhe palautettaessa 1. versiota: ' + err.message, 'error');
         }
     }
-
-    setInterval(async function() {
-        const refreshToken = localStorage.getItem('supabase_refresh_token');
-        const db = haeSupabaseAsiakas();
-        if (refreshToken && db) {
-            try {
-                const res = await fetch(db.url + '/auth/v1/token?grant_type=refresh_token', {
-                    method: 'POST',
-                    headers: { 'apikey': db.key, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ refresh_token: refreshToken })
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    localStorage.setItem('supabase_token', data.access_token);
-                    localStorage.setItem('supabase_refresh_token', data.refresh_token);
-                }
-            } catch (e) {
-                console.log("Automaattipäivitys odottaa seuraavaa sykliä.");
-            }
-        }
-    }, 5 * 60 * 1000);
-
-    window.addEventListener('load', alustaNakyma);
 </script>
-
 </body>
 </html>

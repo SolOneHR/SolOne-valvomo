@@ -114,7 +114,7 @@
 
         /* Sisäänrakennettu kirjautumisruutu */
         #kirjautumis-ikkuna {
-            display: block;
+            display: none;
             background: white;
             border-radius: 12px;
             padding: 25px 20px;
@@ -183,13 +183,13 @@
         }
 
         .julkaisu-card.hylatty-kortti {
-            border: 2px solid var(--danger);
-            background-color: #fef2f2;
-        }
+    border: 2px solid var(--danger);
+    background-color: #fef2f2;
+}
 
-        .tilamerkinta.hylatty-badge {
-            background-color: var(--danger);
-        }
+.tilamerkinta.hylatty-badge {
+    background-color: var(--danger);
+}
 
         .julkaisu-card.kasittelyssa {
             border: 2px dashed #f59e0b;
@@ -500,15 +500,14 @@
     let nykyinenAsiakastunnus = null;
     let automaattiPäivitysAjastin = null;
 
-    function naytaIlmoitus(viesti, tyyppi) {
-        tyyppi = tyyppi || 'success';
+    function naytaIlmoitus(viesti, tyyppi = 'success') {
         const alue = document.getElementById('ilmoitus-alue');
         alue.textContent = viesti;
         alue.className = 'ilmoitus ' + tyyppi;
         alue.style.display = 'block';
         alue.scrollIntoView({ behavior: 'smooth', block: 'center' });
         
-        setTimeout(function() { 
+        setTimeout(() => { 
             alue.style.display = 'none'; 
         }, 6000);
     }
@@ -520,10 +519,10 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: id })
         })
-        .then(function() {
+        .then(() => {
             naytaIlmoitus('🚀 Julkaisu hyväksytty ja lähetetty julkaisujärjestelmään!');
         })
-        .catch(function(error) {
+        .catch(error => {
             console.error('Virhe:', error);
             naytaIlmoitus('⚠️ Virhe yhdistettäessä julkaisujärjestelmään.', 'error');
         });
@@ -540,13 +539,13 @@
         const db = haeSupabaseAsiakas();
 
         try {
-            const res = await fetch(db.url + '/auth/v1/token?grant_type=password', {
+            const res = await fetch(`${db.url}/auth/v1/token?grant_type=password`, {
                 method: 'POST',
                 headers: {
                     'apikey': db.key,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email: email, password: password })
+                body: JSON.stringify({ email, password })
             });
 
             const data = await res.json();
@@ -630,13 +629,13 @@
 
             if (valittuTiedosto) {
                 const tiedostoPaate = valittuTiedosto.name.split('.').pop();
-                const tiedostoNimi = 'live_' + Date.now() + '.' + tiedostoPaate;
+                const tiedostoNimi = `live_${Date.now()}.${tiedostoPaate}`;
 
-                const uploadRes = await fetch(db.url + '/storage/v1/object/somekuvat/' + tiedostoNimi, {
+                const uploadRes = await fetch(`${db.url}/storage/v1/object/somekuvat/${tiedostoNimi}`, {
                     method: 'POST',
                     headers: {
                         'apikey': db.key,
-                        'Authorization': 'Bearer ' + token,
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': valittuTiedosto.type || 'image/jpeg',
                         'x-upsert': 'true'
                     },
@@ -644,18 +643,18 @@
                 });
 
                 if (!uploadRes.ok) {
-                    const errJson = await uploadRes.json().catch(function() { return {}; });
+                    const errJson = await uploadRes.json().catch(() => ({}));
                     throw new Error("Kuvan lataus epäonnistui: " + (errJson.message || uploadRes.statusText));
                 }
 
-                lopullinenKuvaUrl = db.url + '/storage/v1/object/public/somekuvat/' + tiedostoNimi;
+                lopullinenKuvaUrl = `${db.url}/storage/v1/object/public/somekuvat/${tiedostoNimi}`;
             }
 
-            const postRes = await fetch(db.url + '/rest/v1/somepostaukset', {
+            const postRes = await fetch(`${db.url}/rest/v1/somepostaukset`, {
                 method: 'POST',
                 headers: {
                     'apikey': db.key,
-                    'Authorization': 'Bearer ' + token,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                     'Prefer': 'return=representation'
                 },
@@ -681,14 +680,13 @@
             
             haeValvomonTiedot();
 
-            fetch('https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi', {
+            fetch('https://hook.eu1.make.com/gy1aohydxbsuzftgrxekchsjh5v6nqma', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     id: uusiRivi.id,
                     tyyli: profiili,
-                    rawTeksti: rawTeksti,
-                    kuvaUrl: lopullinenKuvaUrl
+                    rawTeksti: rawTeksti
                 })
             });
 
@@ -700,8 +698,7 @@
         }
     }
 
-    function luoKorttiHtml(julkaisu, onHistoria) {
-        onHistoria = onHistoria || false;
+    function luoKorttiHtml(julkaisu, onHistoria = false) {
         const pvm = julkaisu.luotu_aika ? new Date(julkaisu.luotu_aika).toLocaleString('fi-FI') : '-';
         const card = document.createElement('div');
         
@@ -718,48 +715,26 @@
         }
 
         const onHylatty = julkaisu.status === 'hylatty';
-        const onVirhe = julkaisu.status === 'virhe';
-        card.className = 'julkaisu-card' + (onHistoria ? ((onHylatty || onVirhe) ? ' hylatty-kortti' : ' historia') : '');
-        card.id = 'card-' + julkaisu.id;
 
-        const nykyinenAlusta = (julkaisu.target_channel || julkaisu.alusta || 'FB_IG').trim();
-        const nykyinenProfiili = (julkaisu.julkaisuprofiili || julkaisu.profile_id || 'Yleinen').trim();
+card.className = 'julkaisu-card' + (onHistoria ? (onHylatty ? ' hylatty-kortti' : ' historia') : '');
+card.id = 'card-' + julkaisu.id;
 
-        let htmlSisalto = '';
+const nykyinenAlusta = (julkaisu.target_channel || julkaisu.alusta || 'FB_IG').trim();
+const nykyinenProfiili = (julkaisu.julkaisuprofiili || julkaisu.profile_id || 'Yleinen').trim();
 
-        if (onHistoria) {
-            if (onVirhe) {
-                htmlSisalto += '<div class="tilamerkinta hylatty-badge">❌ VIRHE JULKAISUSSA</div>';
-            } else if (onHylatty) {
-                htmlSisalto += '<div class="tilamerkinta hylatty-badge">✕ HYLÄTTY</div>';
-            } else {
-                htmlSisalto += '<div class="tilamerkinta">✓ JULKAISTU / HYVÄKSYTTY</div>';
-            }
-        }
+let htmlSisalto = '';
+
+if (onHistoria) {
+    if (onHylatty) {
+        htmlSisalto += '<div class="tilamerkinta hylatty-badge">✕ HYLÄTTY</div>';
+    } else {
+        htmlSisalto += '<div class="tilamerkinta">✓ JULKAISTU / HYVÄKSYTTY</div>';
+    }
+}
         
-        let kanavaTeksti = nykyinenAlusta;
-        if (nykyinenAlusta === 'FB_IG' || nykyinenAlusta === 'Molemmat') {
-            kanavaTeksti = 'Facebook & Instagram';
-        } else if (nykyinenAlusta === 'FB' || nykyinenAlusta === 'Facebook') {
-            kanavaTeksti = 'Vain Facebook';
-        } else if (nykyinenAlusta === 'IG' || nykyinenAlusta === 'Instagram') {
-            kanavaTeksti = 'Vain Instagram';
-        }
-
-        let aikaTeksti = '';
-        if (julkaisu.julkaistu_aika) {
-            aikaTeksti = '<span><strong>Julkaistu:</strong> ' + new Date(julkaisu.julkaistu_aika).toLocaleString('fi-FI') + '</span>';
-        } else if (julkaisu.ajastettu_aika) {
-            aikaTeksti = '<span><strong>Ajastettu:</strong> ' + new Date(julkaisu.ajastettu_aika).toLocaleString('fi-FI') + '</span>';
-        } else if (onHistoria) {
-            aikaTeksti = '<span><strong>Julkaisu:</strong> Välitön</span>';
-        }
-
         htmlSisalto += '<div class="meta-info">';
         htmlSisalto += '<span><strong>Luotu:</strong> ' + pvm + '</span>';
         htmlSisalto += '<span><strong>Profiili:</strong> ' + nykyinenProfiili + '</span>';
-        htmlSisalto += '<span><strong>Kanava:</strong> ' + kanavaTeksti + '</span>';
-        htmlSisalto += aikaTeksti;
         htmlSisalto += '</div>';
 
         if (julkaisu.kuva_url) {
@@ -779,10 +754,12 @@
             htmlSisalto += '<img src="' + toimivaKuvaUrl + '" class="kuva-esikatselu" alt="Esikatselukuva" style="object-fit: contain;">';
         }
 
+        // 1. Alkuperäinen teksti (raw_text)
         htmlSisalto += '<label class="field-label">Alkuperäinen teksti (Raw Text):</label>';
         htmlSisalto += '<textarea id="raw-teksti-' + julkaisu.id + '" class="teksti-alue"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.raw_text || '') + '</textarea>';
 
         if (!onHistoria) {
+            // 2. Profiilivalikko ja AI-uudelleenmuotoilunappi
             htmlSisalto += '<div class="grid-valinnat">';
             htmlSisalto += '<div>';
             htmlSisalto += '<label class="field-label">Julkaisuprofiili:</label>';
@@ -800,6 +777,7 @@
             htmlSisalto += '<div style="display: flex; gap: 8px;">';
             htmlSisalto += '<button type="button" id="btn-reformat-' + julkaisu.id + '" class="btn-reformat" onclick="muotoileAIlla(\'' + julkaisu.id + '\')">🔄 Muotoile AI:lla</button>';
             
+            // Tarkistetaan löytyykö alkuperäistä AI-versiota
             if (julkaisu.alkuperainen_ai_teksti) {
                 htmlSisalto += '<button type="button" class="btn-reformat" style="background-color: #64748b;" onclick="palautaEnsimmainenVersio(\'' + julkaisu.id + '\')">↩️ Palauta 1. versio</button>';
             }
@@ -807,9 +785,11 @@
             htmlSisalto += '</div>';
         }
 
+        // 3. Muotoiltu Julkaisuteksti (julkaisuteksti)
         htmlSisalto += '<label class="field-label">Julkaisuteksti (FB / IG):</label>';
         htmlSisalto += '<textarea id="teksti-' + julkaisu.id + '" class="teksti-alue" rows="5"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.julkaisuteksti || '') + '</textarea>';
        
+        // 4. LinkedIn (Tulossa)
         htmlSisalto += '<div class="linkedin-osio">';
         htmlSisalto += '<label class="field-label" style="color: #64748b;">LinkedIn-teksti (Tulossa):</label>';
         htmlSisalto += '<textarea class="teksti-alue" style="margin-bottom:0;" disabled placeholder="LinkedIn-integraatio aktivoituu myöhemmin...">' + (julkaisu.draft_text_linkedin || '') + '</textarea>';
@@ -818,6 +798,7 @@
         if (!onHistoria) {
             const valmisAika = julkaisu.ajastettu_aika ? new Date(julkaisu.ajastettu_aika).toISOString().slice(0,16) : '';
             
+            // 5. Kanava ja Ajastus
             htmlSisalto += '<div class="grid-valinnat">';
             htmlSisalto += '<div>';
             htmlSisalto += '<label class="field-label">Kohdekanava:</label>';
@@ -866,27 +847,25 @@
         }
 
         try {
-            await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
+            await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}`, {
                 method: 'PATCH',
                 headers: {
                     'apikey': db.key,
-                    'Authorization': 'Bearer ' + localStorage.getItem('supabase_token'),
+                    'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
                     'Content-Type': 'application/json',
                     'Prefer': 'return=minimal'
                 },
                 body: JSON.stringify({
+                    julkaisuprofiili: profiili,
                     profile_id: profiili,
-                    raw_text: rawTeksti,
-                    kuvaUrl: document.querySelector('#card-' + id + ' .kuva-esikatselu')?.src || null
+                    raw_text: rawTeksti
                 })
             });
         } catch (e) {
             console.log("Esitallennus epäonnistui, jatketaan Make-pyyntöön.");
         }
-const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
-        const cardElem = document.getElementById('card-' + id) || document.querySelector('.julkaisu-card:not(.historia)');
-        const kuvaElem = cardElem ? cardElem.querySelector('.kuva-esikatselu') : null;
-        const kuvaUrlValmis = kuvaElem ? kuvaElem.src : null;
+
+        const webhookUrl = 'https://hook.eu1.make.com/gy1aohydxbsuzftgrxekchsjh5v6nqma';
 
         try {
             const response = await fetch(webhookUrl, {
@@ -895,14 +874,13 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
                 body: JSON.stringify({
                     id: id,
                     tyyli: profiili,
-                    rawTeksti: rawTeksti,
-                    kuvaUrl: kuvaUrlValmis
-                })     
+                    rawTeksti: rawTeksti
+                })
             });
 
             if (response.ok) {
                 naytaIlmoitus('Muotoilupyyntö lähetetty AI:lle! Sivu päivittyy hetken kuluttua.', 'success');
-                setTimeout(function() { haeValvomonTiedot(); }, 4000);
+                setTimeout(() => { location.reload(); }, 10000);
             } else {
                 naytaIlmoitus('❌ Virhe AI-muotoilupyynnössä.', 'error');
                 if (reformatNappi) {
@@ -921,6 +899,7 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
     }
 
     async function haeValvomonTiedot() {
+    // Jos käyttäjä muokkaa parhaillaan tekstiä tai valikoita, älä ylikirjoita näkymää
         const aktiivinenElementti = document.activeElement;
         const kirjoittaaParhaillaan = aktiivinenElementti && 
             ['TEXTAREA', 'INPUT', 'SELECT'].includes(aktiivinenElementti.tagName);
@@ -933,64 +912,55 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
         const odottavatLista = document.getElementById('julkaisut-lista');
         const historiaLista = document.getElementById('historia-lista');
         const db = haeSupabaseAsiakas();
-        const token = localStorage.getItem('supabase_token');
-
-        if (!token) {
-            naytaKirjautumisIkkuna();
-            return;
-        }
 
         try {
             const headers = {
                 'apikey': db.key,
-                'Authorization': 'Bearer ' + token,
+                'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
                 'Content-Type': 'application/json'
             };
 
             let asiakasSuodatus = '';
             if (nykyinenAsiakastunnus) {
-                asiakasSuodatus = '&or=(asiakastunnus.eq.' + nykyinenAsiakastunnus + ',asiakastunnus.is.null)';
+                asiakasSuodatus = `&or=(asiakastunnus.eq.${nykyinenAsiakastunnus},asiakastunnus.is.null)`;
             }
 
-            const resOdottavat = await fetch(db.url + '/rest/v1/somepostaukset?status=in.(odotetaan,kasittelyssa)' + asiakasSuodatus + '&order=luotu_aika.asc', { method: 'GET', headers: headers });
-            if (resOdottavat.status === 401) { 
-                kirjauduUlos(); 
-                return; 
-            }
+            const resOdottavat = await fetch(`${db.url}/rest/v1/somepostaukset?status=in.(odotetaan,kasittelyssa)${asiakasSuodatus}&order=luotu_aika.asc`, { method: 'GET', headers });
+            if (resOdottavat.status === 401) { naytaKirjautumisIkkuna(); return; }
             const dataOdottavat = await resOdottavat.json();
 
-            const resHistoria = await fetch(db.url + '/rest/v1/somepostaukset?status=not.in.(odotetaan,kasittelyssa)' + asiakasSuodatus + '&order=luotu_aika.desc&limit=10', { method: 'GET', headers: headers });
+            const resHistoria = await fetch(`${db.url}/rest/v1/somepostaukset?status=not.in.(odotetaan,kasittelyssa)${asiakasSuodatus}&order=luotu_aika.desc&limit=10`, { method: 'GET', headers });
             const dataHistoria = await resHistoria.json();
 
             if (!dataOdottavat || dataOdottavat.length === 0) {
                 odottavatLista.innerHTML = '<div class="tyhja-tila">Ei odottavia somejulkaisuja. Kaikki valmiina!</div>';
             } else {
                 odottavatLista.innerHTML = '';
-                dataOdottavat.forEach(function(julkaisu) { odottavatLista.appendChild(luoKorttiHtml(julkaisu, false)); });
+                dataOdottavat.forEach(julkaisu => odottavatLista.appendChild(luoKorttiHtml(julkaisu, false)));
             }
 
-            if (!dataHistoria || dataHistoria.length === 0) {
-                historiaLista.innerHTML = '<div class="tyhja-tila">Ei aiemmin julkaistuja viestejä historiassa.</div>';
-            } else {
-                historiaLista.innerHTML = '';
-                dataHistoria.forEach(function(julkaisu) { historiaLista.appendChild(luoKorttiHtml(julkaisu, true)); });
-            }
+          if (!dataHistoria || dataHistoria.length === 0) {
+             historiaLista.innerHTML = '<div class="tyhja-tila">Ei aiemmin julkaistuja viestejä historiassa.</div>';
+         } else {
+             historiaLista.innerHTML = '';
+             dataHistoria.forEach(julkaisu => historiaLista.appendChild(luoKorttiHtml(julkaisu, true)));
+         }
 
-            if (automaattiPäivitysAjastin) clearTimeout(automaattiPäivitysAjastin);
+         // --- AUTOMAATTIPÄIVITYS ---
+         if (automaattiPäivitysAjastin) clearTimeout(automaattiPäivitysAjastin);
 
-            const onKäsittelyssä = dataOdottavat && dataOdottavat.some(function(j) { return j.status === 'kasittelyssa'; });
-            const vive = onKäsittelyssä ? 2000 : 4000;
+         const onKäsittelyssä = dataOdottavat && dataOdottavat.some(j => j.status === 'kasittelyssa');
+         const vive = onKäsittelyssä ? 2000 : 4000;
 
-            automaattiPäivitysAjastin = setTimeout(haeValvomonTiedot, vive);
+         automaattiPäivitysAjastin = setTimeout(haeValvomonTiedot, vive);
 
-        } catch (error) {
-            console.error("Valvomo-virhe:", error);
-            naytaIlmoitus('Virhe ladattaessa tietoja: ' + error.message, 'error');
-        }
-    }
+     } catch (error) {
+         console.error("Valvomo-virhe:", error);
+         naytaIlmoitus('Virhe ladattaessa tietoja: ' + error.message, 'error');
+     }
+ }
 
-    async function paivitaStatus(id, uusiStatus, kaynnistaPika) {
-        kaynnistaPika = kaynnistaPika || false;
+    async function paivitaStatus(id, uusiStatus, kaynnistaPika = false) {
         const muokattuRawTeksti = document.getElementById('raw-teksti-' + id).value;
         const muokattuTeksti = document.getElementById('teksti-' + id).value;
         const valittuProfiili = document.getElementById('profiili-' + id).value;
@@ -1006,15 +976,14 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
                 profile_id: valittuProfiili,
                 target_channel: valittuKanava,
                 alusta: valittuKanava,
-                ajastettu_aika: valittuAika ? new Date(valittuAika).toISOString() : null,
-                julkaistu_aika: (uusiStatus === 'hyvaksytty' && !valittuAika) ? new Date().toISOString() : null
+                ajastettu_aika: valittuAika ? new Date(valittuAika).toISOString() : null
             };
 
-            const response = await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
+            const response = await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}`, {
                 method: 'PATCH',
                 headers: {
                     'apikey': db.key,
-                    'Authorization': 'Bearer ' + localStorage.getItem('supabase_token'),
+                    'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
                     'Content-Type': 'application/json',
                     'Prefer': 'return=minimal'
                 },
@@ -1044,14 +1013,38 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
         }
     }
 
+    setInterval(async () => {
+        const refreshToken = localStorage.getItem('supabase_refresh_token');
+        const db = haeSupabaseAsiakas();
+        if (refreshToken && db) {
+            try {
+                const res = await fetch(`${db.url}/auth/v1/token?grant_type=refresh_token`, {
+                    method: 'POST',
+                    headers: { 'apikey': db.key, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refresh_token: refreshToken })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    localStorage.setItem('supabase_token', data.access_token);
+                    localStorage.setItem('supabase_refresh_token', data.refresh_token);
+                }
+            } catch (e) {
+                console.log("Automaattipäivitys odottaa seuraavaa sykliä.");
+            }
+        }
+    }, 5 * 60 * 1000);
+
+
+window.addEventListener('load', alustaNakyma);
+
     async function paivitaProfiiliKantaan(id, uusiProfiili) {
         const db = haeSupabaseAsiakas();
         try {
-            await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
+            await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}`, {
                 method: 'PATCH',
                 headers: {
                     'apikey': db.key,
-                    'Authorization': 'Bearer ' + localStorage.getItem('supabase_token'),
+                    'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`,
                     'Content-Type': 'application/json',
                     'Prefer': 'return=minimal'
                 },
@@ -1074,11 +1067,12 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
         const token = localStorage.getItem('supabase_token');
 
         try {
-            const res = await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id + '&select=alkuperainen_ai_teksti', {
+            // 1. Haetaan 1. versio Supabasesta
+            const res = await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}&select=alkuperainen_ai_teksti`, {
                 method: 'GET',
                 headers: {
                     'apikey': db.key,
-                    'Authorization': 'Bearer ' + token,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
@@ -1090,11 +1084,12 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
                 return;
             }
 
-            const updateRes = await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
+            // 2. Päivitetään haettu 1. versio Supabasessa julkaisutekstiksi
+            const updateRes = await fetch(`${db.url}/rest/v1/somepostaukset?id=eq.${id}`, {
                 method: 'PATCH',
                 headers: {
                     'apikey': db.key,
-                    'Authorization': 'Bearer ' + token,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                     'Prefer': 'return=minimal'
                 },
@@ -1107,6 +1102,7 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
                 throw new Error("Tallennus tietokantaan epäonnistui.");
             }
 
+            // 3. Päivitetään tekstikenttä ruudulle
             const tekstikentta = document.getElementById('teksti-' + id);
             if (tekstikentta) {
                 tekstikentta.value = haettuTeksti;
@@ -1119,29 +1115,6 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
             naytaIlmoitus('❌ Virhe palautettaessa 1. versiota: ' + err.message, 'error');
         }
     }
-
-    setInterval(async function() {
-        const refreshToken = localStorage.getItem('supabase_refresh_token');
-        const db = haeSupabaseAsiakas();
-        if (refreshToken && db) {
-            try {
-                const res = await fetch(db.url + '/auth/v1/token?grant_type=refresh_token', {
-                    method: 'POST',
-                    headers: { 'apikey': db.key, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ refresh_token: refreshToken })
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    localStorage.setItem('supabase_token', data.access_token);
-                    localStorage.setItem('supabase_refresh_token', data.refresh_token);
-                }
-            } catch (e) {
-                console.log("Automaattipäivitys odottaa seuraavaa sykliä.");
-            }
-        }
-    }, 5 * 60 * 1000);
-
-    window.addEventListener('load', alustaNakyma);
 </script>
 
 </body>
