@@ -541,6 +541,62 @@
     
     let nykyinenAsiakastunnus = null;
     let automaattiPäivitysAjastin = null;
+    async function optimoiKuva(tiedosto) {
+        if (!tiedosto) return tiedosto;
+        
+        const onKuva = (tiedosto.type && tiedosto.type.startsWith('image/')) || 
+                       /\.(jpe?g|png|webp|heic)$/i.test(tiedosto.name);
+        
+        if (!onKuva) return tiedosto;
+
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const MAX_KOKO = 1920;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_KOKO) {
+                            height = Math.round((height * MAX_KOKO) / width);
+                            width = MAX_KOKO;
+                        }
+                    } else {
+                        if (height > MAX_KOKO) {
+                            width = Math.round((width * MAX_KOKO) / height);
+                            height = MAX_KOKO;
+                        }
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob((blob) => {
+                        if (!blob) {
+                            resolve(tiedosto);
+                            return;
+                        }
+                        const uusiNimi = tiedosto.name.replace(/\.[^/.]+$/, "") + ".jpg";
+                        const optimoituTiedosto = new File([blob], uusiNimi, {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        resolve(optimoituTiedosto);
+                    }, 'image/jpeg', 0.85);
+                };
+                img.onerror = () => resolve(tiedosto);
+                img.src = e.target.result;
+            };
+            reader.onerror = () => resolve(tiedosto);
+            reader.readAsDataURL(tiedosto);
+        });
+    }
 
     function naytaIlmoitus(viesti, tyyppi) {
         tyyppi = tyyppi || 'success';
@@ -839,19 +895,20 @@
             let lopullinenKuvaUrl = null;
 
             if (valittuTiedosto) {
-                const tiedostoPaate = valittuTiedosto.name.split('.').pop();
-                const tiedostoNimi = 'live_' + Date.now() + '.' + tiedostoPaate;
+                const kasiteltyTiedosto = await optimoiKuva(valittuTiedosto);
+                const tiedostoNimi = 'live_' + Date.now() + '.jpg';
 
                 const uploadRes = await fetch(db.url + '/storage/v1/object/somekuvat/' + tiedostoNimi, {
                     method: 'POST',
                     headers: {
                         'apikey': db.key,
                         'Authorization': 'Bearer ' + token,
-                        'Content-Type': valittuTiedosto.type || 'image/jpeg',
+                        'Content-Type': 'image/jpeg',
                         'x-upsert': 'true'
                     },
-                    body: valittuTiedosto
+                    body: kasiteltyTiedosto
                 });
+            
 
                 if (!uploadRes.ok) {
                     const errJson = await uploadRes.json().catch(function() { return {}; });
@@ -1235,8 +1292,8 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
                 profile_id: valittuProfiili,
                 target_channel: valittuKanava,
                 alusta: valittuKanava,
-                ajastettu_aika: valittuAika ? new Date(valittuAika).toISOString() : null,
-                julkaistu_aika: (uusiStatus === 'hyvaksytty' && !valittuAika) ? new Date().toISOString() : null
+                ajastettu_aika: kaynnistaPika ? null : (valittuAika ? new Date(valittuAika).toISOString() : null),
+                julkaistu_aika: (kaynnistaPika || (uusiStatus === 'hyvaksytty' && !valittuAika)) ? new Date().toISOString() : null
             };
 
             const response = await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
@@ -1269,6 +1326,7 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
     async function alustaNakyma() {
         const onneksiVoimassa = await tarkistaIstunto();
         if (onneksiVoimassa) {
+            await lataaKayttajanSometilit();
             haeValvomonTiedot();
         }
     }

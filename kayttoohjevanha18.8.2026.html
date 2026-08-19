@@ -141,7 +141,6 @@
         .btn-hyvaksy { background-color: var(--success); }
         .btn-pika { background-color: var(--primary); }
         .btn-hylkaa { background-color: var(--danger); }
-        .btn-asetukset { background-color: var(--secondary); }
 
         ul, ol {
             padding-left: 20px;
@@ -159,25 +158,12 @@
 
     <div class="header-banner">
         <h1>SolOne Somevalvomo – Käyttöohje</h1>
-        <p>Opas somejulkaisujen luomiseen, tarkistukseen, AI-muotoiluun, sivujen hallintaan ja tuotantojulkaisuun.</p>
+        <p>Tämä ohje opastaa uuden käyttäjän somejulkaisujen automaattiseen seurantaan, muokkaukseen, AI-muotoiluun ja julkaisuun.</p>
     </div>
 
     <div class="vinkki-laatikko">
-        <strong>💡 Miten julkaisuja luodaan Valvomoon?</strong><br>
-        Julkaisuja voi syöttää järjestelmään kahdella tavalla:
-        <ul>
-            <li><strong>Sähköpostilla:</strong> Lähetä viesti ja kuva järjestelmän osoitteeseen.</li>
-            <li><strong>Suoraan Valvomosta:</strong> Klikkaa yläpalkin painiketta <span class="nappi-esimerkki btn-pika">➕ Uusi luonnos</span> ja lataa kuva puhelimestasi tai koneeltasi.</li>
-        </ul>
-        <strong>Sivua ei tarvitse päivittää käsin</strong> – Valvomo hakee muutokset itsekseen taustalla. Kun kirjoitat tekstikenttään, automaattipäivitys vetäytyy heti sivuun, ettei työsi ylikirjoitu kesken kaiken!
-    </div>
-
-    <div class="huomio-laatikko">
-        <strong>📷 Kuvaohje ja tiedostokoot:</strong><br>
-        <ul>
-            <li><strong>Sähköpostilla lähetettäessä:</strong> Kuvan maksimikoko on <strong>8 Mt</strong> (suositus 1–4 Mt). Jos liität täystarkan kuvan puhelimella, valitse sähköpostiohjelman kysyessä lähetyskooksi <em>"Suuri"</em> tai <em>"Keskikoko"</em>. Yli 8 Mt liitteet hylätään automaattisesti virhetilaan, jotta julkaisujärjestelmä ei jumitu.</li>
-            <li><strong>Valvomon kautta ladattaessa:</strong> Verkkosivu optimoi ja skaalaa suuretkin puhelinkuvat automaattisesti ennen tallennusta, joten tiedostokoko pysyy aina optimaalisena.</li>
-        </ul>
+        <strong>💡 Miten julkaisut tulevat Valvomoon?</strong><br>
+        Kun lähetät sähköpostia (ja mahollisen kuvan) järjestelmään liitettyyn osoitteeseen, se siirtyy automaattisesti Somevalvomoon käsiteltäväksi. <strong>Sivua ei tarvitse päivittää käsin</strong> – Valvomo päivittää ruudun itsekseen taustalla! Kun muokkaat tekstikenttää, automaattipäivitys vetäytyy heti syrjään, ettei työsi ylikirjoituta kesken kaiken.
     </div>
 
     <div class="osio-otsikko">📱 Julkaisun käsittely vaihe vaiheelta</div>
@@ -186,17 +172,13 @@
     <div class="ohje-kortti">
         <div class="vaihe-otsikko">
             <span class="vaihe-numero">1</span>
-            Kirjautuminen ja sometilien hallinta
+            Kirjautuminen ja automaattinen taustaseuranta
         </div>
-        <p>Kirjaudu sisään sähköpostillasi ja salasanallasi. Yläbannerista löydät työkalut tilien ja luonnosten hallintaan:</p>
-        <ul>
-            <li><span class="nappi-esimerkki btn-asetukset">⚙️ Sometilit</span>: Voit lisätä useita eri Facebook- ja Instagram-sivuja (Page ID & IG Account ID), asettaa oletussivun tai poistaa vanhoja kytkentöjä.</li>
-            <li><span class="nappi-esimerkki btn-pika">➕ Uusi luonnos</span>: Voit luoda uuden somepostauksen suoraan selaimessa ja valita heti kohdesivun ja julkaisuprofiilin.</li>
-        </ul>
+        <p>Avaa Somevalvomo selaimessasi ja kirjaudu sisään sähköpostillasi ja salasanallasi. Valvomo aloittaa heti saapuvien viestien automaattisen seurannan.</p>
         
         <div class="odotus-laatikko">
             <strong>⏳ Uusi julkaisu käsittelyssä -vaihe:</strong><br>
-            Kun uusi julkaisu saapuu (sähköpostitse tai selaimesta), Valvomoon ilmestyy keltainen katkoviiva-kortti. Tekoäly luonnostelee tekstin valmiiksi noin 15–20 sekunnissa, minkä jälkeen kortti muuttuu itsekseen vihreäksi muokkaustilaksi.
+            Kun lähetät sähköpostin, Valvomoon ilmestyy ensin keltainen katkoviiva-kortti. Tämä tarkoittaa, että tekoäly ja kuvalinkit valmistuvat taustalla. Kun valmista tulee (noin 15–20 sekunnissa), keltainen kortti muuttuu <strong>itsekseen vihreäksi muokkaustilaksi</strong> ilman, että kosket ruutuun!
         </div>
     </div>
 
@@ -204,14 +186,14 @@
     <div class="ohje-kortti">
         <div class="vaihe-otsikko">
             <span class="vaihe-numero">2</span>
-            Sisällön ja esikatselun tarkistus
+            Sisällön ja kuvan tarkistus
         </div>
-        <p>Kun kortti on aktiivinen, tarkista sen tiedot:</p>
+        <p>Kun kortti on valmis, tarkista sen tiedot:</p>
         <ul>
-            <li><strong>Kuvan esikatselu:</strong> Varmista, että kuva näkyy oikein.</li>
-            <li><strong>Alkuperäinen teksti (Raw Text):</strong> Sähköpostista tai lomakkeelta tullut raakateksti. Voit muokata sitä suoraan ennen uutta tekoälykäsittelyä.</li>
-            <li><strong>Julkaisuteksti (FB / IG):</strong> Tekoälyn valmiiksi sommittelema julkaisuteksti emojeineen ja aihetunnisteineen. Voit muokata tätä täysin vapaasti.</li>
-            <li><strong>LinkedIn-teksti (Tulossa):</strong> Varauskenttä tulevalle LinkedIn-laajennukselle.</li>
+            <li><strong>Kuvan esikatselu:</strong> Varmista, että kuva on latautunut oikein.</li>
+            <li><strong>Alkuperäinen teksti (Raw Text):</strong> Sähköpostista saapunut alkuperäinen viesti. Voit muokata tätä raakatekstiä suoraan laatikossa ennen uutta AI-muotoilua.</li>
+            <li><strong>Julkaisuteksti (FB / IG):</strong> Tekoälyn muotoilema teksti, joka tulee näkymään sosiaalisessa mediassa. Voit muokata tätä tekstikenttää myös täysin vapaasti käsin.</li>
+            <li><strong>LinkedIn-teksti (Tulossa):</strong> Varaus tulevalle LinkedIn-integraatiolle.</li>
         </ul>
     </div>
 
@@ -219,12 +201,12 @@
     <div class="ohje-kortti">
         <div class="vaihe-otsikko">
             <span class="vaihe-numero">3</span>
-            AI-uudelleenmuotoilu ja 1. version palauttaminen
+            AI-uudelleenmuotoilu ja 1. versioon palauttaminen
         </div>
-        <p>Voit vaihtaa julkaisun tyyliä tai palauttaa aiemman version:</p>
+        <p>Jos haluat muuttaa julkaisun sävyä tekoälyn avulla tai nollata tekemäsi kokeilut:</p>
         <ol>
-            <li><strong>Uusi sävy:</strong> Valitse tyyli valikosta <strong>Julkaisuprofiili</strong> (esim. <em>Yritys & B2B</em>, <em>Yritys & B2C</em>, <em>Somesisällöntuottaja</em>) ja klikkaa <span class="nappi-esimerkki btn-reformat">🔄 Muotoile AI:lla</span>. Tekoäly kirjoittaa tekstin uudelleen valitulla tyylillä.</li>
-            <li><strong>Ensimmäisen version palautus:</strong> Jos haluat perua kokeilut, klikkaa harmaata <span class="nappi-esimerkki btn-reset">↩️ Palauta 1. versio</span> -painiketta, jolloin ensimmäinen AI-luonnos palautuu välittömästi.</li>
+            <li><strong>Uusi muotoilu:</strong> Valitse sävy valikosta <strong>Julkaisuprofiili</strong> (esim. <em>Yritys & B2B</em>, <em>Yritys & B2C</em> tai <em>Somesisällöntuottaja</em>). Valittu profiili tallentuu automaattisesti taustalla. Paina sitten <span class="nappi-esimerkki btn-reformat">🔄 Muotoile AI:lla</span>. Tekoäly luo tekstin uudelleen heti.</li>
+            <li><strong>Ensimmäisen AI-version palauttaminen:</strong> Jos muotoilit tekstiä uudelleen, mutta haluatkin palata takaisin siihen aivan ensimmäiseen tekoälyn tekemään versioon, paina harmaata painiketta <span class="nappi-esimerkki btn-reset">↩️ Palauta 1. versio</span>. Ensimmäinen versio palautuu kenttään ja tallentuu välittömästi kantaan ilman eri odottelua!</li>
         </ol>
     </div>
 
@@ -232,13 +214,12 @@
     <div class="ohje-kortti">
         <div class="vaihe-otsikko">
             <span class="vaihe-numero">4</span>
-            Kohdesivun, kanavan ja ajastuksen valinta
+            Kohdekanavan ja ajastuksen valinta
         </div>
-        <p>Määritä kortin alaosasta minne ja milloin julkaisu toimitetaan:</p>
+        <p>Ennen hyväksyntää valitse kortin alaosasta:</p>
         <ul>
-            <li><strong>Kohdesivu / Sometili:</strong> Jos sinulla on kytkettynä useita sivuja, valitse alasvetovalikosta mille tilille julkaisu lähetetään. Valinta tallentuu välittömästi.</li>
-            <li><strong>Kohdekanava:</strong> Valitse julkaistaanko molempiin (Facebook & Instagram) vai vain toiseen alustaan.</li>
-            <li><strong>Ajasta julkaisu (valinnainen):</strong> Aseta haluamasi julkaisuajankohta kalenterikenttään tai jätä tyhjäksi välitöntä/oletusajoa varten.</li>
+            <li><strong>Kohdekanava:</strong> Valitse julkaistaanko viesti molempiin (Facebook & Instagram) vai vain toiseen. (<em>Huom: Testiasetukset ovat vain järjestelmän kehitystestausta varten!</em>)</li>
+            <li><strong>Ajasta julkaisu (valinnainen):</strong> Jos haluat julkaisun ilmestyvän tiettynä päivänä ja kellonaikana, valitse se ajastuskentästä. Jos jätät kentän tyhjäksi, julkaisu tapahtuu heti kun ajastin ajaa jonon.</li>
         </ul>
     </div>
 
@@ -246,19 +227,19 @@
     <div class="ohje-kortti">
         <div class="vaihe-otsikko">
             <span class="vaihe-numero">5</span>
-            Julkaisun hyväksyntä, pikalähetys ja historia
+            Julkaisun hyväksyntä, hylkäys ja historia
         </div>
-        <p>Valitse haluamasi toiminto:</p>
+        <p>Kun teksti ja asetukset ovat kunnossa, valitse toiminto:</p>
         <ul>
-            <li><span class="nappi-esimerkki btn-hyvaksy">✓ Hyväksy jonoon</span>: Asettaa julkaisun odottamaan ajastettua lähetysaikaa.</li>
-            <li><span class="nappi-esimerkki btn-pika">🚀 Julkaise välittömästi</span>: Lähettää julkaisun välittömästi valitulle sivulle ja kanaviin.</li>
-            <li><span class="nappi-esimerkki btn-hylkaa">✕ Hylkää</span>: Siirtää julkaisun suoraan Julkaisuhistoriaan punaisella merkinnällä ilman julkaisua.</li>
+            <li><span class="nappi-esimerkki btn-hyvaksy">✓ Hyväksy jonoon</span>: Tallentaa julkaisun valmiiksi jonoon automaattista ajastusta varten.</li>
+            <li><span class="nappi-esimerkki btn-pika">🚀 Julkaise välittömästi</span>: Lähettää julkaisun välittömästi tuotantoon (Facebookiin ja Instagramiin)!</li>
+            <li><span class="nappi-esimerkki btn-hylkaa">✕ Hylkää</span>: Hylkää julkaisun. Kortti siirtyy alaspäin <strong>Julkaisuhistoriaan</strong> punaisella kehyksellä ja <span class="nappi-esimerkki btn-hylkaa">✕ HYLÄTTY</span> -leimalla varustettuna.</li>
         </ul>
     </div>
 
     <div class="huomio-laatikko">
         <strong>⚠️ Tärkeää muistaa:</strong><br>
-        Tarkista aina <strong>Julkaisuteksti (FB / IG)</strong> -kentän sisältö ennen hyväksyntää, sillä julkaisu lähtee sosiaalisen median sivuillesi täsmälleen siinä muodossa kuin se laatikossa lukee!
+        Ennen kuin painat <em>Hyväksy jonoon</em> tai <em>Julkaise välittömästi</em>, lue aina läpi <strong>Julkaisuteksti (FB / IG)</strong> -laatikon sisältö, sillä se on se lopullinen teksti, jonka asiakkaasi näkevät somessa!
     </div>
 
 </div>
