@@ -293,6 +293,8 @@
             box-sizing: border-box;
         }
 
+        
+
         .nappi-ryhma { 
             display: flex; 
             flex-direction: column;
@@ -422,6 +424,7 @@
             <span id="kayttaja-email"></span><br>
             <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 5px; flex-wrap: wrap;">
                 <button class="btn-pika" style="padding: 5px 12px; font-size: 0.8rem; width: auto;" onclick="avaaUusiPostausModaali()">➕ Uusi luonnos</button>
+                <button class="btn-testi" style="padding: 5px 12px; font-size: 0.8rem; width: auto;" onclick="avaaAsetuksetModaali()">⚙️ Sometilit</button>
                 <button class="btn-ulos" style="margin-top: 0; width: auto;" onclick="kirjauduUlos()">Kirjaudu ulos</button>
             </div>
         </div>
@@ -459,6 +462,7 @@
                         <option value="Blogi">Blogi</option>
                     </select>
                 </div>
+
                 <div>
                     <label class="field-label">Kohdekanava:</label>
                     <select id="uusi-kanava" class="valinta-kentta">
@@ -468,10 +472,48 @@
                     </select>
                 </div>
             </div>
-
+<div id="uusi-sometili-valinta-lohko" style="margin-bottom: 15px; display: none;">
+                <label class="field-label">Kohdesivu / Sometili:</label>
+                <select id="uusi-sometili-valinta" class="valinta-kentta"></select>
+            </div>
             <div class="nappi-ryhma" style="margin-top:20px;">
                 <button class="btn-hyvaksy" id="btn-luo-luonnos" onclick="luoUusiPostausKantaan()">🚀 Luo ja käsittele AI:lla</button>
                 <button type="button" class="btn-ulos" style="color:var(--text-main); border: 1px solid #cbd5e1; background: #f1f5f9;" onclick="suljeUusiPostausModaali()">Peruuta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SOMETILIT-ASETUKSET MODAALI -->
+    <!-- SOMETILIT-ASETUKSET MODAALI (MONISIVUTUKI) -->
+    <div id="asetukset-modaali" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center; padding: 15px; box-sizing: border-box;">
+        <div style="background:white; border-radius:12px; padding:25px; width:100%; max-width:550px; box-shadow:0 10px 25px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto; box-sizing: border-box;">
+            <h3 style="margin-top:0; color:var(--text-main); font-size: 1.2rem;">⚙️ Kytketyt Sometilit ja Sivut</h3>
+            
+            <div id="sometilit-lista" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px;">
+                <!-- Olemassa olevat tilit listataan tähän dynaamisesti -->
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                <h4 style="margin: 0 0 10px 0; font-size: 0.95rem; color: var(--text-main);">➕ Lisää uusi sivu / tili</h4>
+                <label class="field-label">Sivun / Profiilin nimi (tunniste):</label>
+                <input type="text" id="uusi-asetus-nimi" class="valinta-kentta" placeholder="esim. SolOne Yrityssivu" style="margin-bottom:10px;">
+
+                <label class="field-label">Facebook Page ID:</label>
+                <input type="text" id="uusi-asetus-fb-id" class="valinta-kentta" placeholder="esim. 108130191086329" style="margin-bottom:10px;">
+
+                <label class="field-label">Instagram Account ID:</label>
+                <input type="text" id="uusi-asetus-ig-id" class="valinta-kentta" placeholder="esim. 17841400322950672" style="margin-bottom:12px;">
+
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                    <input type="checkbox" id="uusi-asetus-ensisijainen" style="width: 16px; height: 16px; cursor: pointer;">
+                    <label for="uusi-asetus-ensisijainen" style="font-size: 0.85rem; cursor: pointer;">Aseta ensisijaiseksi oletussivuksi</label>
+                </div>
+
+                <button class="btn-pika" style="width: 100%; padding: 8px;" onclick="lisaaUusiSometiliKantaan()">+ Tallenna uusi tili</button>
+            </div>
+
+            <div class="nappi-ryhma">
+                <button type="button" class="btn-ulos" style="color:var(--text-main); border: 1px solid #cbd5e1; background: #f1f5f9; width: 100%;" onclick="suljeAsetuksetModaali()">Sulje</button>
             </div>
         </div>
     </div>
@@ -596,12 +638,180 @@
     }
 
     // --- UUDEN POSTAUKSEN MODAALIN TOIMINNOT ---
-    function avaaUusiPostausModaali() {
+    // --- UUDEN POSTAUKSEN JA SOMETILIEN TOIMINNOT ---
+    let kayttajanSometilit = [];
+
+    async function lataaKayttajanSometilit() {
+        if (!nykyinenAsiakastunnus) return;
+        const db = haeSupabaseAsiakas();
+        const token = localStorage.getItem('supabase_token');
+
+        try {
+            const res = await fetch(db.url + '/rest/v1/asiakkaan_sometilit?asiakastunnus=eq.' + encodeURIComponent(nykyinenAsiakastunnus) + '&order=ensisijainen.desc', {
+                method: 'GET',
+                headers: {
+                    'apikey': db.key,
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                }
+            });
+            kayttajanSometilit = await res.json() || [];
+        } catch (e) {
+            console.error("Virhe ladattaessa sometilejä:", e);
+        }
+    }
+
+    async function avaaAsetuksetModaali() {
+        await lataaKayttajanSometilit();
+        paivitaAsetuksetListaHtml();
+        document.getElementById('asetukset-modaali').style.display = 'flex';
+    }
+
+    function suljeAsetuksetModaali() {
+        document.getElementById('asetukset-modaali').style.display = 'none';
+        haeValvomonTiedot();
+    }
+
+    function paivitaAsetuksetListaHtml() {
+        const lista = document.getElementById('sometilit-lista');
+        if (!lista) return;
+
+        if (!kayttajanSometilit || kayttajanSometilit.length === 0) {
+            lista.innerHTML = '<div style="font-size: 0.85rem; color: var(--text-muted);">Ei vielä kytkettyjä tilejä. Lisää ensimmäinen alla.</div>';
+            return;
+        }
+
+        let html = '';
+        kayttajanSometilit.forEach(function(tili) {
+            html += '<div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center; background: ' + (tili.ensisijainen ? '#f0fdf4' : '#ffffff') + ';">';
+            html += '  <div>';
+            html += '    <strong style="font-size: 0.95rem;">' + (tili.sivun_nimi || 'Nimetön sivu') + '</strong>' + (tili.ensisijainen ? ' <span style="font-size: 0.75rem; background: var(--success); color: white; padding: 2px 6px; border-radius: 4px;">Ensisijainen</span>' : '') + '<br>';
+            html += '    <span style="font-size: 0.8rem; color: var(--text-muted);">FB: ' + (tili.fb_page_id || '-') + ' | IG: ' + (tili.ig_account_id || '-') + '</span>';
+            html += '  </div>';
+            html += '  <div style="display: flex; gap: 6px;">';
+            if (!tili.ensisijainen) {
+                html += '    <button class="btn-ulos" style="color: var(--primary); border-color: var(--primary); font-size: 0.75rem; padding: 4px 8px; width: auto;" onclick="asetaEnsisijaiseksi(\'' + tili.id + '\')">Aseta oletukseksi</button>';
+            }
+            html += '    <button class="btn-ulos" style="color: var(--danger); border-color: var(--danger); font-size: 0.75rem; padding: 4px 8px; width: auto;" onclick="poistaSometili(\'' + tili.id + '\')">Poista</button>';
+            html += '  </div>';
+            html += '</div>';
+        });
+        lista.innerHTML = html;
+    }
+
+    async function lisaaUusiSometiliKantaan() {
+        const nimi = document.getElementById('uusi-asetus-nimi').value.trim() || 'Oma sivu';
+        const fbId = document.getElementById('uusi-asetus-fb-id').value.trim();
+        const igId = document.getElementById('uusi-asetus-ig-id').value.trim();
+        const ensisijainen = document.getElementById('uusi-asetus-ensisijainen').checked || kayttajanSometilit.length === 0;
+        const db = haeSupabaseAsiakas();
+        const token = localStorage.getItem('supabase_token');
+
+        if (!fbId && !igId) {
+            alert("Syötä vähintään Facebook Page ID tai Instagram Account ID!");
+            return;
+        }
+
+        try {
+            if (ensisijainen && kayttajanSometilit.length > 0) {
+                await fetch(db.url + '/rest/v1/asiakkaan_sometilit?asiakastunnus=eq.' + encodeURIComponent(nykyinenAsiakastunnus), {
+                    method: 'PATCH',
+                    headers: { 'apikey': db.key, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+                    body: JSON.stringify({ ensisijainen: false })
+                });
+            }
+
+            const res = await fetch(db.url + '/rest/v1/asiakkaan_sometilit', {
+                method: 'POST',
+                headers: { 'apikey': db.key, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+                body: JSON.stringify([{
+                    asiakastunnus: nykyinenAsiakastunnus,
+                    sivun_nimi: nimi,
+                    fb_page_id: fbId || null,
+                    ig_account_id: igId || null,
+                    ensisijainen: ensisijainen,
+                    aktiivinen: true
+                }])
+            });
+
+            if (!res.ok) throw new Error("Tallennus epäonnistui");
+
+            document.getElementById('uusi-asetus-nimi').value = '';
+            document.getElementById('uusi-asetus-fb-id').value = '';
+            document.getElementById('uusi-asetus-ig-id').value = '';
+            document.getElementById('uusi-asetus-ensisijainen').checked = false;
+
+            await lataaKayttajanSometilit();
+            paivitaAsetuksetListaHtml();
+            naytaIlmoitus('✓ Uusi sivu lisätty onnistuneesti!', 'success');
+        } catch (err) {
+            alert("Virhe lisättäessä sivua: " + err.message);
+        }
+    }
+
+    async function asetaEnsisijaiseksi(tiliId) {
+        const db = haeSupabaseAsiakas();
+        const token = localStorage.getItem('supabase_token');
+        try {
+            await fetch(db.url + '/rest/v1/asiakkaan_sometilit?asiakastunnus=eq.' + encodeURIComponent(nykyinenAsiakastunnus), {
+                method: 'PATCH',
+                headers: { 'apikey': db.key, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+                body: JSON.stringify({ ensisijainen: false })
+            });
+
+            await fetch(db.url + '/rest/v1/asiakkaan_sometilit?id=eq.' + tiliId, {
+                method: 'PATCH',
+                headers: { 'apikey': db.key, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+                body: JSON.stringify({ ensisijainen: true })
+            });
+
+            await lataaKayttajanSometilit();
+            paivitaAsetuksetListaHtml();
+        } catch (e) {
+            console.error("Virhe asetettaessa ensisijaiseksi:", e);
+        }
+    }
+
+    async function poistaSometili(tiliId) {
+        if (!confirm("Haluatko varmasti poistaa tämän sivukytkennän?")) return;
+        const db = haeSupabaseAsiakas();
+        const token = localStorage.getItem('supabase_token');
+        try {
+            await fetch(db.url + '/rest/v1/asiakkaan_sometilit?id=eq.' + tiliId, {
+                method: 'DELETE',
+                headers: { 'apikey': db.key, 'Authorization': 'Bearer ' + token }
+            });
+            await lataaKayttajanSometilit();
+            paivitaAsetuksetListaHtml();
+        } catch (e) {
+            console.error("Virhe poistettaessa:", e);
+        }
+    }
+
+    async function avaaUusiPostausModaali() {
         document.getElementById('uusi-raw-teksti').value = '';
         const kuvaInput = document.getElementById('uusi-kuva-tiedosto');
         if (kuvaInput) kuvaInput.value = '';
+
+        await lataaKayttajanSometilit();
+        const lohko = document.getElementById('uusi-sometili-valinta-lohko');
+        const select = document.getElementById('uusi-sometili-valinta');
+
+        if (lohko && select) {
+            if (kayttajanSometilit && kayttajanSometilit.length > 0) {
+                lohko.style.display = 'block';
+                select.innerHTML = '';
+                kayttajanSometilit.forEach(function(t) {
+                    select.innerHTML += '<option value="' + (t.id || '') + '"' + (t.ensisijainen ? ' selected' : '') + '>' + (t.sivun_nimi || 'Oma sivu') + (t.ensisijainen ? ' (Oletus)' : '') + '</option>';
+                });
+            } else {
+                lohko.style.display = 'none';
+            }
+        }
+
         document.getElementById('uusi-postaus-modaali').style.display = 'flex';
     }
+
 
     function suljeUusiPostausModaali() {
         document.getElementById('uusi-postaus-modaali').style.display = 'none';
@@ -651,6 +861,11 @@
                 lopullinenKuvaUrl = db.url + '/storage/v1/object/public/somekuvat/' + tiedostoNimi;
             }
 
+            const valintaElem = document.getElementById('uusi-sometili-valinta');
+            const valittuSometiliId = (valintaElem && valintaElem.value) 
+                ? valintaElem.value 
+                : (kayttajanSometilit && kayttajanSometilit[0] ? kayttajanSometilit[0].id : null);
+
             const postRes = await fetch(db.url + '/rest/v1/somepostaukset', {
                 method: 'POST',
                 headers: {
@@ -667,6 +882,7 @@
                     target_channel: kanava,
                     alusta: kanava,
                     asiakastunnus: nykyinenAsiakastunnus,
+                    sometili_id: valittuSometiliId,
                     status: 'kasittelyssa',
                     luotu_aika: new Date().toISOString()
                 }])
@@ -755,8 +971,12 @@
             aikaTeksti = '<span><strong>Julkaisu:</strong> Välitön</span>';
         }
 
+       const valittuTiliOlio = kayttajanSometilit.find(function(t) { return t.id === julkaisu.sometili_id; });
+        const sivunNimiTeksti = valittuTiliOlio ? valittuTiliOlio.sivun_nimi : (kayttajanSometilit[0] ? kayttajanSometilit[0].sivun_nimi : 'Oletussivu');
+
         htmlSisalto += '<div class="meta-info">';
         htmlSisalto += '<span><strong>Luotu:</strong> ' + pvm + '</span>';
+        htmlSisalto += '<span><strong>Kohdesivu:</strong> ' + sivunNimiTeksti + '</span>';
         htmlSisalto += '<span><strong>Profiili:</strong> ' + nykyinenProfiili + '</span>';
         htmlSisalto += '<span><strong>Kanava:</strong> ' + kanavaTeksti + '</span>';
         htmlSisalto += aikaTeksti;
@@ -783,7 +1003,7 @@
         htmlSisalto += '<textarea id="raw-teksti-' + julkaisu.id + '" class="teksti-alue"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.raw_text || '') + '</textarea>';
 
         if (!onHistoria) {
-            htmlSisalto += '<div class="grid-valinnat">';
+            htmlSisalto += '<div class="grid-valinnat">'; 
             htmlSisalto += '<div>';
             htmlSisalto += '<label class="field-label">Julkaisuprofiili:</label>';
             const prof = julkaisu.julkaisuprofiili || 'Yleinen';
@@ -818,7 +1038,16 @@
         if (!onHistoria) {
             const valmisAika = julkaisu.ajastettu_aika ? new Date(julkaisu.ajastettu_aika).toISOString().slice(0,16) : '';
             
-            htmlSisalto += '<div class="grid-valinnat">';
+            htmlSisalto += '<div class="grid-valinnat">'; if (kayttajanSometilit && kayttajanSometilit.length > 1) {
+                htmlSisalto += '<div>';
+                htmlSisalto += '<label class="field-label">Kohdesivu / Sometili:</label>';
+                htmlSisalto += '<select id="sometili-' + julkaisu.id + '" class="valinta-kentta" onchange="paivitaSometiliKantaan(\'' + julkaisu.id + '\', this.value)">';
+                kayttajanSometilit.forEach(function(t) {
+                    htmlSisalto += '<option value="' + t.id + '"' + (julkaisu.sometili_id === t.id ? ' selected' : '') + '>' + t.sivun_nimi + (t.ensisijainen ? ' (Oletus)' : '') + '</option>';
+                });
+                htmlSisalto += '</select>';
+                htmlSisalto += '</div>';
+            }
             htmlSisalto += '<div>';
             htmlSisalto += '<label class="field-label">Kohdekanava:</label>';
             htmlSisalto += '<select id="alusta-' + julkaisu.id + '" class="valinta-kentta">';
@@ -1064,7 +1293,26 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
             console.error("Profiilin tallennus epäonnistui:", e);
         }
     }
-
+async function paivitaSometiliKantaan(id, uusiTiliId) {
+        const db = haeSupabaseAsiakas();
+        try {
+            await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
+                method: 'PATCH',
+                headers: {
+                    'apikey': db.key,
+                    'Authorization': 'Bearer ' + localStorage.getItem('supabase_token'),
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                    sometili_id: uusiTiliId || null
+                })
+            });
+            naytaIlmoitus('✓ Kohdesivu päivitetty!');
+        } catch (e) {
+            console.error("Sometilin tallennus epäonnistui:", e);
+        }
+    }
     async function palautaEnsimmainenVersio(id) {
         if (!confirm("Haluatko varmasti palauttaa ensimmäisen AI-generoidun tekstiversion?")) {
             return;
@@ -1140,6 +1388,7 @@ const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
             }
         }
     }, 5 * 60 * 1000);
+
 
     window.addEventListener('load', alustaNakyma);
 </script>
