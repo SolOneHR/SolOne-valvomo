@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <title>SolOne Autopublish - Somevalvomo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      color: #1e293b;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 30px;
+      line-height: 1.5;
+    }
+    .solone-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Värillinen yläbanneri */
+    .solone-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0369a1 100%);
+      color: #ffffff;
+      padding: 30px 24px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .solone-badge {
+      display: inline-block;
+      background-color: rgba(224, 242, 254, 0.2);
+      color: #7dd3fc;
+      border: 1px solid rgba(125, 211, 252, 0.4);
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 4px 14px;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .solone-title {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0 0 10px 0;
+      letter-spacing: -0.5px;
+    }
+
+    .solone-subtitle {
+      font-size: 0.98rem;
+      color: #e2e8f0;
+      margin: 0 auto;
+      max-width: 650px;
+      line-height: 1.5;
+    }
+
+    .solone-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 25px;
+    }
+
+    .solone-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      page-break-inside: avoid;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .solone-card-icon {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+
+    .solone-card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 8px 0;
+    }
+
+    .solone-card-text {
+      font-size: 0.85rem;
+      color: #475569;
+      margin-bottom: 6px;
+    }
+
+    .solone-benefits {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 25px;
+      page-break-inside: avoid;
+    }
+
+    .solone-benefits-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0f172a;
+      text-align: center;
+      margin: 0 0 14px 0;
+    }
+
+    .solone-benefits-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .solone-benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: #334155;
+    }
+
+    .solone-benefit-bullet {
+      color: #0284c7;
+      font-weight: bold;
+    }
+
+    .solone-cta-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      page-break-inside: avoid;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .solone-cta-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin: 0 0 6px 0;
+      color: #ffffff;
+    }
+
+    .solone-cta-desc {
+      font-size: 0.95rem;
+      color: #94a3b8;
+      margin: 0 0 14px 0;
+    }
+
+    .solone-contacts {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      font-size: 0.9rem;
+    }
+
+    .solone-contact-link {
+      color: #ffffff;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    @media print {
+      body {
+        padding: 0;
+      }
+      @page {
+        size: A4;
+        margin: 12mm;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="solone-container">
+    
+    <!-- Tyylitelty ja värillinen yläbanneri -->
+    <div class="solone-header">
+      <span class="solone-badge">Automaatio & Tekoäly</span>
+      <h1 class="solone-title">SolOne Autopublish - Somevalvomo 🚀</h1>
+      <p class="solone-subtitle">
+        Älykäs someviestintä sovitettuna sinun arkeesi. Säännöllinen somenäkyvyys tuo asiakkaita ja sitouttaa yhteisöä – SolOne muuttaa arjen tilanteet valmiiksi julkaisuiksi tekoälyn ja selkeän ohjauskeskuksen avulla.
+      </p>
+    </div>
+
+    <div class="solone-grid">
+      <div class="solone-card">
+        <div class="solone-card-icon">🔧</div>
+        <div class="solone-card-title">Asennus- ja käsityöyrittäjät</div>
+        <p class="solone-card-text"><strong>Käyttötapa:</strong> Nappaa kuva valmiista työkohteesta puhelimella ja lähetä se sähköpostilla valvomoon parin sanan saatteella: <em>"Liesiasennus ja sähkökytkentä valmis kohteessa X"</em>.</p>
+        <p class="solone-card-text"><strong>Lopputulos:</strong> Järjestelmä luo ammattimaisen, asiakkaita houkuttelevan somepostauksen, jonka hyväksyt julkaisuun iltakahvilla yhdellä klikkauksella.</p>
+      </div>
+
+      <div class="solone-card">
+        <div class="solone-card-icon">🛍️</div>
+        <div class="solone-card-title">Kivijalkaliikkeet & palvelut</div>
+        <p class="solone-card-text"><strong>Käyttötapa:</strong> Uusi tuote-erä saapui hyllyyn tai lounaslista vaihtui.</p>
+        <p class="solone-card-text"><strong>Lopputulos:</strong> Luot yhdellä lomakkeella postauksen, valitset tyyliksi <em>Yritys & B2C</em> ja ajastat viikon päivitykset automaattisesti Facebookiin ja Instagramiin parhaisiin katseluaikoihin.</p>
+      </div>
+
+      <div class="solone-card">
+        <div class="solone-card-icon">🤝</div>
+        <div class="solone-card-title">Yhdistykset & yhteisöt</div>
+        <p class="solone-card-text"><strong>Käyttötapa:</strong> Osallistujat, tapahtumajärjestäjät ja tiimi voivat jakaa kuvia kentältä suoraan puhelimella tai sähköpostitse yhteiseen julkaisujonoon.</p>
+        <p class="solone-card-text"><strong>Lopputulos:</strong> Viestintävastaava näkee kaikki luonnokset yhdessä näkymässä, hioo tekstit tekoälyllä ja hyväksyy ne kanaville hallitusti ilman sählinkiä.</p>
+      </div>
+
+      <div class="solone-card">
+        <div class="solone-card-icon">💼</div>
+        <div class="solone-card-title">Monibrändi- & ketjuhallinta</div>
+        <p class="solone-card-text"><strong>Käyttötapa:</strong> Hallitse useita eri Facebook- ja Instagram-sivuja samalla käyttäjätunnuksella.</p>
+        <p class="solone-card-text"><strong>Lopputulos:</strong> Valitset vain kortin alasvetovalikosta, mille sivulle mikäkin päivitys ohjataan.</p>
+      </div>
+    </div>
+
+    <div class="solone-benefits">
+      <div class="solone-benefits-title">Miksi valita SolOne Autopublish - somejulkaisuautomaatio?</div>
+      <ul class="solone-benefits-list">
+        <li class="solone-benefit-item">
+          <span class="solone-benefit-bullet">✓</span>
+          <div><strong>Matalin kynnys:</strong> Tuota sisältöä suoraan sähköpostilla tai helppokäyttöisellä selainlomakkeella.</div>
+        </li>
+        <li class="solone-benefit-item">
+          <span class="solone-benefit-bullet">✓</span>
+          <div><strong>Tekoäly apunasi:</strong> Ei enää tyhjän paperin tai ruudun kammoa – järjestelmä kirjoittaa luonnokset puolestasi.</div>
+        </li>
+        <li class="solone-benefit-item">
+          <span class="solone-benefit-bullet">✓</span>
+          <div><strong>Täysi kontrolli:</strong> Päätät aina itse julkaisusta, ajastuksesta tai kanavista. Mikään ei lähde ulos ilman kuittaustasi.</div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="solone-cta-box">
+      <div class="solone-cta-title">Haluatko testata maksutta?</div>
+      <p class="solone-cta-desc">Ota yhteyttä ja kokeile, miten helppoa säännöllinen somenäkyvyys voi olla!</p>
+      <div class="solone-contacts">
+        <span class="solone-contact-link">✉️ info@solone.fi</span>
+        <span class="solone-contact-link">🌐 www.solone.fi</span>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
