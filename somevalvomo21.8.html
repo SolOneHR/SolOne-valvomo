@@ -293,6 +293,8 @@
             box-sizing: border-box;
         }
 
+        
+
         .nappi-ryhma { 
             display: flex; 
             flex-direction: column;
@@ -470,7 +472,7 @@
                     </select>
                 </div>
             </div>
-            <div id="uusi-sometili-valinta-lohko" style="margin-bottom: 15px; display: none;">
+<div id="uusi-sometili-valinta-lohko" style="margin-bottom: 15px; display: none;">
                 <label class="field-label">Kohdesivu / Sometili:</label>
                 <select id="uusi-sometili-valinta" class="valinta-kentta"></select>
             </div>
@@ -481,6 +483,7 @@
         </div>
     </div>
 
+    <!-- SOMETILIT-ASETUKSET MODAALI -->
     <!-- SOMETILIT-ASETUKSET MODAALI (MONISIVUTUKI) -->
     <div id="asetukset-modaali" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center; padding: 15px; box-sizing: border-box;">
         <div style="background:white; border-radius:12px; padding:25px; width:100%; max-width:550px; box-shadow:0 10px 25px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto; box-sizing: border-box;">
@@ -538,7 +541,6 @@
     
     let nykyinenAsiakastunnus = null;
     let automaattiPäivitysAjastin = null;
-
     async function optimoiKuva(tiedosto) {
         if (!tiedosto) return tiedosto;
         
@@ -691,6 +693,7 @@
         document.getElementById('kirjautumis-ikkuna').style.display = 'block';
     }
 
+    // --- UUDEN POSTAUKSEN MODAALIN TOIMINNOT ---
     // --- UUDEN POSTAUKSEN JA SOMETILIEN TOIMINNOT ---
     let kayttajanSometilit = [];
 
@@ -865,6 +868,7 @@
         document.getElementById('uusi-postaus-modaali').style.display = 'flex';
     }
 
+
     function suljeUusiPostausModaali() {
         document.getElementById('uusi-postaus-modaali').style.display = 'none';
     }
@@ -904,6 +908,7 @@
                     },
                     body: kasiteltyTiedosto
                 });
+            
 
                 if (!uploadRes.ok) {
                     const errJson = await uploadRes.json().catch(function() { return {}; });
@@ -917,9 +922,6 @@
             const valittuSometiliId = (valintaElem && valintaElem.value) 
                 ? valintaElem.value 
                 : (kayttajanSometilit && kayttajanSometilit[0] ? kayttajanSometilit[0].id : null);
-
-            const valittuTiliOlio = kayttajanSometilit.find(function(t) { return t.id === valittuSometiliId; });
-            const sivunNimiArvo = valittuTiliOlio ? valittuTiliOlio.sivun_nimi : null;
 
             const postRes = await fetch(db.url + '/rest/v1/somepostaukset', {
                 method: 'POST',
@@ -938,7 +940,6 @@
                     alusta: kanava,
                     asiakastunnus: nykyinenAsiakastunnus,
                     sometili_id: valittuSometiliId,
-                    sivun_nimi: sivunNimiArvo,
                     status: 'kasittelyssa',
                     luotu_aika: new Date().toISOString()
                 }])
@@ -1027,8 +1028,8 @@
             aikaTeksti = '<span><strong>Julkaisu:</strong> Välitön</span>';
         }
 
-        const valittuTiliOlio = kayttajanSometilit.find(function(t) { return t.id === julkaisu.sometili_id; });
-        const sivunNimiTeksti = julkaisu.sivun_nimi || (valittuTiliOlio ? valittuTiliOlio.sivun_nimi : (kayttajanSometilit[0] ? kayttajanSometilit[0].sivun_nimi : 'Oletussivu'));
+       const valittuTiliOlio = kayttajanSometilit.find(function(t) { return t.id === julkaisu.sometili_id; });
+        const sivunNimiTeksti = valittuTiliOlio ? valittuTiliOlio.sivun_nimi : (kayttajanSometilit[0] ? kayttajanSometilit[0].sivun_nimi : 'Oletussivu');
 
         htmlSisalto += '<div class="meta-info">';
         htmlSisalto += '<span><strong>Luotu:</strong> ' + pvm + '</span>';
@@ -1063,7 +1064,7 @@
             htmlSisalto += '<div>';
             htmlSisalto += '<label class="field-label">Julkaisuprofiili:</label>';
             const prof = julkaisu.julkaisuprofiili || 'Yleinen';
-            htmlSisalto += '<select id="profiili-' + julkaisu.id + '" class="valinta-kentta" onchange="paivitaProfiiliKantaan(\'' + julkaisu.id + '\', this.value)">';
+            htmlSisalto += '<select id="profiili-' + julkaisu.id + '" class="field-select" onchange="paivitaProfiiliKantaan(\'' + julkaisu.id + '\', this.value)">';
             htmlSisalto += '  <option value="Yleinen"' + (prof === 'Yleinen' ? ' selected' : '') + '>Yleinen</option>';
             htmlSisalto += '  <option value="Yritys & B2B"' + (prof === 'Yritys & B2B' ? ' selected' : '') + '>Yritys & B2B</option>';
             htmlSisalto += '  <option value="Yritys & B2C"' + (prof === 'Yritys & B2C' ? ' selected' : '') + '>Yritys & B2C</option>';
@@ -1094,22 +1095,16 @@
         if (!onHistoria) {
             const valmisAika = julkaisu.ajastettu_aika ? new Date(julkaisu.ajastettu_aika).toISOString().slice(0,16) : '';
             
-            htmlSisalto += '<div class="grid-valinnat">'; 
-            
-            if (kayttajanSometilit && kayttajanSometilit.length > 0) {
-                const oletusTiliId = (kayttajanSometilit.find(function(t) { return t.ensisijainen; }) || kayttajanSometilit[0]).id;
-                const aktiivinenTiliId = julkaisu.sometili_id || oletusTiliId;
-
+            htmlSisalto += '<div class="grid-valinnat">'; if (kayttajanSometilit && kayttajanSometilit.length > 1) {
                 htmlSisalto += '<div>';
                 htmlSisalto += '<label class="field-label">Kohdesivu / Sometili:</label>';
                 htmlSisalto += '<select id="sometili-' + julkaisu.id + '" class="valinta-kentta" onchange="paivitaSometiliKantaan(\'' + julkaisu.id + '\', this.value)">';
                 kayttajanSometilit.forEach(function(t) {
-                    htmlSisalto += '<option value="' + t.id + '"' + (aktiivinenTiliId === t.id ? ' selected' : '') + '>' + t.sivun_nimi + (t.ensisijainen ? ' (Oletus)' : '') + '</option>';
+                    htmlSisalto += '<option value="' + t.id + '"' + (julkaisu.sometili_id === t.id ? ' selected' : '') + '>' + t.sivun_nimi + (t.ensisijainen ? ' (Oletus)' : '') + '</option>';
                 });
                 htmlSisalto += '</select>';
                 htmlSisalto += '</div>';
             }
-
             htmlSisalto += '<div>';
             htmlSisalto += '<label class="field-label">Kohdekanava:</label>';
             htmlSisalto += '<select id="alusta-' + julkaisu.id + '" class="valinta-kentta">';
@@ -1174,8 +1169,7 @@
         } catch (e) {
             console.log("Esitallennus epäonnistui, jatketaan Make-pyyntöön.");
         }
-
-        const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
+const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
         const cardElem = document.getElementById('card-' + id) || document.querySelector('.julkaisu-card:not(.historia)');
         const kuvaElem = cardElem ? cardElem.querySelector('.kuva-esikatselu') : null;
         const kuvaUrlValmis = kuvaElem ? kuvaElem.src : null;
@@ -1288,18 +1282,6 @@
         const valittuProfiili = document.getElementById('profiili-' + id).value;
         const valittuKanava = document.getElementById('alusta-' + id).value;
         const valittuAika = document.getElementById('ajastus-' + id).value;
-        
-        const sometiliSelect = document.getElementById('sometili-' + id);
-        let valittuSometiliId = sometiliSelect ? sometiliSelect.value : null;
-
-        if (!valittuSometiliId && kayttajanSometilit && kayttajanSometilit.length > 0) {
-            const oletus = kayttajanSometilit.find(function(t) { return t.ensisijainen; }) || kayttajanSometilit[0];
-            valittuSometiliId = oletus.id;
-        }
-
-        const valittuTili = kayttajanSometilit.find(function(t) { return t.id === valittuSometiliId; });
-        const sivunNimi = valittuTili ? valittuTili.sivun_nimi : null;
-
         const db = haeSupabaseAsiakas();
 
         try {
@@ -1310,8 +1292,6 @@
                 profile_id: valittuProfiili,
                 target_channel: valittuKanava,
                 alusta: valittuKanava,
-                sometili_id: valittuSometiliId,
-                sivun_nimi: sivunNimi,
                 ajastettu_aika: kaynnistaPika ? null : (valittuAika ? new Date(valittuAika).toISOString() : null),
                 julkaistu_aika: (kaynnistaPika || (uusiStatus === 'hyvaksytty' && !valittuAika)) ? new Date().toISOString() : null
             };
@@ -1371,12 +1351,8 @@
             console.error("Profiilin tallennus epäonnistui:", e);
         }
     }
-
-    async function paivitaSometiliKantaan(id, uusiTiliId) {
+async function paivitaSometiliKantaan(id, uusiTiliId) {
         const db = haeSupabaseAsiakas();
-        const valittuTili = kayttajanSometilit.find(function(t) { return t.id === uusiTiliId; });
-        const sivunNimi = valittuTili ? valittuTili.sivun_nimi : null;
-
         try {
             await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
                 method: 'PATCH',
@@ -1387,8 +1363,7 @@
                     'Prefer': 'return=minimal'
                 },
                 body: JSON.stringify({
-                    sometili_id: uusiTiliId || null,
-                    sivun_nimi: sivunNimi
+                    sometili_id: uusiTiliId || null
                 })
             });
             naytaIlmoitus('✓ Kohdesivu päivitetty!');
@@ -1396,7 +1371,6 @@
             console.error("Sometilin tallennus epäonnistui:", e);
         }
     }
-
     async function palautaEnsimmainenVersio(id) {
         if (!confirm("Haluatko varmasti palauttaa ensimmäisen AI-generoidun tekstiversion?")) {
             return;
@@ -1472,6 +1446,7 @@
             }
         }
     }, 5 * 60 * 1000);
+
 
     window.addEventListener('load', alustaNakyma);
 </script>
