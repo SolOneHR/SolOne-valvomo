@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SolOne Autopublish – Somevalvomo (DEMO)</title>
+    <title>SolOne - Somejulkaisujen Valvomo (DEMO)</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         
     <style>
@@ -74,16 +74,6 @@
             .header-banner h1 { 
                 font-size: 1.6rem; 
             }
-        }
-
-        .logo-valvomo-sol {
-            color: #ffffff;
-            font-weight: 700;
-        }
-
-        .logo-valvomo-one {
-            color: #38bdf8;
-            font-weight: 600;
         }
 
         .header-banner p {
@@ -510,7 +500,7 @@
     <!-- YLÄBANNERI -->
     <div class="header-banner">
         <div>
-            <h1><span class="logo-valvomo-sol">Sol</span><span class="logo-valvomo-one">One</span> Autopublish – Somevalvomo (DEMO)</h1>
+            <h1>SolOne HR & Business – Somevalvomo (DEMO)</h1>
             <p>Testaa, muokkaa ja simuloi odottavat somejulkaisut.</p>
         </div>
         <div id="kayttaja-kortti" class="user-info" style="display:none;">
@@ -971,7 +961,7 @@
         // 4. LinkedIn (Tulossa)
         htmlSisalto += '<div class="linkedin-osio">';
         htmlSisalto += '<label class="field-label" style="color: #64748b;">LinkedIn-teksti (Tulossa):</label>';
-        htmlSisalto += '<textarea class="teksti-alue" style="margin-bottom:0;" disabled placeholder="LinkedIn-integraatio aktivoituu myöhemmin..."></textarea>';
+        htmlSisalto += '<textarea class="teksti-alue" style="margin-bottom:0;" disabled placeholder="LinkedIn-integraatio aktivoituu myöhemmin...">' + (julkaisu.draft_text_linkedin || '') + '</textarea>';
         htmlSisalto += '</div>';
 
         if (!onHistoria) {
