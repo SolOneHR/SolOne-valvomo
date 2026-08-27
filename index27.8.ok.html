@@ -30,67 +30,40 @@
             line-height: 1.6;
         }
 
+        /* Leveyden keskitys ja rajaus (Max 900px) */
         .container {
             max-width: 900px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        /* Yläpalkki ja navigaatio */
+        /* Kirjautumispalkki ja logo yläreunassa */
         .asiakasportaalipalkki {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 15px;
-            padding: 12px 0;
+            gap: 10px;
+            padding: 10px 0;
+            font-size: 14px;
             border-bottom: 1px solid var(--border-color);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
-        .logo-nav-group {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            flex-wrap: wrap;
-        }
-
+        /* Ohennettu tekstilogo yläpalkkiin */
         .logo-palkki {
-            font-size: 22px;
-            font-weight: 700;
+            font-size: 21px;
+            font-weight: 600;
             letter-spacing: -0.3px;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
         }
-        .logo-palkki .sol { color: #1e3a8a; }
-        .logo-palkki .one { color: #0284c7; }
-
-        .paanavigaatio {
-            display: flex;
-            align-items: center;
-            gap: 16px;
+        .logo-palkki .sol {
+            color: #1e3a8a;
         }
-
-        .paanavigaatio a {
-            color: var(--text-main);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 14px;
-            padding: 4px 8px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
-
-        .paanavigaatio a:hover {
-            color: var(--primary);
-            background-color: #f1f5f9;
-        }
-
-        .paanavigaatio a.aktiivinen {
-            color: var(--primary);
-            font-weight: 700;
-            background-color: #eff6ff;
+        .logo-palkki .one {
+            color: #0284c7;
         }
 
         .portaali-toiminnot {
@@ -110,8 +83,7 @@
         .portal-linkki {
             color: var(--primary);
             text-decoration: none;
-            font-weight: 600;
-            font-size: 13px;
+            font-weight: bold;
             cursor: pointer;
         }
         .portal-linkki:hover { text-decoration: underline; }
@@ -172,7 +144,7 @@
             font-weight: bold;
         }
 
-        /* Hero */
+        /* Hero / Banneri */
         .hero {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 65%, #1e3a5f 100%);
             color: white;
@@ -190,8 +162,15 @@
             font-weight: 600;
         }
 
-        .logo-hero-sol { color: #ffffff; font-weight: 700; }
-        .logo-hero-one { color: #38bdf8; font-weight: 600; }
+        .logo-hero-sol {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .logo-hero-one {
+            color: #38bdf8;
+            font-weight: 600;
+        }
 
         .hero p {
             margin: 0 0 20px 0;
@@ -213,9 +192,19 @@
             transition: background-color 0.2s;
         }
 
-        .btn-cta:hover { background-color: var(--primary-hover); }
+        .btn-cta:hover {
+            background-color: var(--primary-hover);
+        }
 
-        /* Kortit ja Grid */
+        /* Esittelykortit */
+        .section-title {
+            font-size: 20px;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            border-left: 4px solid var(--border-color);
+            padding-left: 10px;
+        }
+
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -241,7 +230,10 @@
             margin-bottom: 10px;
         }
 
-        .badge-live { background-color: #d1fae5; color: #065f46; }
+        .badge-live {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
 
         .grid {
             display: grid;
@@ -264,21 +256,16 @@
 
     <div class="container">
         
-        <!-- ASIAKASPORTAALIPALKKI, LOGO JA NAVIGAATIO -->
+        <!-- ASIAKASPORTAALIPALKKI JA LOGO YLÄREUNASSA -->
         <div class="asiakasportaalipalkki">
-            <div class="logo-nav-group">
+            <div>
                 <a href="index.html" class="logo-palkki">
                     <span class="sol">Sol</span><span class="one">One</span>
                 </a>
-                <nav class="paanavigaatio">
-                    <a href="index.html" class="aktiivinen">Etusivu</a>
-                    <a href="palvelut.html">Palvelut</a>
-                    <a href="kayttoohje.html">Käyttöohje</a>
-                </nav>
             </div>
             <div class="portaali-toiminnot">
                 <div id="portaali-vieras">
-                    <span class="portal-linkki" onclick="vaihdaLomakeNakyvyys()">🔒 Asiakasportaali</span>
+                    <span class="portal-linkki" onclick="vaihdaLomakeNakyvyys()">🔒 Asiakasportaali / Kirjaudu sisään</span>
                 </div>
                 <div id="portaali-kirjautunut" style="display: none;">
                     <span style="color: var(--text-muted); margin-right: 5px;" id="kayttaja-tunnus"></span>
@@ -296,7 +283,7 @@
             <button style="width: 100%; background: var(--primary); color: white; border: none; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="suoritaKirjautuminen()">Kirjaudu</button>
         </div>
 
-        <!-- Hero Section -->
+        <!-- Hero Section tekstiotsikolla ja logotyylillä -->
         <header class="hero">
             <h1><span class="logo-hero-sol">Sol</span><span class="logo-hero-one">One</span> <span style="font-weight: 400; font-size: 24px; opacity: 0.9;">HR & Business</span></h1>
             <p>Älykästä automaatiota ja helppoja digitaalisia ratkaisuja liiketoiminnan ja arjen tueksi.</p>
@@ -317,7 +304,7 @@
                 <p style="color: var(--info-text); font-size: 13px; margin: 5px 0 8px 0; line-height: 1.4;">
                     Katso pikaopas somejulkaisujen luomiseen, tekoälyn ohjeistamiseen ja julkaisujen hallintaan suoraan sähköpostistasi.
                 </p>
-                <a href="kayttoohje.html" style="color: var(--primary); font-size: 13px; font-weight: bold; text-decoration: none;">
+                <a href="kayttoohje.html" target="_blank" style="color: var(--primary); font-size: 13px; font-weight: bold; text-decoration: none;">
                     📖 Lue tuotantoversion käyttöohje &rarr;
                 </a>
             </div>
@@ -333,6 +320,7 @@
         <!-- SOLONE AUTOPUBLISH - ESITTELY & KOHDERYHMÄT -->
         <div class="card" style="margin-top: 25px; margin-bottom: 30px; border-top: 4px solid var(--primary);">
             
+            <!-- Otsikkoalue pehmeällä infotaustalla -->
             <div style="text-align: center; margin-bottom: 25px; background: linear-gradient(180deg, #f0f7ff 0%, #ffffff 100%); border: 1px solid #dbeafe; border-radius: 10px; padding: 22px 18px;">
                 <span class="badge" style="background-color: #dbeafe; color: #0284c7; font-size: 11px;">AUTOMAATIO & TEKOÄLY</span>
                 <h2 style="font-size: 22px; color: var(--text-main); margin: 8px 0 10px 0;">SolOne Autopublish - Somevalvomo 🚀</h2>
@@ -341,6 +329,7 @@
                 </p>
             </div>
 
+            <!-- Esimerkit eri kohderyhmille -->
             <div class="grid" style="margin-bottom: 25px;">
                 <div style="background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px;">
                     <div style="font-size: 24px; margin-bottom: 8px;">🔧</div>
@@ -410,7 +399,7 @@
             </div>
         </div>
 
-        <!-- Footer -->
+        <!-- Yhteystiedot / Footer -->
         <footer class="footer">
             <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business</strong></p>
             <p style="margin: 5px 0;">SolOne Automaatioratkaisut</p>
