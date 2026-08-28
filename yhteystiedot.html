@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Palvelut – SolOne HR & Business</title>
+    <title>Yhteystiedot – SolOne HR & Business</title>
     <style>
         :root {
             --bg-main: #f8fafc;
@@ -30,6 +30,7 @@
             line-height: 1.6;
         }
 
+        /* Leveyden keskitys ja rajaus (Max 900px) */
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -55,16 +56,21 @@
             flex-wrap: wrap;
         }
 
+        /* Ohennettu tekstilogo yläpalkkiin */
         .logo-palkki {
-            font-size: 22px;
-            font-weight: 700;
+            font-size: 21px;
+            font-weight: 600;
             letter-spacing: -0.3px;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
         }
-        .logo-palkki .sol { color: #1e3a8a; }
-        .logo-palkki .one { color: #0284c7; }
+        .logo-palkki .sol {
+            color: #1e3a8a;
+        }
+        .logo-palkki .one {
+            color: #0284c7;
+        }
 
         .paanavigaatio {
             display: flex;
@@ -110,8 +116,7 @@
         .portal-linkki {
             color: var(--primary);
             text-decoration: none;
-            font-weight: 600;
-            font-size: 13px;
+            font-weight: bold;
             cursor: pointer;
         }
         .portal-linkki:hover { text-decoration: underline; }
@@ -196,7 +201,7 @@
             font-size: 15px;
         }
 
-        /* Kortit ja Grid */
+        /* Kortit */
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -204,52 +209,6 @@
             padding: 24px;
             margin-bottom: 20px;
             box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
-        }
-
-        .badge {
-            display: inline-block;
-            background-color: #dbeafe;
-            color: #1e40af;
-            font-size: 12px;
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        /* Alabanneri 180 astetta käännetyllä taustakuvalla */
-        .bottom-banner {
-            position: relative;
-            border-radius: 8px;
-            padding: 25px 20px;
-            text-align: center;
-            margin-top: 20px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            color: white;
-        }
-
-        .bottom-banner::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.65)), url('soloneverkkosivu.jpg') center/cover no-repeat;
-            transform: rotate(180deg);
-            z-index: 1;
-        }
-
-        .bottom-banner-sisalto {
-            position: relative;
-            z-index: 2;
         }
 
         /* Footer */
@@ -267,7 +226,7 @@
 
     <div class="container">
         
-        <!-- YLÄPALKKI, LOGO JA NAVIGAATIO -->
+        <!-- ASIAKASPORTAALIPALKKI JA LOGO YLÄREUNASSA -->
         <div class="asiakasportaalipalkki">
             <div class="logo-nav-group">
                 <a href="index.html" class="logo-palkki">
@@ -275,14 +234,14 @@
                 </a>
                 <nav class="paanavigaatio">
                     <a href="index.html">Etusivu</a>
-                    <a href="palvelut.html" class="aktiivinen">Palvelut</a>
+                    <a href="palvelut.html">Palvelut</a>
                     <a href="kayttoohje.html">Käyttöohje</a>
-                    <a href="yhteystiedot.html">Yhteystiedot</a>
+                    <a href="yhteystiedot.html" class="aktiivinen">Yhteystiedot</a>
                 </nav>
             </div>
             <div class="portaali-toiminnot">
                 <div id="portaali-vieras">
-                    <span class="portal-linkki" onclick="vaihdaLomakeNakyvyys()">🔒 Asiakasportaali</span>
+                    <span class="portal-linkki" onclick="vaihdaLomakeNakyvyys()">🔒 Asiakasportaali / Kirjaudu sisään</span>
                 </div>
                 <div id="portaali-kirjautunut" style="display: none;">
                     <span style="color: var(--text-muted); margin-right: 5px;" id="kayttaja-tunnus"></span>
@@ -302,56 +261,53 @@
 
         <!-- Sivun otsikko / Yläbanneri taustakuvalla -->
         <header class="page-header">
-            <h1>Palvelualueet</h1>
-            <p>Joustavat digitaalisen arkkitehtuurin ja automaation ratkaisut yrityksesi arjen tehostamiseen.</p>
+            <h1>Yhteystiedot</h1>
+            <p>Ota yhteyttä – vastaamme mielellämme kysymyksiin ja kartoitamme tarpeesi.</p>
         </header>
 
-        <!-- Palvelukortit -->
-        <div class="grid">
-            <!-- Kortti 1: Prosessit ja Automaatio -->
-            <div class="card">
-                <span class="badge">PROSESSIT & AUTOMAATIO</span>
-                <h2 style="margin-top: 0; font-size: 18px;">Digitaalinen arkkitehtuuri</h2>
-                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 0;">
-                    Yrityksen prosessien ja rutiinityön automatisointi nykyaikaisilla, skaalautuvilla digiratkaisuilla ja rajapintaintegraatioilla (API). Vapautamme työaikaa rutiineista tuottavaan työhön.
-                </p>
+        <!-- Yhteystietokortti -->
+        <div class="card">
+            <h2 style="margin-top: 0; font-size: 20px; color: var(--text-main);">
+                <span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business
+            </h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+                SolOne Automaatioratkaisut
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+                <div>
+                    <strong>Sähköposti:</strong> 
+                    <a href="mailto:info@solone.fi" style="color: var(--primary); text-decoration: none; margin-left: 5px;">info@solone.fi</a>
+                </div>
+                <div>
+                    <strong>Verkkosivusto:</strong> 
+                    <a href="https://www.solone.fi" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: none; margin-left: 5px;">www.solone.fi</a>
+                </div>
+                <div>
+                    <strong>Y-tunnus:</strong> 
+                    <span style="margin-left: 5px;">1391767-8</span>
+                </div>
             </div>
 
-            <!-- Kortti 2: Tekoäly ja Viestintä -->
-            <div class="card">
-                <span class="badge">TEKOÄLY & VIESTINTÄ</span>
-                <h2 style="margin-top: 0; font-size: 18px;">Jatkuvasti kehittyvä viestintäautomaatio</h2>
-                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">
-                    Tehosta asiakaspalvelua huolettomilla ja ylläpidetyillä tekoälyratkaisuilla:
-                </p>
-                <ul style="color: var(--text-muted); font-size: 14px; margin: 0 0 12px 0; padding-left: 18px; line-height: 1.5;">
-                    <li><strong>Sähköpostiavustaja:</strong> Luonnostelee valmiit vastausviestit palvelutarjoomasi pohjalta.</li>
-                    <li><strong>Verkkosivuchatbot:</strong> Vastaa asiakkaiden kysymyksiin sivustollasi 24/7.</li>
-                </ul>
-                <p style="color: var(--text-muted); font-size: 13px; margin: 0; background-color: var(--info-bg); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--info-border);">
-                    🔄 <strong>Aina ajantasalla:</strong> Huolehdimme järjestelmien ylläpidosta ja päivityksistä palveluidesi muuttuessa.
-                </p>
-            </div>
-        </div>
-
-        <!-- Yhteydenotto / CTA-laatikko alabannerissa (taustakuva käännetty 180°) -->
-        <div class="bottom-banner">
-            <div class="bottom-banner-sisalto">
-                <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #ffffff;">Kiinnostuitko palveluistamme?</h3>
-                <p style="margin: 0 0 15px 0; color: #e2e8f0; font-size: 13px;">Ota yhteyttä ja katsotaan yrityksellesi sopiva ratkaisu!</p>
-                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                    <a href="mailto:info@solone.fi" style="color: white; background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">✉️ info@solone.fi</a>
-                    <a href="https://www.solone.fi" target="_blank" rel="noopener noreferrer" style="color: white; background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">🌐 www.solone.fi</a>
-                    <a href="https://www.facebook.com/Sol1One" target="_blank" rel="noopener noreferrer" style="color: white; background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> Facebook</a>
-                    <a href="https://www.instagram.com/solone.fi/" target="_blank" rel="noopener noreferrer" style="color: white; background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg> Instagram</a>
+            <!-- Sosiaalinen media -->
+            <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                <strong style="font-size: 14px; display: block; margin-bottom: 10px;">Seuraa somessa:</strong>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <a href="https://www.facebook.com/Sol1One" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> Facebook
+                    </a>
+                    <a href="https://www.instagram.com/solone.fi/" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg> Instagram
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Footer -->
+        <!-- Yhteystiedot / Footer -->
         <footer class="footer">
             <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business</strong></p>
             <p style="margin: 5px 0;">SolOne Automaatioratkaisut</p>
+            <p style="margin: 5px 0; font-size: 13px; color: var(--text-muted);">Y-tunnus: 1391767-8</p>
             <p style="font-size: 12px; color: #94a3b8; margin-top: 15px;">&copy; SolOne. Kaikki oikeudet pidätetään.</p>
         </footer>
     </div>
