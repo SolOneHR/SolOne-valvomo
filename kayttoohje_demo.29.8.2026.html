@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testaajan opas: SolOne Somevalvomo (Demo)</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --secondary: #64748b;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px 15px;
+        }
+
+        @media (min-width: 600px) {
+            body { padding: 40px 20px; }
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .header-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        .header-banner h1 {
+            font-size: 1.6rem;
+            margin: 0 0 8px 0;
+            color: #ffffff;
+        }
+
+        .header-banner p {
+            margin: 0;
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        .osio-otsikko {
+            font-size: 1.2rem;
+            color: var(--text-main);
+            margin: 35px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .ohje-kortti {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .vaihe-numero {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            text-align: center;
+            line-height: 28px;
+            margin-right: 10px;
+            font-size: 0.9rem;
+        }
+
+        .vaihe-otsikko {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .info-box {
+            background-color: #eff6ff;
+            border-left: 4px solid var(--primary);
+            padding: 15px 18px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            color: #1e40af;
+            font-size: 0.95rem;
+        }
+
+        .turva-box {
+            background-color: #f0fdf4;
+            border-left: 4px solid var(--success);
+            padding: 15px 18px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            color: #166534;
+            font-size: 0.95rem;
+        }
+
+        .odotus-laatikko {
+            background-color: #fffbeb;
+            border-left: 4px solid var(--warning);
+            padding: 15px 18px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+            color: #92400e;
+            font-size: 0.95rem;
+        }
+
+        .example-box {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px 20px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            white-space: pre-line;
+            margin: 15px 0;
+            color: #0f172a;
+        }
+
+        .nappi-esimerkki {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: white;
+            margin: 2px 0;
+        }
+        .btn-reformat { background-color: #6366f1; }
+        .btn-reset { background-color: var(--secondary); }
+        .btn-hyvaksy { background-color: var(--success); }
+        .btn-pika { background-color: var(--primary); }
+        .btn-hylkaa { background-color: var(--danger); }
+
+        ul, ol {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background-color: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #0f172a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header-banner">
+        <h1>Testaajan opas: SolOne Somevalvomo (Demo)</h1>
+        <p>Pikaopas sähköpostipohjaisen julkaisuautomaation testaamiseen, tekoälyohjaukseen ja luonnosten hallintaan.</p>
+    </div>
+
+    <div class="turva-box">
+        <strong>🔒 100 % Turvallinen testiympäristö</strong><br>
+        Tämä demoalusta käyttää erillistä testikantaa. Vaikka klikkaat valvomossa <em>"Julkaise heti (Simuloi)"</em>, viestit <strong>eivät koskaan päädy oikeisiin sosiaalisen median kanaviin</strong>, vaan julkaisu ainoastaan simuloidaan ja arkistoidaan suoraan valvomon julkaisuhistoriaan.
+    </div>
+
+    <div class="info-box">
+        <strong>💡 Miten järjestelmä toimii?</strong><br>
+        Lähetät vain tavallisen sähköpostin ja mahdollisen kuvan järjestelmään. Tekoäly muotoilee tekstistä julkaisuvalmiin somepostauksen, ja Valvomo päivittää ruudun <strong>automaattisesti ilman sivun uudelleenlatausta</strong>!
+    </div>
+
+    <div class="osio-otsikko">📱 Testaaminen vaihe vaiheelta</div>
+
+    <!-- VAIHE 1 -->
+    <div class="ohje-kortti">
+        <div class="vaihe-otsikko">
+            <span class="vaihe-numero">1</span>
+            Demo-tunnuksen hankkiminen ja kirjautuminen
+        </div>
+        <p>Valvomo erottelee eri testaajien luonnokset toisistaan henkilökohtaisen demo-tunnuksen avulla:</p>
+        <ol>
+            <li>Avaa Demo-Valvomo selaimessasi.</li>
+            <li>Jos sinulla ei vielä ole koodia, paina <strong>"Pyydä uusi tunnus"</strong> ja syötä sähköpostiosoitteesi. Automaatio lähettää vapaan tunnuksen sähköpostiisi heti.</li>
+            <li>Syötä saamasi tunnus (muotoa <code>DEMO-XXXXX</code>) kenttään ja paina <strong>Kirjaudu sisään</strong>. Tunnus pysyy muistissa samalla selaimella.</li>
+        </ol>
+    </div>
+
+    <!-- VAIHE 2 -->
+    <div class="ohje-kortti">
+        <div class="vaihe-otsikko">
+            <span class="vaihe-numero">2</span>
+            Testijulkaisun lähettäminen sähköpostitse
+        </div>
+        <p>Luo uusi sähköpostiviesti omasta sähköpostiohjelmastasi seuraavilla tiedoilla:</p>
+        <ul>
+            <li><strong>Vastaanottaja (To):</strong> Lähetä viesti järjestelmän osoitteeseen (esim. <code>demo@solone.fi</code>).</li>
+            <li><strong>Aihe (Subject):</strong> Kirjoita aihe-kenttään <strong>oma demo-tunnuksesi</strong> (esim. <code>DEMO-12345</code>). Tämän perusteella järjestelmä tietää, kenen näkymään julkaisu kuuluu!</li>
+            <li><strong>Viestiosa (Body):</strong> Kirjoita tähän ajatuksesi, raakatekstisi tai uutisesi, josta haluat julkaisun.</li>
+            <li><strong>Liitteet:</strong> Voit liittää mukaan minkä tahansa kuvan testataksesi kuvan automaattista käsittelyä.</li>
+        </ul>
+
+        <div class="odotus-laatikko">
+            <strong>⏳ Käsittelyaika:</strong><br>
+            Sähköpostin lähettämisen jälkeen taustajärjestelmä ja tekoäly käsittelevät viestiä n. 15–25 sekuntia. Valvomoon ilmestyy ensin keltainen katkoviiva-kortti, joka muuttuu automaattisesti valmiiksi muokkaustilaksi, kun tekoäly on valmis!
+        </div>
+    </div>
+
+    <!-- VAIHE 3 -->
+    <div class="ohje-kortti">
+        <div class="vaihe-otsikko">
+            <span class="vaihe-numero">3</span>
+            Tekoälyn ohjeistaminen sähköpostissa (Promptaus)
+        </div>
+        <p>Voit halutessasi ohjata tekoälyn tyyliä suoraan sähköpostista lisäämällä viestin loppuun ohjeita hakasulkeissa:</p>
+
+        <div class="example-box"><strong>Vastaanottaja:</strong> demo@solone.fi
+<strong>Aihe:</strong> DEMO-12345
+<strong>Viesti:</strong>
+Käytiin tänään asiakkaan luona tekemässä laiteasennuksia ja opastamassa tabletin käytössä. Kaikki sujui hienosti ja asiakas oli tosi tyytyväinen.
+
+[OHJE TEKOÄLYLLE: Kirjoita tästä rento, iloinen ja asiantunteva Facebook-päivitys. Lisää aiheeseen sopivat emojit ja 3 hashtagia.]</div>
+    </div>
+
+    <!-- VAIHE 4 -->
+    <div class="ohje-kortti">
+        <div class="vaihe-otsikko">
+            <span class="vaihe-numero">4</span>
+            Valvomon työkalut: AI-sävyt ja palautus
+        </div>
+        <p>Kun kortti on saapunut Valvomoon, voit testata sen monipuolisia muokkaustoimintoja:</p>
+        <ul>
+            <li><strong>Julkaisuprofiilin valinta:</strong> Valitse pudotusvalikosta haluamasi sävy (<em>Yleinen, Yritys & B2B, Yritys & B2C, Somesisällöntuottaja, Yhdistys/yhteisö tai Blogi</em>).</li>
+            <li><span class="nappi-esimerkki btn-reformat">🔄 Muotoile AI:lla</span>: Klikkaa nappia, niin tekoäly kirjoittaa julkaisun uudelleen valitulla profiililla ja tyylillä lennosta!</li>
+            <li><span class="nappi-esimerkki btn-reset">↩️ Palauta 1. versio</span>: Voit milloin tahansa palata aivan ensimmäiseen tekoälyn tekemään ehdotukseen yhdellä klikkauksella.</li>
+            <li><strong>Vapaa muokkaus:</strong> Voit myös suoraan kirjoittaa ja hienosäätää julkaisutekstiä tekstilaatikossa.</li>
+        </ul>
+    </div>
+
+    <!-- VAIHE 5 -->
+    <div class="ohje-kortti">
+        <div class="vaihe-otsikko">
+            <span class="vaihe-numero">5</span>
+            Julkaisun simulointi ja hyväksyntä
+        </div>
+        <p>Kun olet tyytyväinen lopputulokseen, valitse haluamasi toiminto:</p>
+        <ul>
+            <li><span class="nappi-esimerkki btn-pika">🚀 Julkaise heti (Simuloi)</span>: Simuloi välittömän julkaisun. Kortti siirtyy alaspäin <strong>Julkaisuhistoriaan</strong> vihreällä leimalla varustettuna.</li>
+            <li><span class="nappi-esimerkki btn-hyvaksy">✓ Hyväksy jonoon</span>: Tallentaa luonnoksen hyväksytyksi ajastusta varten.</li>
+            <li><span class="nappi-esimerkki btn-hylkaa">✕ Hylkää</span>: Hylkää luonnoksen. Kortti siirtyy historiaan punaisella <span class="nappi-esimerkki btn-hylkaa">✕ HYLÄTTY</span> -merkinnällä.</li>
+        </ul>
+    </div>
+
+</div>
+
+</body>
+</html>
