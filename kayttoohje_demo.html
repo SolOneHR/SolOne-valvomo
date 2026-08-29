@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Somevalvomo - Käyttöohje (DEMO)</title>
+    <title>SolOne – Somevalvomon Käyttöohje (DEMO)</title>
     <style>
         :root {
             --bg-main: #f8fafc;
@@ -12,8 +12,8 @@
             --border-color: #e2e8f0;
             --text-main: #0f172a;
             --text-muted: #64748b;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
             --success: #10b981;
             --info-bg: #eff6ff;
             --info-border: #bfdbfe;
@@ -32,12 +32,14 @@
             line-height: 1.6;
         }
 
+        /* Leveyden keskitys ja rajaus (Max 900px) */
         .container {
             max-width: 900px;
             margin: 0 auto;
             padding: 20px;
         }
 
+        /* Yläpalkki ja navigaatio */
         .asiakasportaalipalkki {
             display: flex;
             justify-content: space-between;
@@ -97,8 +99,8 @@
         .btn-valvomo-linkki {
             background-color: var(--primary);
             color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 6px 14px;
+            border-radius: 8px;
             text-decoration: none;
             font-weight: bold;
             font-size: 13px;
@@ -107,6 +109,7 @@
         }
         .btn-valvomo-linkki:hover { background-color: var(--primary-hover); }
 
+        /* Yläbanneri taustakuvalla */
         .page-header {
             background: linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.65)), url('soloneverkkosivu.jpg') center/cover no-repeat;
             color: white;
@@ -130,6 +133,7 @@
             font-size: 15px;
         }
 
+        /* Ohjekortit */
         .osio-otsikko {
             font-size: 1.2rem;
             color: var(--text-main);
@@ -180,12 +184,12 @@
         }
 
         .vinkki-laatikko {
-            background-color: #f0fdf4;
-            border-left: 4px solid var(--success);
+            background-color: #eff6ff;
+            border-left: 4px solid var(--primary);
             padding: 15px;
             border-radius: 0 8px 8px 0;
-            margin: 20px 0;
-            color: #166534;
+            margin-bottom: 20px;
+            color: #1e40af;
             font-size: 0.95rem;
         }
 
@@ -199,19 +203,22 @@
             font-size: 0.95rem;
         }
 
+        /* Alkuperäisen demon mukaiset napit */
         .nappi-esimerkki {
             display: inline-block;
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 6px;
             font-weight: 600;
             font-size: 0.85rem;
             color: white;
-            margin: 2px 0;
+            margin: 2px 2px;
+            line-height: 1.4;
+            vertical-align: middle;
         }
+        .btn-pika { background-color: var(--primary); }
         .btn-reformat { background-color: #6366f1; }
         .btn-reset { background-color: var(--secondary); }
         .btn-hyvaksy { background-color: var(--success); }
-        .btn-pika { background-color: var(--primary); }
         .btn-hylkaa { background-color: var(--danger); }
 
         ul, ol {
@@ -339,7 +346,7 @@
                 Julkaisun hyväksyntä, pikalähetys ja historia
             </div>
             <p>Valitse haluamasi toiminto:</p>
-            <ul>
+            <ul style="line-height: 2;">
                 <li><span class="nappi-esimerkki btn-hyvaksy">✓ Hyväksy jonoon</span>: Asettaa julkaisun odottamaan ajastettua lähetysaikaa.</li>
                 <li><span class="nappi-esimerkki btn-pika">🚀 Julkaise heti (Simuloi)</span>: Simuloi julkaisun ja siirtää sen historiaan ilman oikeaa somejulkaisua.</li>
                 <li><span class="nappi-esimerkki btn-hylkaa">✕ Hylkää</span>: Siirtää julkaisun suoraan Julkaisuhistoriaan punaisella merkinnällä ilman julkaisua.</li>
