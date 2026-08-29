@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SolOne – Somevalvomon Käyttöohje (DEMO)</title>
+    <title>Somevalvomo - Käyttöohje (DEMO)</title>
     <style>
         :root {
             --bg-main: #f8fafc;
@@ -32,14 +32,12 @@
             line-height: 1.6;
         }
 
-        /* Leveyden keskitys ja rajaus (Max 900px) */
         .container {
             max-width: 900px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        /* Yläpalkki ja navigaatio */
         .asiakasportaalipalkki {
             display: flex;
             justify-content: space-between;
@@ -58,7 +56,6 @@
             flex-wrap: wrap;
         }
 
-        /* Ohennettu tekstilogo yläpalkkiin */
         .logo-palkki {
             font-size: 21px;
             font-weight: 600;
@@ -67,12 +64,8 @@
             display: inline-flex;
             align-items: center;
         }
-        .logo-palkki .sol {
-            color: #1e3a8a;
-        }
-        .logo-palkki .one {
-            color: #0284c7;
-        }
+        .logo-palkki .sol { color: #1e3a8a; }
+        .logo-palkki .one { color: #0284c7; }
 
         .paanavigaatio {
             display: flex;
@@ -101,28 +94,6 @@
             background-color: #eff6ff;
         }
 
-        .portaali-toiminnot {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        #portaali-kirjautunut {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .portal-linkki {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .portal-linkki:hover { text-decoration: underline; }
-
         .btn-valvomo-linkki {
             background-color: var(--primary);
             color: white;
@@ -136,50 +107,6 @@
         }
         .btn-valvomo-linkki:hover { background-color: var(--primary-hover); }
 
-        .btn-ulos-pieni {
-            background: transparent;
-            border: 1px solid var(--text-muted);
-            color: var(--text-muted);
-            padding: 4px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-        .btn-ulos-pieni:hover { color: var(--danger); border-color: var(--danger); }
-
-        #portaali-lomake {
-            display: none;
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            text-align: left;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
-            max-width: 320px;
-            margin-left: auto;
-        }
-
-        .lomake-kentta {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 13px;
-        }
-
-        .ilmoitus-pieni {
-            color: var(--danger);
-            font-size: 12px;
-            margin-bottom: 10px;
-            display: none;
-            font-weight: bold;
-        }
-
-        /* Yläbanneri taustakuvalla */
         .page-header {
             background: linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.65)), url('soloneverkkosivu.jpg') center/cover no-repeat;
             color: white;
@@ -203,7 +130,6 @@
             font-size: 15px;
         }
 
-        /* Ohjeosion tyylit */
         .osio-otsikko {
             font-size: 1.2rem;
             color: var(--text-main);
@@ -248,7 +174,7 @@
             border-left: 4px solid var(--success);
             padding: 15px;
             border-radius: 0 8px 8px 0;
-            margin: 20px 0;
+            margin-bottom: 20px;
             color: #166534;
             font-size: 0.95rem;
         }
@@ -260,16 +186,6 @@
             border-radius: 0 8px 8px 0;
             margin: 20px 0;
             color: #166534;
-            font-size: 0.95rem;
-        }
-
-        .huomio-laatikko {
-            background-color: #fef2f2;
-            border-left: 4px solid var(--danger);
-            padding: 15px;
-            border-radius: 0 8px 8px 0;
-            margin: 20px 0;
-            color: #991b1b;
             font-size: 0.95rem;
         }
 
@@ -307,7 +223,6 @@
             margin-bottom: 8px;
         }
 
-        /* Footer */
         .footer {
             text-align: center;
             padding: 30px 0;
@@ -322,7 +237,7 @@
 
     <div class="container">
         
-        <!-- ASIAKASPORTAALIPALKKI JA LOGO YLÄREUNASSA -->
+        <!-- YLÄPALKKI JA NAVIGAATIO -->
         <div class="asiakasportaalipalkki">
             <div class="logo-nav-group">
                 <a href="index.html" class="logo-palkki">
@@ -331,58 +246,47 @@
                 <nav class="paanavigaatio">
                     <a href="index.html">Etusivu</a>
                     <a href="palvelut.html">Palvelut</a>
-                    <a href="kayttoohje.html" class="aktiivinen">Käyttöohje</a>
                     <a href="yhteystiedot.html">Yhteystiedot</a>
                 </nav>
             </div>
-            <div class="portaali-toiminnot">
-                <div id="portaali-vieras">
-                    <span class="portal-linkki" onclick="vaihdaLomakeNakyvyys()">🔒 Asiakasportaali / Kirjaudu sisään</span>
-                </div>
-                <div id="portaali-kirjautunut" style="display: none;">
-                    <span style="color: var(--text-muted); margin-right: 5px;" id="kayttaja-tunnus"></span>
-                    <a href="somevalvomo.html" class="btn-valvomo-linkki">💻 Avaa Somevalvomo</a>
-                    <button class="btn-ulos-pieni" onclick="kirjauduUlos()">Ulos</button>
-                </div>
+            <div>
+                <a href="somevalvomo_demo.html" class="btn-valvomo-linkki">💻 Avaa Somevalvomo Demo</a>
             </div>
-        </div>
-
-        <!-- KIRJAUTUMISLOMAKE -->
-        <div id="portaali-lomake">
-            <div id="pika-virhe" class="ilmoitus-pieni"></div>
-            <input type="email" id="pika-email" class="lomake-kentta" placeholder="Sähköposti">
-            <input type="password" id="pika-password" class="lomake-kentta" placeholder="Salasana">
-            <button style="width: 100%; background: var(--primary); color: white; border: none; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="suoritaKirjautuminen()">Kirjaudu</button>
         </div>
 
         <!-- Yläbanneri taustakuvalla -->
         <header class="page-header">
-            <h1>SolOne Somevalvomo – Käyttöohje (DEMO)</h1>
-            <p>Opas demo-ympäristön käyttöön, sähköpostipohjaiseen testaukseen ja tekoälyohjaukseen.</p>
+            <h1>Somevalvomo - Käyttöohje (DEMO)</h1>
+            <p>Testaa, muokkaa ja simuloi odottavat somejulkaisut.</p>
         </header>
 
-        <!-- TURVA- JA TOIMINTA-INFOT -->
+        <!-- ENNEN KUIN ALOITAT -->
         <div class="turva-box">
-            <strong>🔒 100 % Turvallinen testiympäristö</strong><br>
-            Tämä demoalusta käyttää erillistä testikantaa. Vaikka klikkaat valvomossa <em>"Julkaise heti (Simuloi)"</em>, viestit <strong>eivät koskaan päädy oikeisiin sosiaalisen median kanaviin</strong>, vaan julkaisu ainoastaan simuloidaan ja arkistoidaan suoraan valvomon julkaisuhistoriaan.
+            <strong>🔒 Ennen kuin aloitat:</strong><br>
+            Tämä on 100 % turvallinen testiympäristö. Mikään julkaisu ei mene oikeisiin sosiaalisen median kanaviin, vaikka painaisit ”Julkaise heti (simuloi)”.
         </div>
 
         <div class="vinkki-laatikko">
-            <strong>💡 Miten julkaisuja luodaan Valvomoon?</strong><br>
-            Julkaisuja voi syöttää järjestelmään kahdella tavalla:
-            <ul>
-                <li><strong>Sähköpostilla:</strong> Lähetä viesti ja kuva osoitteeseen <strong>demo@solone.fi</strong> aiheena oma demo-tunnuksesi.</li>
-                <li><strong>Suoraan Valvomosta:</strong> Klikkaa yläpalkin painiketta <span class="nappi-esimerkki btn-pika">➕ Uusi luonnos</span> ja lataa kuva puhelimestasi tai koneeltasi.</li>
-            </ul>
-            <strong>Sivua ei tarvitse päivittää käsin</strong> – Valvomo hakee muutokset itsekseen taustalla. Kun kirjoitat tekstikenttään, automaattipäivitys vetäytyy heti sivuun, ettei työsi ylikirjoitu kesken kaiken!
+            <strong>💡 Julkaisun luominen:</strong><br>
+            <p style="margin: 6px 0 10px 0;"><strong>Voit luoda julkaisun suoraan Valvomossa:</strong></p>
+            <ol style="padding-left: 20px; margin-bottom: 12px;">
+                <li>Avaa Valvomo ja valitse painike <span class="nappi-esimerkki btn-pika">➕ Uusi luonnos</span>.</li>
+                <li>Lisää kuva puhelimelta tai tietokoneelta.</li>
+                <li>Kirjoita julkaisun teksti ja valitse haluamasi julkaisuprofiili.</li>
+                <li>Paina <strong>”🚀 Luo ja käsittele AI:lla”</strong>.</li>
+            </ol>
+            <p style="margin: 0 0 12px 0;">Valvomo käsittelee kuvan automaattisesti, joten sinun ei tarvitse pienentää tai muokata kuvatiedostoa ennen lataamista.</p>
+
+            <p style="margin: 12px 0 6px 0;"><strong>Voit luoda julkaisun myös sähköpostilla:</strong></p>
+            <p style="margin: 0 0 6px 0;">Jos haluat käyttää sähköpostia, voit lähettää kuvan ja viestin osoitteeseen <strong>demo@solone.fi</strong>. Kirjoita viestin aiheeksi oma demo-tunnuksesi.</p>
+            <p style="margin: 0 0 12px 0;">Sähköpostilla lähetettävän kuvan enimmäiskoko on 4 Mt (suositus).</p>
+
+            <p style="margin: 0;">Valvomo päivittyy automaattisesti, joten sivua ei tarvitse päivittää itse.</p>
         </div>
 
-        <div class="huomio-laatikko">
-            <strong>📷 Kuvaohje ja tiedostokoot:</strong><br>
-            <ul>
-                <li><strong>Sähköpostilla lähetettäessä:</strong> Kuvan maksimikoko on <strong>8 Mt</strong> (suositus 1–4 Mt). Jos liität täystarkan kuvan puhelimella, valitse sähköpostiohjelman kysyessä lähetyskooksi <em>"Suuri"</em> tai <em>"Keskikoko"</em>. Yli 8 Mt liitteet hylätään automaattisesti virhetilaan, jotta julkaisujärjestelmä ei jumitu.</li>
-                <li><strong>Valvomon kautta ladattaessa:</strong> Verkkosivu optimoi ja skaalaa suuretkin puhelinkuvat automaattisesti ennen tallennusta, joten tiedostokoko pysyy aina optimaalisena.</li>
-            </ul>
+        <div class="odotus-laatikko">
+            <strong>⏳ Uusi julkaisu käsittelyssä:</strong><br>
+            Kun uusi julkaisu saapuu (sähköpostitse tai selaimesta), Valvomoon ilmestyy keltainen katkoviiva-kortti. Tekoäly luonnostelee tekstin valmiiksi noin 15–20 sekunnissa, minkä jälkeen kortti muuttuu itsekseen vihreäksi muokkaustilaksi.
         </div>
 
         <div class="osio-otsikko">📱 Julkaisun käsittely vaihe vaiheelta</div>
@@ -391,23 +295,6 @@
         <div class="ohje-kortti">
             <div class="vaihe-otsikko">
                 <span class="vaihe-numero">1</span>
-                Demo-tunnus ja luonnosten hallinta
-            </div>
-            <p>Syötä demo-tunnuksesi päästäksesi omaan näkymääsi. Yläbannerista löydät työkalun luonnosten luontiin:</p>
-            <ul>
-                <li><span class="nappi-esimerkki btn-pika">➕ Uusi luonnos</span>: Voit luoda uuden somepostauksen suoraan selaimessa ja valita heti kohdesivun ja julkaisuprofiilin.</li>
-            </ul>
-            
-            <div class="odotus-laatikko">
-                <strong>⏳ Uusi julkaisu käsittelyssä -vaihe:</strong><br>
-                Kun uusi julkaisu saapuu (sähköpostitse tai selaimesta), Valvomoon ilmestyy keltainen katkoviiva-kortti. Tekoäly luonnostelee tekstin valmiiksi noin 15–20 sekunnissa, minkä jälkeen kortti muuttuu itsekseen vihreäksi muokkaustilaksi.
-            </div>
-        </div>
-
-        <!-- VAIHE 2 -->
-        <div class="ohje-kortti">
-            <div class="vaihe-otsikko">
-                <span class="vaihe-numero">2</span>
                 Sisällön ja esikatselun tarkistus
             </div>
             <p>Kun kortti on aktiivinen, tarkista sen tiedot:</p>
@@ -419,10 +306,10 @@
             </ul>
         </div>
 
-        <!-- VAIHE 3 -->
+        <!-- VAIHE 2 -->
         <div class="ohje-kortti">
             <div class="vaihe-otsikko">
-                <span class="vaihe-numero">3</span>
+                <span class="vaihe-numero">2</span>
                 AI-uudelleenmuotoilu ja 1. version palauttaminen
             </div>
             <p>Voit vaihtaa julkaisun tyyliä tai palauttaa aiemman version:</p>
@@ -432,10 +319,10 @@
             </ol>
         </div>
 
-        <!-- VAIHE 4 -->
+        <!-- VAIHE 3 -->
         <div class="ohje-kortti">
             <div class="vaihe-otsikko">
-                <span class="vaihe-numero">4</span>
+                <span class="vaihe-numero">3</span>
                 Kohdesivun, kanavan ja ajastuksen valinta
             </div>
             <p>Määritä kortin alaosasta minne ja milloin julkaisu toimitetaan:</p>
@@ -445,10 +332,10 @@
             </ul>
         </div>
 
-        <!-- VAIHE 5 -->
+        <!-- VAIHE 4 -->
         <div class="ohje-kortti">
             <div class="vaihe-otsikko">
-                <span class="vaihe-numero">5</span>
+                <span class="vaihe-numero">4</span>
                 Julkaisun hyväksyntä, pikalähetys ja historia
             </div>
             <p>Valitse haluamasi toiminto:</p>
@@ -459,75 +346,14 @@
             </ul>
         </div>
 
-        <!-- Yhteystiedot / Footer -->
+        <!-- Footer -->
         <footer class="footer">
             <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business</strong></p>
             <p style="margin: 5px 0;">SolOne Automaatioratkaisut</p>
-            <p style="margin: 5px 0; font-size: 13px; color: var(--text-muted);">Y-tunnus: 1391767-8</p>
             <p style="font-size: 12px; color: #94a3b8; margin-top: 15px;">&copy; SolOne. Kaikki oikeudet pidätetään.</p>
         </footer>
 
     </div>
 
-<script>
-    const SUPABASE_URL = 'https://oajnnrrnatqqymmvncxf.supabase.co';
-    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
-
-    function vaihdaLomakeNakyvyys() {
-        const lomake = document.getElementById('portaali-lomake');
-        lomake.style.display = lomake.style.display === 'block' ? 'none' : 'block';
-    }
-
-    async function suoritaKirjautuminen() {
-        const email = document.getElementById('pika-email').value;
-        const password = document.getElementById('pika-password').value;
-        const virheAlue = document.getElementById('pika-virhe');
-
-        try {
-            const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
-                method: 'POST',
-                headers: { 'apikey': ANON_KEY, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error_description || data.msg || "Virhe");
-
-            localStorage.setItem('supabase_token', data.access_token);
-            localStorage.setItem('supabase_refresh_token', data.refresh_token);
-            localStorage.setItem('user_email', data.user.email);
-
-            virheAlue.style.display = 'none';
-            document.getElementById('portaali-lomake').style.display = 'none';
-            tarkistaIstunto();
-        } catch (err) {
-            virheAlue.textContent = "Kirjautuminen epäonnistui.";
-            virheAlue.style.display = 'block';
-        }
-    }
-
-    function kirjauduUlos() {
-        localStorage.removeItem('supabase_token');
-        localStorage.removeItem('supabase_refresh_token');
-        localStorage.removeItem('user_email');
-        tarkistaIstunto();
-    }
-
-    function tarkistaIstunto() {
-        const token = localStorage.getItem('supabase_token');
-        const email = localStorage.getItem('user_email');
-
-        if (token) {
-            document.getElementById('portaali-vieras').style.display = 'none';
-            document.getElementById('kayttaja-tunnus').textContent = email ? email.split('@')[0] : 'Asiakas';
-            document.getElementById('portaali-kirjautunut').style.display = 'block';
-        } else {
-            document.getElementById('portaali-kirjautunut').style.display = 'none';
-            document.getElementById('portaali-vieras').style.display = 'block';
-        }
-    }
-
-    window.addEventListener('load', tarkistaIstunto);
-</script>
 </body>
 </html>
