@@ -1,2 +1,0 @@
-# soloset-valvomo
-IT-Valvomo

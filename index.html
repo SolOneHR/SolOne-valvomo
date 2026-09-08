@@ -52,7 +52,7 @@
         .logo-nav-group {
             display: flex;
             align-items: center;
-            gap: 24px;
+            gap: 14px;
             flex-wrap: wrap;
         }
 
@@ -75,17 +75,19 @@
         .paanavigaatio {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 6px;
+            flex-wrap: nowrap;
         }
 
         .paanavigaatio a {
             color: var(--text-main);
             text-decoration: none;
             font-weight: 500;
-            font-size: 14px;
-            padding: 4px 8px;
+            font-size: 13.5px;
+            padding: 4px 6px;
             border-radius: 6px;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
         .paanavigaatio a:hover {
@@ -97,6 +99,29 @@
             color: var(--primary);
             font-weight: 700;
             background-color: #eff6ff;
+        }
+
+        /* Kännykkäsäädöt navigaatiolle: estää sivun ylileveäksi leviämisen */
+        @media (max-width: 640px) {
+            .logo-nav-group {
+                width: 100%;
+                justify-content: center;
+                gap: 10px;
+            }
+            .paanavigaatio {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 4px;
+                width: 100%;
+            }
+            .paanavigaatio a {
+                font-size: 12.5px;
+                padding: 4px 6px;
+            }
+            .portaali-toiminnot {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
         .portaali-toiminnot {
@@ -171,6 +196,14 @@
 
         .ilmoitus-pieni {
             color: var(--danger);
+            font-size: 12px;
+            margin-bottom: 10px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .ilmoitus-onni {
+            color: var(--success);
             font-size: 12px;
             margin-bottom: 10px;
             display: none;
@@ -326,6 +359,7 @@
                 <nav class="paanavigaatio">
                     <a href="index.html" class="aktiivinen">Etusivu</a>
                     <a href="palvelut.html">Palvelut</a>
+                    <a href="vastuullisuus.html">Vastuullisuus</a>
                     <a href="yhteystiedot.html">Yhteystiedot</a>
                     <a href="tietosuoja.html">Tietosuojaseloste</a>
                 </nav>
@@ -345,9 +379,22 @@
         <!-- KIRJAUTUMISLOMAKE -->
         <div id="portaali-lomake">
             <div id="pika-virhe" class="ilmoitus-pieni"></div>
+            <div id="pika-info" class="ilmoitus-onni"></div>
             <input type="email" id="pika-email" class="lomake-kentta" placeholder="Sähköposti">
             <input type="password" id="pika-password" class="lomake-kentta" placeholder="Salasana">
-            <button style="width: 100%; background: var(--primary); color: white; border: none; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="suoritaKirjautuminen()">Kirjaudu</button>
+            <button style="width: 100%; background: var(--primary); color: white; border: none; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-bottom: 8px;" onclick="suoritaKirjautuminen()">Kirjaudu</button>
+            <div style="text-align: center;">
+                <a href="javascript:void(0)" onclick="lahetaSalasananPalautus()" style="font-size: 11px; color: var(--primary); text-decoration: none;">Unohditko salasanasi?</a>
+            </div>
+        </div>
+
+        <!-- UUDEN SALASANAN ASETUS -LOMAKE (Aukeaa palautuslinkistä) -->
+        <div id="salasanan-vaihto-laatikko" style="display: none; background: white; border: 2px solid var(--primary); border-radius: 8px; padding: 18px; margin-bottom: 25px; max-width: 380px; margin-left: auto; margin-right: auto; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+            <h3 style="margin-top: 0; font-size: 16px;">🔑 Aseta uusi salasana</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Syötä uusi salasana tilillesi.</p>
+            <div id="salasana-nollaus-virhe" class="ilmoitus-pieni"></div>
+            <input type="password" id="uusi-salasana-kentta" class="lomake-kentta" placeholder="Uusi salasana (väh. 6 merkkiä)">
+            <button style="width: 100%; background: var(--success); color: white; border: none; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="tallennaUusiSalasana()">Tallenna uusi salasana</button>
         </div>
 
         <!-- Hero Section tekstiotsikolla ja logotyylillä -->
@@ -421,7 +468,7 @@
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">
                         <strong>Haaste:</strong> Valikoima ja arki elävät nopeasti, mutta toistuvaan somen ylläpitoon ja ideointiin ei löydy aikaa.
                     </p>
-                    <p style="font-size: 13px; color: var(--text-muted); margin: 0;">
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">
                         <strong>Ratkaisu:</strong> Syötä uusi tuote tai päivän vinkki Somevalvomoon, valitse tyyliksi <em>Yritys & B2C</em> ja anna järjestelmän luoda sekä ajastaa viikon julkaisut parhaisiin katseluaikoihin.
                     </p>
                 </div>
@@ -501,6 +548,11 @@
             <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business</strong></p>
             <p style="margin: 5px 0;">SolOne Automaatioratkaisut</p>
             <p style="margin: 5px 0; font-size: 13px; color: var(--text-muted);">Y-tunnus: 1391767-8</p>
+            <p style="margin: 10px 0; font-size: 13px;">
+                <a href="vastuullisuus.html" style="color: var(--text-muted); text-decoration: none;">Vastuullisuus</a>
+                <span style="color: var(--border-color); margin: 0 8px;">|</span>
+                <a href="tietosuoja.html" style="color: var(--text-muted); text-decoration: none;">Tietosuojaseloste</a>
+            </p>
             <p style="font-size: 12px; color: #94a3b8; margin-top: 15px;">&copy; SolOne. Kaikki oikeudet pidätetään.</p>
         </footer>
     </div>
@@ -518,6 +570,7 @@
         const email = document.getElementById('pika-email').value;
         const password = document.getElementById('pika-password').value;
         const virheAlue = document.getElementById('pika-virhe');
+        const infoAlue = document.getElementById('pika-info');
 
         try {
             const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
@@ -534,12 +587,124 @@
             localStorage.setItem('user_email', data.user.email);
 
             virheAlue.style.display = 'none';
+            if (infoAlue) infoAlue.style.display = 'none';
             document.getElementById('portaali-lomake').style.display = 'none';
             tarkistaIstunto();
         } catch (err) {
             virheAlue.textContent = "Kirjautuminen epäonnistui.";
             virheAlue.style.display = 'block';
         }
+    }
+
+    async function lahetaSalasananPalautus() {
+        const emailKentta = document.getElementById('pika-email');
+        const virheAlue = document.getElementById('pika-virhe');
+        const infoAlue = document.getElementById('pika-info');
+
+        virheAlue.style.display = 'none';
+        infoAlue.style.display = 'none';
+
+        let email = emailKentta.value.trim();
+        if (!email) {
+            email = prompt("Syötä sähköpostiosoitteesi salasanan palauttamiseksi:");
+            if (!email) return;
+            emailKentta.value = email;
+        }
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/auth/v1/recover`, {
+                method: 'POST',
+                headers: { 'apikey': ANON_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.msg || data.error_description || "Virhe pyynnössä");
+
+            infoAlue.textContent = "✓ Palautuslinkki lähetetty sähköpostiisi!";
+            infoAlue.style.display = 'block';
+        } catch (err) {
+            virheAlue.textContent = "Virhe: " + err.message;
+            virheAlue.style.display = 'block';
+        }
+    }
+
+    async function tallennaUusiSalasana() {
+        const uusiSalasana = document.getElementById('uusi-salasana-kentta').value;
+        const virheAlue = document.getElementById('salasana-nollaus-virhe');
+        const token = localStorage.getItem('supabase_token');
+
+        if (!uusiSalasana || uusiSalasana.length < 6) {
+            virheAlue.textContent = "Salasanan on oltava vähintään 6 merkkiä.";
+            virheAlue.style.display = 'block';
+            return;
+        }
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+                method: 'PUT',
+                headers: {
+                    'apikey': ANON_KEY,
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ password: uusiSalasana })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.msg || data.error_description || "Tallennus epäonnistui");
+
+            document.getElementById('salasanan-vaihto-laatikko').style.display = 'none';
+            window.location.hash = '';
+            alert("✓ Uusi salasana tallennettu! Voit nyt kirjautua sisään.");
+            tarkistaIstunto();
+        } catch (err) {
+            virheAlue.textContent = "Virhe: " + err.message;
+            virheAlue.style.display = 'block';
+        }
+    }
+
+    async function tarkistaPalautusKoodi() {
+        const hash = window.location.hash;
+        const search = window.location.search;
+        let token = null;
+        let refreshToken = null;
+
+        if (hash && (hash.includes('type=recovery') || hash.includes('access_token='))) {
+            const params = new URLSearchParams(hash.replace('#', '?'));
+            token = params.get('access_token');
+            refreshToken = params.get('refresh_token');
+        } else if (search && search.includes('code=')) {
+            const params = new URLSearchParams(search);
+            const code = params.get('code');
+            try {
+                const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=pkce`, {
+                    method: 'POST',
+                    headers: { 'apikey': ANON_KEY, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ auth_code: code })
+                });
+                const data = await res.json();
+                if (res.ok && data.access_token) {
+                    token = data.access_token;
+                    refreshToken = data.refresh_token;
+                }
+            } catch (e) {
+                console.error("PKCE vaihto epäonnistui:", e);
+            }
+        }
+
+        if (token) {
+            localStorage.setItem('supabase_token', token);
+            if (refreshToken) localStorage.setItem('supabase_refresh_token', refreshToken);
+
+            const laatikko = document.getElementById('salasanan-vaihto-laatikko');
+            if (laatikko) {
+                laatikko.style.display = 'block';
+                laatikko.scrollIntoView({ behavior: 'smooth' });
+            }
+            return true;
+        }
+        return false;
     }
 
     function kirjauduUlos() {
@@ -563,7 +728,12 @@
         }
     }
 
-    window.addEventListener('load', tarkistaIstunto);
+    window.addEventListener('load', async function() {
+        const onPalautus = await tarkistaPalautusKoodi();
+        if (!onPalautus) {
+            tarkistaIstunto();
+        }
+    });
 </script>
 </body>
 </html>
