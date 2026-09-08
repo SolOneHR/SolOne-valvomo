@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vastuullisuus | SolOne</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #eff6ff;
+      --accent: #059669;
+      --text: #1f2937;
+      --text-muted: #4b5563;
+      --bg: #ffffff;
+      --card-bg: #f9fafb;
+      --border: #e5e7eb;
+      --radius: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      line-height: 1.65;
+      color: var(--text);
+      background-color: var(--bg);
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    header.section-header {
+      margin-bottom: 3rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 2rem;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 0.35rem 0.8rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      color: var(--primary);
+      line-height: 1.25;
+      margin-bottom: 1rem;
+    }
+
+    .lead-text {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      color: var(--primary);
+      margin: 2.5rem 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Omat vastuut -kortit (3 saraketta) */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .card h3 {
+      font-size: 1.2rem;
+      color: var(--text);
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .card ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .card li {
+      margin-bottom: 0.85rem;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .card li strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    /* Taulukko kädenjäljelle */
+    .table-responsive {
+      overflow-x: auto;
+      margin: 1.5rem 0 3rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    th {
+      background-color: var(--primary-light);
+      color: var(--primary);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    td ul {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: var(--text-muted);
+    }
+
+    td ul li {
+      margin-bottom: 0.4rem;
+    }
+
+    .table-category {
+      font-weight: 700;
+      color: var(--primary);
+      white-space: nowrap;
+    }
+
+    .table-sub {
+      display: block;
+      font-weight: normal;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Lainaus / Asiakaslupaus */
+    .quote-box {
+      background: linear-gradient(135deg, var(--primary-light), #f0fdf4);
+      border-left: 5px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 1.5rem 2rem;
+      margin: 2.5rem 0;
+    }
+
+    .quote-box p {
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .quote-box .author {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      font-style: normal;
+    }
+
+    /* CTA osio */
+    .cta-box {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-top: 3rem;
+    }
+
+    .cta-box h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+      color: var(--primary);
+    }
+
+    .cta-box p {
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background: var(--primary);
+      color: #ffffff;
+      padding: 0.75rem 1.8rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.2s ease;
+    }
+
+    .cta-btn:hover {
+      background: #172554;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Sivun otsikko & johdanto -->
+    <header class="section-header">
+      <span class="badge">Vastuullisuus & Vaikuttavuus</span>
+      <h1>Kestävää teknologiaa, inhimillistä työarkea ja mitattavaa tulosta</h1>
+      <p class="lead-text">
+        Vastuullisuus ei ole meille päälleliimattuja korulauseita, vaan kiinteä osa jokaista koodiriviä, prosessia ja asiakaskohtaamista. Uskomme, että kestävä liiketoiminta syntyy pienten ja keskisuurten yritysten elinvoimasta, ihmislähtöisestä digitalisaatiosta sekä resurssien fiksusta käytöstä.
+      </p>
+    </header>
+
+    <!-- Osa 1: SolOnen oma vastuu -->
+    <section>
+      <h2>1. Miten me toimimme – SolOnen vastuu arjessa</h2>
+      <p class="lead-text" style="font-size: 1rem; margin-bottom: 1.5rem;">
+        Oma toimintamme perustuu läpinäkyvään hallintoon, ihmislähtöisyyteen ja digitaalisen hiilijalanjäljen minimointiin.
+      </p>
+
+      <div class="grid-3">
+        <!-- Sosiaalinen vastuu -->
+        <div class="card">
+          <h3>Sosiaalinen vastuu (Social)</h3>
+          <ul>
+            <li>
+              <strong>Teknologia ihmisen tueksi</strong>
+              Automaation tarkoitus on vapauttaa asiantuntijat rutiineista, vähentää kognitiivista kuormitusta ja ennaltaehkäistä uupumusta.
+            </li>
+            <li>
+              <strong>Selkeys ja turvallisuus</strong>
+              Selkeät prosessit, dokumentaatio ja tasapuoliset pelisäännöt luovat luottamusta ja tasa-arvoista työkulttuuria.
+            </li>
+            <li>
+              <strong>Ymmärrettävä digitalisaatio</strong>
+              Teemme tekoälystä ja pilviratkaisuista helppoja ja saavutettavia ilman vaikeaselkoista IT-jargonia.
+            </li>
+          </ul>
+        </div>
+
+        <!-- Taloudellinen vastuu -->
+        <div class="card">
+          <h3>Taloudellinen vastuu (Governance)</h3>
+          <ul>
+            <li>
+              <strong>Pk-yritysten elinvoima</strong>
+              Rakennamme kustannustehokkaita ratkaisuja ilman raskaita tai ylimitoitettuja järjestelmäinvestointeja.
+            </li>
+            <li>
+              <strong>Läpinäkyvä kumppanuus</strong>
+              Hinnoittelumme on avointa ja ennakoitavaa. Emme sido asiakkaita keinotekoisiin toimittajalukkoihin.
+            </li>
+            <li>
+              <strong>Tietosuoja ja etiikka</strong>
+              Noudatamme tiukasti GDPR-sääntelyä. Varmistamme, että tekoälyä käytetään ilman riskiä luottamuksellisen datan vuotamisesta.
+            </li>
+          </ul>
+        </div>
+
+        <!-- Ympäristövastuu -->
+        <div class="card">
+          <h3>Ympäristövastuu (Environmental)</h3>
+          <ul>
+            <li>
+              <strong>Kevyt koodi (Green IT)</strong>
+              Suunnittelemme järjestelmät kevyiksi, jolloin ne säästävät palvelinresursseja, kaistanleveyttä ja sähköä.
+            </li>
+            <li>
+              <strong>100 % digitaalinen toimisto</strong>
+              Toimimme paperittomasti ja suosimme etäkohtaamisia turhan asiointiliikenteen ja päästöjen karsimiseksi.
+            </li>
+            <li>
+              <strong>Laitteiden elinkaariajattelu</strong>
+              Pidämme laitteidemme käyttöiän pitkänä, huollamme tekniikan ja kierrätämme elektroniikan asianmukaisesti.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Osa 2: Kädenjälki -->
+    <section>
+      <h2>2. Vastuullisuuskädenjälkemme asiakkaalle</h2>
+      <p class="lead-text" style="font-size: 1rem; margin-bottom: 1.5rem;">
+        Merkittävin yhteiskunnallinen vaikutuksemme syntyy <strong>kädenjäljestämme</strong>: niistä todennettavista hyödyistä, joita ratkaisumme tuottavat asiakasyritystemme oman vastuullisuuden ja arjen vahvistamiseen.
+      </p>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 25%;">Vastuullisuusalue</th>
+              <th style="width: 40%;">SolOnen kädenjälki asiakkaan arjessa</th>
+              <th style="width: 35%;">Konkreettinen hyöty asiakkaalle</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span class="table-category">Sosiaalinen kädenjälki</span>
+                <span class="table-sub">Työhyvinvointi & yhteisö</span>
+              </td>
+              <td>
+                <ul>
+                  <li>Mekaanisten rutiinitehtävien ja datan siirtelyn automatisointi</li>
+                  <li>Läpinäkyvien HR- ja perehdytysmallien rakentaminen</li>
+                  <li>Henkilöstön opastaminen ja digitaitojen vahvistaminen</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Kognitiivinen kuorma ja kiirestressi kevenevät</li>
+                  <li>Työajan suuntaaminen mielekkääseen työhön parantaa viihtyvyyttä</li>
+                  <li>Reilut ja selkeät prosessit lisäävät psykologista turvallisuutta</li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span class="table-category">Taloudellinen kädenjälki</span>
+                <span class="table-sub">Kannattavuus & luotettavuus</span>
+              </td>
+              <td>
+                <ul>
+                  <li>Olemassa olevien järjestelmien ja resurssien tehostaminen</li>
+                  <li>Työnkulkujen standardointi ja inhimillisten unohdusten karsinta</li>
+                  <li>Tietosuojavaatimustenmukaisuuden (GDPR) varmistaminen</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Pk-yrityksen tuottavuus kasvaa ilman jätti-investointeja</li>
+                  <li>Parempi toimitusvarmuus suojaa yrityksen mainetta</li>
+                  <li>Lainsäädännölliset riskit ja tietoturvauhat minimoituvat</li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span class="table-category">Ympäristökädenjälki</span>
+                <span class="table-sub">Resurssi- & energiatehokkuus</span>
+              </td>
+              <td>
+                <ul>
+                  <li>Paperipohjaisten toimintamallien korvaaminen digitaalisilla työnkuluilla</li>
+                  <li>Turhien ajokilometrien ja siirtymien karsiminen digiratkaisuilla</li>
+                  <li>Päällekkäisen datamassan ja järjestelmäkuorman siivous</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Paperi-, tulostus- ja jätekuorma pienenee selvästi</li>
+                  <li>Asiointiliikenteen ja logistiikan polttoainepäästöt vähenevät</li>
+                  <li>Kevyemmät digityökalut pienentävät digitaalista hiilijalanjälkeä</li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Asiakaslupaus -->
+    <div class="quote-box">
+      <p>”Yhteistyö SolOnen kanssa ei ainoastaan sujuvoita yrityksenne liiketoimintaa, vaan antaa teille todennettavia tuloksia oman vastuullisuustyönne, henkilöstöhyvinvointinne ja resurssitehokkuutenne tueksi.”</p>
+      <span class="author">SolOne – Lupauksemme asiakkaalle</span>
+    </div>
+
+    <!-- Yhteydenottokehote (CTA) -->
+    <div class="cta-box">
+      <h3>Haluatko rakentaa kestävämpää ja sujuvampaa työarkea?</h3>
+      <p>Katsotaan yhdessä, miten teidän yrityksenne prosesseja voidaan tehostaa inhimillisesti ja vastuullisesti.</p>
+      <a href="/yhteys" class="cta-btn">Ota yhteyttä</a>
+    </div>
+
+  </div>
+
+</body>
+</html>
