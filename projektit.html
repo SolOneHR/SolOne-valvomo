@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projektit & Kehityshankkeet – SolOne</title>
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .ylapalkki {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .linkki-takaisin {
+            text-decoration: none;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .lomake-rivi {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 650px) {
+            .lomake-rivi { grid-template-columns: 1fr; }
+        }
+
+        .kentta {
+            padding: 9px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .btn:hover { background: var(--primary-hover); }
+
+        .vaihe-rivi {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-projekti {
+            background: #eff6ff;
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid #bfdbfe;
+        }
+
+        .tila-valitsin {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-weight: 500;
+        }
+
+        .btn-poisto {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px 8px;
+        }
+        .btn-poisto:hover { color: var(--danger); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="ylapalkki">
+            <div>
+                <a href="somevalvomo.html" class="linkki-takaisin">&larr; Takaisin Somevalvomoon</a>
+                <h1 style="margin: 5px 0 0 0; font-size: 24px;">🚀 Kehityshankkeet & Tehtävät</h1>
+            </div>
+            <span id="kayttaja-info" style="font-size: 12px; color: var(--text-muted);"></span>
+        </div>
+
+        <!-- UUDEN TYÖVAIHEEN SYÖTTÖ -->
+        <div class="card">
+            <h3 style="margin-top: 0; font-size: 16px;">+ Lisää uusi projekti tai työvaihe</h3>
+            <div class="lomake-rivi">
+                <input type="text" id="syotto-projekti" class="kentta" placeholder="Projekti (esim. SolOne, Soloset)">
+                <input type="text" id="syotto-vaihe" class="kentta" placeholder="Mitä tehdään? (esim. Azure OpenAI Makeen)">
+                <select id="syotto-tila" class="kentta">
+                    <option value="Työn alla" selected>Työn alla</option>
+                    <option value="Suunnitteilla">Suunnitteilla</option>
+                    <option value="Valmis">Valmis</option>
+                </select>
+                <button onclick="lisaaUusiVaihe()" class="btn">Tallenna</button>
+            </div>
+            <input type="text" id="syotto-muistiinpano" class="kentta" style="width: 100%; box-sizing: border-box;" placeholder="Vapaat muistiinpanot tai lisätiedot (valinnainen)">
+        </div>
+
+        <!-- LISTA VAIHEISTA -->
+        <div id="projektit-lista">
+            <div style="color: var(--text-muted); font-size: 13px;">Ladataan projekteja...</div>
+        </div>
+
+    </div>
+
+<script>
+    const SUPABASE_URL = 'https://oajnnrrnatqqymmvncxf.supabase.co';
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
+    const ADMIN_EMAIL = 'pasi@solone.fi';
+
+    function varmistaOikeudet() {
+        const token = localStorage.getItem('supabase_token');
+        const email = localStorage.getItem('user_email');
+
+        if (!token || email !== ADMIN_EMAIL) {
+            alert("Tämä sivu on tarkoitettu vain ylläpitäjälle (" + ADMIN_EMAIL + ").");
+            window.location.href = 'index.html';
+            return false;
+        }
+
+        document.getElementById('kayttaja-info').textContent = 'Kirjautuneena: ' + email;
+        return true;
+    }
+
+    async function haeProjektit() {
+        const token = localStorage.getItem('supabase_token');
+        const lista = document.getElementById('projektit-lista');
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/solone_projektit?select=*&order=luotu_pvm.desc`, {
+                headers: {
+                    'apikey': ANON_KEY,
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!res.ok) throw new Error("Haku epäonnistui");
+            const data = await res.json();
+
+            if (!data || data.length === 0) {
+                lista.innerHTML = '<div class="card" style="text-align: center; color: var(--text-muted);">Ei vielä kirjattuja kehitysvaiheita. Lisää ensimmäinen yllä olevalla lomakkeella!</div>';
+                return;
+            }
+
+            lista.innerHTML = data.map(v => `
+                <div class="vaihe-rivi">
+                    <div style="flex: 1;">
+                        <div style="margin-bottom: 4px;">
+                            <span class="badge-projekti">${v.projekti}</span>
+                            <strong style="margin-left: 8px; font-size: 15px;">${v.vaihe_nimi}</strong>
+                        </div>
+                        ${v.muistiinpanot ? `<div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">📝 ${v.muistiinpanot}</div>` : ''}
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <select class="tila-valitsin" onchange="paivitaTila('${v.id}', this.value)">
+                            <option value="Suunnitteilla" ${v.tila === 'Suunnitteilla' ? 'selected' : ''}>⏳ Suunnitteilla</option>
+                            <option value="Työn alla" ${v.tila === 'Työn alla' ? 'selected' : ''}>🔨 Työn alla</option>
+                            <option value="Valmis" ${v.tila === 'Valmis' ? 'selected' : ''}>✅ Valmis</option>
+                        </select>
+                        <button class="btn-poisto" title="Poista vaihe" onclick="poistaVaihe('${v.id}')">✕</button>
+                    </div>
+                </div>
+            `).join('');
+
+        } catch (err) {
+            lista.innerHTML = '<div class="card" style="color: var(--danger);">Virhe haettaessa tietoja: ' + err.message + '</div>';
+        }
+    }
+
+    async function lisaaUusiVaihe() {
+        const projekti = document.getElementById('syotto-projekti').value.trim();
+        const vaihe_nimi = document.getElementById('syotto-vaihe').value.trim();
+        const tila = document.getElementById('syotto-tila').value;
+        const muistiinpanot = document.getElementById('syotto-muistiinpano').value.trim();
+        const token = localStorage.getItem('supabase_token');
+
+        if (!projekti || !vaihe_nimi) {
+            alert("Täytä vähintään projektin ja vaiheen nimi.");
+            return;
+        }
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/solone_projektit`, {
+                method: 'POST',
+                headers: {
+                    'apikey': ANON_KEY,
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ projekti, vaihe_nimi, tila, muistiinpanot })
+            });
+
+            if (!res.ok) throw new Error("Tallennus epäonnistui");
+
+            document.getElementById('syotto-vaihe').value = '';
+            document.getElementById('syotto-muistiinpano').value = '';
+            haeProjektit();
+
+        } catch (err) {
+            alert("Virhe tallennuksessa: " + err.message);
+        }
+    }
+
+    async function paivitaTila(id, uusiTila) {
+        const token = localStorage.getItem('supabase_token');
+        await fetch(`${SUPABASE_URL}/rest/v1/solone_projektit?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: {
+                'apikey': ANON_KEY,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ tila: uusiTila })
+        });
+    }
+
+    async function poistaVaihe(id) {
+        if (!confirm("Haluatko varmasti poistaa tämän vaiheen?")) return;
+        const token = localStorage.getItem('supabase_token');
+
+        await fetch(`${SUPABASE_URL}/rest/v1/solone_projektit?id=eq.${id}`, {
+            method: 'DELETE',
+            headers: {
+                'apikey': ANON_KEY,
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        haeProjektit();
+    }
+
+    window.addEventListener('load', () => {
+        if (varmistaOikeudet()) {
+            haeProjektit();
+        }
+    });
+</script>
+</body>
+</html>
