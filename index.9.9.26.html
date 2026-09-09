@@ -101,7 +101,7 @@
             background-color: #eff6ff;
         }
 
-        /* Kännykkäsäädöt navigaatiolle */
+        /* Kännykkäsäädöt navigaatiolle: estää sivun ylileveäksi leviämisen */
         @media (max-width: 640px) {
             .logo-nav-group {
                 width: 100%;
@@ -262,6 +262,15 @@
             background-color: var(--primary-hover);
         }
 
+        /* Esittelykortit */
+        .section-title {
+            font-size: 20px;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            border-left: 4px solid var(--border-color);
+            padding-left: 10px;
+        }
+
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -298,34 +307,7 @@
             gap: 20px;
         }
 
-        /* Uutiskortit */
-        .uutis-kortti {
-            background: var(--bg-main);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-
-        .uutis-kortti:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        .uutis-kanavat {
-            display: flex;
-            gap: 6px;
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 1px solid #e2e8f0;
-            font-size: 11px;
-            color: var(--text-muted);
-            align-items: center;
-        }
-
+        /* Alabanneri 180 astetta käännetyllä taustakuvalla */
         .bottom-banner {
             position: relative;
             border-radius: 8px;
@@ -353,6 +335,7 @@
             z-index: 2;
         }
 
+        /* Footer */
         .footer {
             text-align: center;
             padding: 30px 0;
@@ -375,7 +358,6 @@
                 </a>
                 <nav class="paanavigaatio">
                     <a href="index.html" class="aktiivinen">Etusivu</a>
-                    <a href="#uutiset">Uutiset</a>
                     <a href="palvelut.html">Palvelut</a>
                     <a href="vastuullisuus.html">Vastuullisuus</a>
                     <a href="yhteystiedot.html">Yhteystiedot</a>
@@ -406,7 +388,7 @@
             </div>
         </div>
 
-        <!-- UUDEN SALASANAN ASETUS -LOMAKE -->
+        <!-- UUDEN SALASANAN ASETUS -LOMAKE (Aukeaa palautuslinkistä) -->
         <div id="salasanan-vaihto-laatikko" style="display: none; background: white; border: 2px solid var(--primary); border-radius: 8px; padding: 18px; margin-bottom: 25px; max-width: 380px; margin-left: auto; margin-right: auto; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
             <h3 style="margin-top: 0; font-size: 16px;">🔑 Aseta uusi salasana</h3>
             <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Syötä uusi salasana tilillesi.</p>
@@ -449,61 +431,10 @@
             </div>
         </div>
 
-        <!-- UUTISET & AJANKOHTAISTA -OSIO -->
-        <div id="uutiset" class="card" style="margin-top: 25px; margin-bottom: 30px;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
-                <div>
-                    <span class="badge" style="background-color: #f1f5f9; color: #334155;">AJANKOHTAISTA & KEHITYS</span>
-                    <h2 style="margin: 4px 0 0 0; font-size: 20px; color: var(--text-main);">SolOne News 📢</h2>
-                </div>
-                <span style="font-size: 13px; color: var(--text-muted);">Meneillään olevat projektit, tietosuoja ja lanseeraukset</span>
-            </div>
-
-            <!-- UUTISKORTIT (2 tuoreinta uutista rinnakkain) -->
-            <div id="uutiset-sailio" class="grid">
-                
-                <!-- Uutinen 1: Tietosuoja & GDPR -->
-                <div class="uutis-kortti">
-                    <div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <span style="font-size: 12px; font-weight: bold; color: #059669;">Tietosuoja & Infra</span>
-                            <span style="font-size: 12px; color: var(--text-muted);">9.9.2026</span>
-                        </div>
-                        <h3 style="font-size: 16px; margin: 0 0 8px 0; color: var(--text-main);">Varmistamme GDPR:n toteutumisen – data pysyy EU-alueen konesaleissa</h3>
-                        <p style="font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.5;">
-                            Vahvistamme ja auditoimme parhaillaan tietosuojakäytäntöjämme. SolOnen pilvi- ja tietokantaratkaisut on rakennettu varmistamaan, että kaikki asiakasdata tallennetaan ja käsitellään turvallisesti EU:n alueella sijaitsevissa konesaleissa.
-                        </p>
-                    </div>
-                    <div class="uutis-kanavat">
-                        <span>Jaettu kanaviin:</span>
-                        <span>🌐 Web</span> • <span>💼 LinkedIn</span>
-                    </div>
-                </div>
-
-                <!-- Uutinen 2: Demo-julkaisu -->
-                <div class="uutis-kortti">
-                    <div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <span style="font-size: 12px; font-weight: bold; color: var(--primary);">Lanseeraus</span>
-                            <span style="font-size: 12px; color: var(--text-muted);">1.9.2026</span>
-                        </div>
-                        <h3 style="font-size: 16px; margin: 0 0 8px 0; color: var(--text-main);">SolOne AutoPublish DEMO julkaistu yleiseen testaukseen</h3>
-                        <p style="font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.5;">
-                            Ensimmäinen julkinen demoversio Somevalvomosta on avattu. Voit nyt kokeilla selainpohjaista tekstintuottoa ja ajastamista suoraan ilman erillistä asennusta.
-                        </p>
-                    </div>
-                    <div class="uutis-kanavat">
-                        <span>Jaettu kanaviin:</span>
-                        <span>🌐 Web</span> • <span>📘 Facebook</span> • <span>📸 Instagram</span> • <span>💼 LinkedIn</span>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
         <!-- SOLONE AUTOPUBLISH - ESITTELY & KOHDERYHMÄT -->
         <div class="card" style="margin-top: 25px; margin-bottom: 30px; border-top: 4px solid var(--primary);">
             
+            <!-- Otsikkoalue pehmeällä infotaustalla -->
             <div style="text-align: center; margin-bottom: 25px; background: linear-gradient(180deg, #f0f7ff 0%, #ffffff 100%); border: 1px solid #dbeafe; border-radius: 10px; padding: 22px 18px;">
                 <span class="badge" style="background-color: #dbeafe; color: #0284c7; font-size: 11px;">AUTOMAATIO & TEKOÄLY</span>
                 <h2 style="font-size: 22px; color: var(--text-main); margin: 8px 0 10px 0;">SolOne Autopublish - Somevalvomo 🚀</h2>
@@ -571,7 +502,7 @@
                 </div>
             </div>
 
-            <!-- Nostolaatikko -->
+            <!-- Nostolaatikko (Somevalvomo selaimessa) -->
             <div style="background: #ffffff; border: 2px dashed var(--primary); border-radius: 10px; padding: 18px 20px; margin-bottom: 25px;">
                 <div style="display: flex; align-items: flex-start; gap: 14px;">
                     <span style="font-size: 28px; line-height: 1;">💡</span>
@@ -597,7 +528,7 @@
                 </ul>
             </div>
 
-            <!-- Yhteydenotto / CTA-laatikko alabannerissa -->
+            <!-- Yhteydenotto / CTA-laatikko alabannerissa (taustakuva käännetty 180°) -->
             <div class="bottom-banner">
                 <div class="bottom-banner-sisalto">
                     <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #ffffff;">Haluatko testata maksutta?</h3>
@@ -649,7 +580,7 @@
             });
 
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error_description || data.msg || "Kirjautuminen epäonnistui");
+            if (!res.ok) throw new Error(data.error_description || data.msg || "Virhe");
 
             localStorage.setItem('supabase_token', data.access_token);
             localStorage.setItem('supabase_refresh_token', data.refresh_token);

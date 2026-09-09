@@ -430,10 +430,7 @@
         </div>
         <div id="kayttaja-kortti" class="user-info" style="display:none;">
             <span id="kayttaja-email"></span><br>
-            <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 5px; flex-wrap: wrap; align-items: center;">
-                <!-- PROJEKTIT-LINKKI (Vain ylläpitäjälle) -->
-                <a href="projektit.html" id="linkki-projektit" style="display: none; background: #0284c7; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 600; align-items: center; gap: 4px;">📁 Projektit</a>
-                
+            <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 5px; flex-wrap: wrap;">
                 <button class="btn-pika" style="padding: 5px 12px; font-size: 0.8rem; width: auto;" onclick="avaaUusiPostausModaali()">➕ Uusi luonnos</button>
                 <button class="btn-testi" style="padding: 5px 12px; font-size: 0.8rem; width: auto;" onclick="avaaAsetuksetModaali()">⚙️ Sometilit</button>
                 <button class="btn-testi" style="padding: 5px 12px; font-size: 0.8rem; width: auto; background-color: #475569;" onclick="avaaSalasananVaihtoModaali()">🔑 Vaihda salasana</button>
@@ -887,12 +884,6 @@
         document.getElementById('kirjautumis-ikkuna').style.display = 'none';
         document.getElementById('valvomo-sisalto').style.display = 'block';
         
-        // Näytetään Projektit-nappi vain ylläpitäjälle (pasi@solone.fi)
-        const projektitLinkki = document.getElementById('linkki-projektit');
-        if (projektitLinkki) {
-            projektitLinkki.style.display = (email === 'pasi@solone.fi') ? 'inline-flex' : 'none';
-        }
-
         nykyinenAsiakastunnus = email;
         return true;
     }
