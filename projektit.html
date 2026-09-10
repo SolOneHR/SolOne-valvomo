@@ -14,6 +14,7 @@
             --primary: #3b82f6;
             --primary-hover: #2563eb;
             --success: #10b981;
+            --warning: #f59e0b;
             --danger: #ef4444;
         }
 
@@ -27,7 +28,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 920px;
             margin: 0 auto;
         }
 
@@ -60,12 +61,12 @@
 
         .lomake-rivi {
             display: grid;
-            grid-template-columns: 1fr 2fr 1fr auto;
+            grid-template-columns: 1fr 2fr 130px 130px 130px auto;
             gap: 10px;
             margin-bottom: 10px;
         }
 
-        @media (max-width: 650px) {
+        @media (max-width: 768px) {
             .lomake-rivi { grid-template-columns: 1fr; }
         }
 
@@ -74,6 +75,8 @@
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             font-size: 13px;
+            background-color: white;
+            box-sizing: border-box;
         }
 
         .btn {
@@ -96,8 +99,29 @@
             margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            gap: 10px;
+            align-items: flex-start;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .vaihe-rivi.prio-korkea {
+            border-left: 4px solid var(--danger);
+        }
+        .vaihe-rivi.prio-normaali {
+            border-left: 4px solid var(--warning);
+        }
+        .vaihe-rivi.prio-matala {
+            border-left: 4px solid #94a3b8;
+        }
+
+        .vaihe-rivi.tila-valmis {
+            border-left: 4px solid var(--success);
+            background-color: #f8fafc;
+            opacity: 0.75;
+        }
+        .vaihe-rivi.tila-valmis strong {
+            text-decoration: line-through;
+            color: var(--text-muted);
         }
 
         .badge-projekti {
@@ -110,24 +134,66 @@
             border: 1px solid #bfdbfe;
         }
 
-        .tila-valitsin {
-            padding: 4px 8px;
+        .badge-kategoria {
+            background: #f1f5f9;
+            color: #334155;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
             border-radius: 6px;
-            font-size: 12px;
             border: 1px solid #cbd5e1;
-            background: white;
-            font-weight: 500;
         }
 
-        .btn-poisto {
-            background: none;
-            border: none;
-            color: #94a3b8;
+        .badge-prio {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 4px;
+        }
+        .badge-prio.korkea { background: #fee2e2; color: var(--danger); }
+        .badge-prio.normaali { background: #fef3c7; color: #b45309; }
+        .badge-prio.matala { background: #f1f5f9; color: var(--text-muted); }
+        .badge-prio.valmis { background: #d1fae5; color: #065f46; }
+
+        .btn-doc-linkki {
+            font-size: 11.5px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #eff6ff;
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid #bfdbfe;
+            margin-top: 6px;
             cursor: pointer;
-            font-size: 16px;
+        }
+        .btn-doc-linkki:hover {
+            background: #dbeafe;
+        }
+
+        .btn-toiminto {
+            background: none;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 12px;
             padding: 4px 8px;
         }
-        .btn-poisto:hover { color: var(--danger); }
+        .btn-toiminto:hover { background: #f1f5f9; color: var(--text-main); }
+        .btn-poisto:hover { color: var(--danger); border-color: var(--danger); }
+
+        .suodatus-palkki {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
@@ -148,14 +214,50 @@
             <div class="lomake-rivi">
                 <input type="text" id="syotto-projekti" class="kentta" placeholder="Projekti (esim. SolOne, Soloset)">
                 <input type="text" id="syotto-vaihe" class="kentta" placeholder="Mitä tehdään? (esim. Azure OpenAI Makeen)">
-                <select id="syotto-tila" class="kentta">
-                    <option value="Työn alla" selected>Työn alla</option>
-                    <option value="Suunnitteilla">Suunnitteilla</option>
-                    <option value="Valmis">Valmis</option>
+                
+                <select id="syotto-kategoria" class="kentta">
+                    <option value="Yleinen" selected>Yleinen</option>
+                    <option value="Infra">Infra</option>
+                    <option value="UI/Kehitys">UI / Kehitys</option>
+                    <option value="Tekoäly/Make">Tekoäly / Make</option>
+                    <option value="GDPR/Tietosuoja">GDPR / Tietosuoja</option>
+                    <option value="SOTE/Soloset">SOTE / Soloset</option>
+                    <option value="Markkinointi">Markkinointi</option>
                 </select>
-                <button onclick="lisaaUusiVaihe()" class="btn">Tallenna</button>
+
+                <select id="syotto-prio" class="kentta">
+                    <option value="Korkea">🔴 Kiireellinen</option>
+                    <option value="Normaali" selected>🟡 Normaali</option>
+                    <option value="Matala">⚪ Matala</option>
+                </select>
+
+                <select id="syotto-tila" class="kentta">
+                    <option value="Työn alla" selected>🔨 Työn alla</option>
+                    <option value="Suunnitteilla">⏳ Suunnitteilla</option>
+                    <option value="Valmis">✅ Valmis</option>
+                </select>
+
+                <button onclick="lisaaUusiVaihe()" id="btn-tallenna-uusi" class="btn">Tallenna</button>
             </div>
-            <input type="text" id="syotto-muistiinpano" class="kentta" style="width: 100%; box-sizing: border-box;" placeholder="Vapaat muistiinpanot tai lisätiedot (valinnainen)">
+            
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-top: 10px;">
+                <input type="text" id="syotto-muistiinpano" class="kentta" placeholder="Vapaat muistiinpanot tai lisätiedot (valinnainen)">
+                <div>
+                    <input type="file" id="syotto-tiedosto" class="kentta" style="padding: 6px; font-size: 12px; width: 100%;" title="Lataa dokumentti">
+                </div>
+                <input type="url" id="syotto-linkki" class="kentta" placeholder="Tai ulkoinen URL (Drive/GitHub)">
+            </div>
+        </div>
+
+        <!-- SUODATUS ALASVETOVALIKOLLA -->
+        <div class="suodatus-palkki">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label for="projekti-suodatin" style="font-size: 13px; font-weight: 600;">Valitse projekti:</label>
+                <select id="projekti-suodatin" class="kentta" onchange="suodataNakyma()" style="padding: 6px 10px;">
+                    <option value="KAIKKI">Kaikki projektit</option>
+                </select>
+            </div>
+            <span id="vaiheet-laskuri" style="font-size: 12px; color: var(--text-muted);"></span>
         </div>
 
         <!-- LISTA VAIHEISTA -->
@@ -169,6 +271,9 @@
     const SUPABASE_URL = 'https://oajnnrrnatqqymmvncxf.supabase.co';
     const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
     const ADMIN_EMAIL = 'pasi@solone.fi';
+
+    let kaikkiVaiheet = [];
+    let muokkausId = null;
 
     function varmistaOikeudet() {
         const token = localStorage.getItem('supabase_token');
@@ -197,52 +302,246 @@
             });
 
             if (!res.ok) throw new Error("Haku epäonnistui");
-            const data = await res.json();
+            kaikkiVaiheet = await res.json() || [];
 
-            if (!data || data.length === 0) {
-                lista.innerHTML = '<div class="card" style="text-align: center; color: var(--text-muted);">Ei vielä kirjattuja kehitysvaiheita. Lisää ensimmäinen yllä olevalla lomakkeella!</div>';
-                return;
-            }
-
-            lista.innerHTML = data.map(v => `
-                <div class="vaihe-rivi">
-                    <div style="flex: 1;">
-                        <div style="margin-bottom: 4px;">
-                            <span class="badge-projekti">${v.projekti}</span>
-                            <strong style="margin-left: 8px; font-size: 15px;">${v.vaihe_nimi}</strong>
-                        </div>
-                        ${v.muistiinpanot ? `<div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">📝 ${v.muistiinpanot}</div>` : ''}
-                    </div>
-
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <select class="tila-valitsin" onchange="paivitaTila('${v.id}', this.value)">
-                            <option value="Suunnitteilla" ${v.tila === 'Suunnitteilla' ? 'selected' : ''}>⏳ Suunnitteilla</option>
-                            <option value="Työn alla" ${v.tila === 'Työn alla' ? 'selected' : ''}>🔨 Työn alla</option>
-                            <option value="Valmis" ${v.tila === 'Valmis' ? 'selected' : ''}>✅ Valmis</option>
-                        </select>
-                        <button class="btn-poisto" title="Poista vaihe" onclick="poistaVaihe('${v.id}')">✕</button>
-                    </div>
-                </div>
-            `).join('');
+            paivitaSuodatinValikko();
+            suodataNakyma();
 
         } catch (err) {
             lista.innerHTML = '<div class="card" style="color: var(--danger);">Virhe haettaessa tietoja: ' + err.message + '</div>';
         }
     }
 
+    function paivitaSuodatinValikko() {
+        const suodatin = document.getElementById('projekti-suodatin');
+        const nykyinenValinta = suodatin.value;
+
+        const uniikitProjektit = [...new Set(kaikkiVaiheet.map(v => v.projekti).filter(Boolean))];
+
+        let vaihtoehdotHtml = '<option value="KAIKKI">Kaikki projektit</option>';
+        uniikitProjektit.forEach(p => {
+            vaihtoehdotHtml += `<option value="${p}" ${nykyinenValinta === p ? 'selected' : ''}>${p}</option>`;
+        });
+        suodatin.innerHTML = vaihtoehdotHtml;
+    }
+
+    function suodataNakyma() {
+        const valittuProjekti = document.getElementById('projekti-suodatin').value;
+        const lista = document.getElementById('projektit-lista');
+        const laskuri = document.getElementById('vaiheet-laskuri');
+
+        let suodatetut = [...kaikkiVaiheet];
+        if (valittuProjekti !== 'KAIKKI') {
+            suodatetut = suodatetut.filter(v => v.projekti === valittuProjekti);
+        }
+
+        const prioJarjestys = { 'Korkea': 1, 'Normaali': 2, 'Matala': 3 };
+
+        // LAJITTELU: 
+        // 1. Keskeneräiset ensin, Valmiit listan alimmaksi
+        // 2. Ryhmitellään projektin nimen mukaan (SolOne, Soloset Oy jne. peräkkäin)
+        // 3. Saman projektin sisällä kiireellisimmät ylimpänä
+        suodatetut.sort((a, b) => {
+            const aValmis = a.tila === 'Valmis' ? 1 : 0;
+            const bValmis = b.tila === 'Valmis' ? 1 : 0;
+            if (aValmis !== bValmis) {
+                return aValmis - bValmis;
+            }
+
+            const projA = (a.projekti || '').trim().toLowerCase();
+            const projB = (b.projekti || '').trim().toLowerCase();
+            const projVertailu = projA.localeCompare(projB);
+            if (projVertailu !== 0) {
+                return projVertailu;
+            }
+
+            const pa = prioJarjestys[a.prioriteetti] || 2;
+            const pb = prioJarjestys[b.prioriteetti] || 2;
+            return pa - pb;
+        });
+
+        const avoimetLkm = suodatetut.filter(v => v.tila !== 'Valmis').length;
+        const valmiitLkm = suodatetut.filter(v => v.tila === 'Valmis').length;
+        laskuri.textContent = `Avoimia: ${avoimetLkm} kpl | Valmiita: ${valmiitLkm} kpl`;
+
+        if (suodatetut.length === 0) {
+            lista.innerHTML = '<div class="card" style="text-align: center; color: var(--text-muted);">Ei vaiheita valitulla rajauksella.</div>';
+            return;
+        }
+
+        lista.innerHTML = suodatetut.map(v => {
+            if (muokkausId === v.id) {
+                return `
+                    <div class="vaihe-rivi" style="background: #f8fafc; border: 2px solid var(--primary); flex-direction: column;">
+                        <strong style="font-size: 14px; color: var(--primary); margin-bottom: 8px;">✏️ Muokataan vaihetta</strong>
+                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 8px; width: 100%; margin-bottom: 8px;">
+                            <input type="text" id="edit-projekti-${v.id}" class="kentta" value="${v.projekti}">
+                            <input type="text" id="edit-vaihe-${v.id}" class="kentta" value="${v.vaihe_nimi}">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; width: 100%; margin-bottom: 8px;">
+                            <select id="edit-kategoria-${v.id}" class="kentta">
+                                <option value="Yleinen" ${v.kategoria === 'Yleinen' ? 'selected' : ''}>Yleinen</option>
+                                <option value="Infra" ${v.kategoria === 'Infra' ? 'selected' : ''}>Infra</option>
+                                <option value="UI/Kehitys" ${v.kategoria === 'UI/Kehitys' ? 'selected' : ''}>UI / Kehitys</option>
+                                <option value="Tekoäly/Make" ${v.kategoria === 'Tekoäly/Make' ? 'selected' : ''}>Tekoäly / Make</option>
+                                <option value="GDPR/Tietosuoja" ${v.kategoria === 'GDPR/Tietosuoja' ? 'selected' : ''}>GDPR / Tietosuoja</option>
+                                <option value="SOTE/Soloset" ${v.kategoria === 'SOTE/Soloset' ? 'selected' : ''}>SOTE / Soloset</option>
+                                <option value="Markkinointi" ${v.kategoria === 'Markkinointi' ? 'selected' : ''}>Markkinointi</option>
+                            </select>
+                            <select id="edit-prio-${v.id}" class="kentta">
+                                <option value="Korkea" ${v.prioriteetti === 'Korkea' ? 'selected' : ''}>🔴 Kiireellinen</option>
+                                <option value="Normaali" ${v.prioriteetti === 'Normaali' || !v.prioriteetti ? 'selected' : ''}>🟡 Normaali</option>
+                                <option value="Matala" ${v.prioriteetti === 'Matala' ? 'selected' : ''}>⚪ Matala</option>
+                            </select>
+                            <select id="edit-tila-${v.id}" class="kentta">
+                                <option value="Suunnitteilla" ${v.tila === 'Suunnitteilla' ? 'selected' : ''}>⏳ Suunnitteilla</option>
+                                <option value="Työn alla" ${v.tila === 'Työn alla' ? 'selected' : ''}>🔨 Työn alla</option>
+                                <option value="Valmis" ${v.tila === 'Valmis' ? 'selected' : ''}>✅ Valmis</option>
+                            </select>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; width: 100%; margin-bottom: 10px;">
+                            <input type="text" id="edit-muistiinpano-${v.id}" class="kentta" value="${v.muistiinpanot || ''}" placeholder="Muistiinpanot / Lisätiedot">
+                            <input type="file" id="edit-tiedosto-${v.id}" class="kentta" style="padding: 6px; font-size: 11px;">
+                            <input type="url" id="edit-linkki-${v.id}" class="kentta" value="${v.dokumentti_url || ''}" placeholder="Tai URL">
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn" id="btn-edit-tallenna-${v.id}" style="padding: 6px 14px;" onclick="tallennaMuokkaus('${v.id}')">Tallenna muutokset</button>
+                            <button class="btn-toiminto" onclick="peruutaMuokkaus()">Peruuta</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const onValmis = v.tila === 'Valmis';
+            const prioLuokka = onValmis ? 'tila-valmis' : ((v.prioriteetti === 'Korkea') ? 'prio-korkea' : ((v.prioriteetti === 'Matala') ? 'prio-matala' : 'prio-normaali'));
+            
+            let prioBadgeTeksti = (v.prioriteetti === 'Korkea') ? '🔴 Kiireellinen' : ((v.prioriteetti === 'Matala') ? '⚪ Matala' : '🟡 Normaali');
+            let prioBadgeLuokka = (v.prioriteetti === 'Korkea') ? 'korkea' : ((v.prioriteetti === 'Matala') ? 'matala' : 'normaali');
+            
+            if (onValmis) {
+                prioBadgeTeksti = '✅ Valmis';
+                prioBadgeLuokka = 'valmis';
+            }
+
+            return `
+                <div class="vaihe-rivi ${prioLuokka}">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
+                            <span class="badge-projekti">${v.projekti}</span>
+                            ${v.kategoria ? `<span class="badge-kategoria">${v.kategoria}</span>` : ''}
+                            <span class="badge-prio ${prioBadgeLuokka}">${prioBadgeTeksti}</span>
+                            <strong style="font-size: 15px;">${v.vaihe_nimi}</strong>
+                        </div>
+                        
+                        ${v.muistiinpanot ? `<div style="font-size: 12px; color: var(--text-muted); margin-top: 4px; background: #f8fafc; padding: 4px 8px; border-radius: 4px; border-left: 2px solid #cbd5e1;">📝 ${v.muistiinpanot}</div>` : ''}
+
+                        ${v.dokumentti_url ? `
+                            <div>
+                                <button onclick="avaaDokumentti('${v.dokumentti_url}')" class="btn-doc-linkki">
+                                    📂 Avaa dokumentti / liite ↗
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                        <select class="kentta" style="padding: 4px 8px; font-size: 12px;" onchange="paivitaTila('${v.id}', this.value)">
+                            <option value="Suunnitteilla" ${v.tila === 'Suunnitteilla' ? 'selected' : ''}>⏳ Suunnitteilla</option>
+                            <option value="Työn alla" ${v.tila === 'Työn alla' ? 'selected' : ''}>🔨 Työn alla</option>
+                            <option value="Valmis" ${v.tila === 'Valmis' ? 'selected' : ''}>✅ Valmis</option>
+                        </select>
+                        <button class="btn-toiminto" title="Muokkaa tietoja" onclick="avaaMuokkaus('${v.id}')">✏️</button>
+                        <button class="btn-toiminto btn-poisto" title="Poista vaihe" onclick="poistaVaihe('${v.id}')">✕</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function avaaDokumentti(url) {
+        if (!url) return;
+
+        if (url.startsWith('private:')) {
+            const tiedostonNimi = url.replace('private:', '');
+            const token = localStorage.getItem('supabase_token');
+
+            try {
+                const res = await fetch(`${SUPABASE_URL}/storage/v1/object/sign/projekti-dokumentit/${tiedostonNimi}`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': ANON_KEY,
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ expiresIn: 60 })
+                });
+
+                const data = await res.json();
+                if (data.signedURL) {
+                    window.open(`${SUPABASE_URL}/storage/v1${data.signedURL}`, '_blank');
+                } else {
+                    alert("Virhe luotaessa suojattua linkkiä.");
+                }
+            } catch (e) {
+                alert("Ei käyttöoikeutta tiedostoon: " + e.message);
+            }
+        } else {
+            window.open(url, '_blank');
+        }
+    }
+
+    async function lataaTiedostoPilveen(tiedosto, token) {
+        // Erotetaan tiedostopääte (.pdf, .png jne.)
+        const paate = tiedosto.name.includes('.') ? '.' + tiedosto.name.split('.').pop().toLowerCase() : '';
+        // Käytetään puhdasta aikaleima-avainta S3-tallennuksessa ilman ääkkösiä
+        const tiedostoNimi = 'doc_' + Date.now() + paate;
+
+        const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/projekti-dokumentit/${tiedostoNimi}`, {
+            method: 'POST',
+            headers: {
+                'apikey': ANON_KEY,
+                'Authorization': `Bearer ${token}`,
+                'x-upsert': 'true'
+            },
+            body: tiedosto
+        });
+
+        if (!uploadRes.ok) {
+            const errJson = await uploadRes.json().catch(() => ({}));
+            throw new Error(errJson.message || `Palvelinvirhe ${uploadRes.status}`);
+        }
+
+        return 'private:' + tiedostoNimi;
+    }
+
     async function lisaaUusiVaihe() {
         const projekti = document.getElementById('syotto-projekti').value.trim();
         const vaihe_nimi = document.getElementById('syotto-vaihe').value.trim();
+        const kategoria = document.getElementById('syotto-kategoria').value;
+        const prioriteetti = document.getElementById('syotto-prio').value;
         const tila = document.getElementById('syotto-tila').value;
         const muistiinpanot = document.getElementById('syotto-muistiinpano').value.trim();
+        const linkkiInput = document.getElementById('syotto-linkki').value.trim();
+        const tiedostoInput = document.getElementById('syotto-tiedosto');
+        const valittuTiedosto = tiedostoInput && tiedostoInput.files ? tiedostoInput.files[0] : null;
         const token = localStorage.getItem('supabase_token');
+        const btn = document.getElementById('btn-tallenna-uusi');
 
         if (!projekti || !vaihe_nimi) {
             alert("Täytä vähintään projektin ja vaiheen nimi.");
             return;
         }
 
+        btn.disabled = true;
+        btn.textContent = 'Tallennetaan...';
+
         try {
+            let lopullinenDokumenttiUrl = linkkiInput || null;
+
+            if (valittuTiedosto) {
+                lopullinenDokumenttiUrl = await lataaTiedostoPilveen(valittuTiedosto, token);
+            }
+
             const res = await fetch(`${SUPABASE_URL}/rest/v1/solone_projektit`, {
                 method: 'POST',
                 headers: {
@@ -250,17 +549,103 @@
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ projekti, vaihe_nimi, tila, muistiinpanot })
+                body: JSON.stringify({
+                    projekti,
+                    vaihe_nimi,
+                    kategoria,
+                    prioriteetti,
+                    tila,
+                    muistiinpanot: muistiinpanot || null,
+                    dokumentti_url: lopullinenDokumenttiUrl
+                })
             });
 
             if (!res.ok) throw new Error("Tallennus epäonnistui");
 
             document.getElementById('syotto-vaihe').value = '';
             document.getElementById('syotto-muistiinpano').value = '';
+            document.getElementById('syotto-linkki').value = '';
+            if (tiedostoInput) tiedostoInput.value = '';
+
             haeProjektit();
 
         } catch (err) {
             alert("Virhe tallennuksessa: " + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Tallenna';
+        }
+    }
+
+    function avaaMuokkaus(id) {
+        muokkausId = id;
+        suodataNakyma();
+    }
+
+    function peruutaMuokkaus() {
+        muokkausId = null;
+        suodataNakyma();
+    }
+
+    async function tallennaMuokkaus(id) {
+        const projekti = document.getElementById(`edit-projekti-${id}`).value.trim();
+        const vaihe_nimi = document.getElementById(`edit-vaihe-${id}`).value.trim();
+        const kategoria = document.getElementById(`edit-kategoria-${id}`).value;
+        const prioriteetti = document.getElementById(`edit-prio-${id}`).value;
+        const tila = document.getElementById(`edit-tila-${id}`).value;
+        const muistiinpanot = document.getElementById(`edit-muistiinpano-${id}`).value.trim();
+        const dokumentti_url = document.getElementById(`edit-linkki-${id}`).value.trim();
+        const tiedostoInput = document.getElementById(`edit-tiedosto-${id}`);
+        const valittuTiedosto = tiedostoInput && tiedostoInput.files ? tiedostoInput.files[0] : null;
+        const token = localStorage.getItem('supabase_token');
+        const btn = document.getElementById(`btn-edit-tallenna-${id}`);
+
+        if (!projekti || !vaihe_nimi) {
+            alert("Projekti ja työvaihe eivät voi olla tyhjiä.");
+            return;
+        }
+
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Tallennetaan...';
+        }
+
+        try {
+            let lopullinenDokumenttiUrl = dokumentti_url || null;
+
+            if (valittuTiedosto) {
+                lopullinenDokumenttiUrl = await lataaTiedostoPilveen(valittuTiedosto, token);
+            }
+
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/solone_projektit?id=eq.${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'apikey': ANON_KEY,
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    projekti,
+                    vaihe_nimi,
+                    kategoria,
+                    prioriteetti,
+                    tila,
+                    muistiinpanot: muistiinpanot || null,
+                    dokumentti_url: lopullinenDokumenttiUrl
+                })
+            });
+
+            if (!res.ok) throw new Error("Päivitys epäonnistui");
+
+            muokkausId = null;
+            haeProjektit();
+        } catch (err) {
+            alert("Virhe muokkauksen tallennuksessa: " + err.message);
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Tallenna muutokset';
+            }
         }
     }
 
@@ -275,6 +660,10 @@
             },
             body: JSON.stringify({ tila: uusiTila })
         });
+
+        const kohde = kaikkiVaiheet.find(v => v.id === id);
+        if (kohde) kohde.tila = uusiTila;
+        suodataNakyma();
     }
 
     async function poistaVaihe(id) {

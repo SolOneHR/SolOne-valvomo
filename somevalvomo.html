@@ -479,17 +479,93 @@
         </div>
     </div>
 
-    <!-- UUSI JULKAISU -MODAALI -->
+    <!-- UUSI JULKAISU / PROJEKTIVAIHE -MODAALI -->
     <div id="uusi-postaus-modaali" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center; padding: 15px; box-sizing: border-box;">
-        <div style="background:white; border-radius:12px; padding:25px; width:100%; max-width:550px; box-shadow:0 10px 25px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto; box-sizing: border-box;">
-            <h3 style="margin-top:0; color:var(--text-main); font-size: 1.2rem;">➕ Luo uusi somejulkaisu</h3>
+        <div style="background:white; border-radius:12px; padding:25px; width:100%; max-width:580px; box-shadow:0 10px 25px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto; box-sizing: border-box;">
+            <h3 style="margin-top:0; color:var(--text-main); font-size: 1.2rem;">➕ Luo uusi julkaisu tai työvaihe</h3>
             
-            <label class="field-label">Julkaisun aihe / Alkuperäinen teksti (Raw text):</label>
+            <!-- TYYPPIVALINTA (Vain pasi@solone.fi) -->
+            <div id="admin-tallennustyyppi-lohko" style="display: none; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <label class="field-label" style="color: var(--primary);">Tallennuksen kohde:</label>
+                <select id="uusi-tallennus-tyyppi" class="valinta-kentta" onchange="vaihdaTallennusTyyppi(this.value)">
+                    <option value="some" selected>📱 Somejulkaisu (Make.com / AI-käsittely)</option>
+                    <option value="projekti">📁 Projektidokumentti / Työvaihe (Projektilistaan)</option>
+                </select>
+            </div>
+
+            <!-- KAIKKI PROJEKTIN LISÄKENTÄT (Näkyvät vain jos 'projekti' valittu) -->
+            <div id="projekti-lisakentat" style="display: none; background: #eff6ff; padding: 14px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #bfdbfe;">
+                
+                <!-- Rivi 1: Projekti & Uuden projektin luonti -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                    <div>
+                        <label class="field-label">Valitse projekti:</label>
+                        <select id="uusi-projekti-valinta" class="valinta-kentta" onchange="kasitteleProjektiValinta(this.value)">
+                            <option value="SolOne">SolOne</option>
+                            <option value="Soloset Oy">Soloset Oy</option>
+                            <option value="_UUSI_">+ Luo uusi projekti...</option>
+                        </select>
+                    </div>
+                    <div id="uusi-projekti-syotto-lohko" style="display: none;">
+                        <label class="field-label">Uuden projektin nimi:</label>
+                        <input type="text" id="uusi-projekti-nimi-syotto" class="valinta-kentta" placeholder="Kirjoita projektin nimi">
+                    </div>
+                </div>
+
+                <!-- Rivi 2: Kategoria, Prioriteetti & Tila -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                    <div>
+                        <label class="field-label">Kategoria:</label>
+                        <select id="uusi-projekti-kategoria" class="valinta-kentta">
+                            <option value="Yleinen" selected>Yleinen</option>
+                            <option value="Infra">Infra</option>
+                            <option value="UI/Kehitys">UI / Kehitys</option>
+                            <option value="Tekoäly/Make">Tekoäly / Make</option>
+                            <option value="GDPR/Tietosuoja">GDPR / Tietosuoja</option>
+                            <option value="SOTE/Soloset">SOTE / Soloset</option>
+                            <option value="Markkinointi">Markkinointi</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="field-label">Kiireellisyys:</label>
+                        <select id="uusi-projekti-prio" class="valinta-kentta">
+                            <option value="Korkea">🔴 Kiireellinen</option>
+                            <option value="Normaali" selected>🟡 Normaali</option>
+                            <option value="Matala">⚪ Matala</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="field-label">Tila:</label>
+                        <select id="uusi-projekti-tila" class="valinta-kentta">
+                            <option value="Työn alla" selected>🔨 Työn alla</option>
+                            <option value="Suunnitteilla">⏳ Suunnitteilla</option>
+                            <option value="Valmis">✅ Valmis</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Rivi 3: Muistiinpanot & Ulkoinen linkki -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label class="field-label">Vapaat muistiinpanot / Speksit:</label>
+                        <input type="text" id="uusi-projekti-muistiinpano" class="valinta-kentta" placeholder="Tarkemmat lisätiedot...">
+                    </div>
+                    <div>
+                        <label class="field-label">Ulkoinen linkki (Drive/GitHub):</label>
+                        <input type="url" id="uusi-projekti-linkki" class="valinta-kentta" placeholder="https://...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TEHTÄVÄN KUVAUS / RAW TEKSTI -->
+            <label class="field-label" id="label-raw-teksti">Julkaisun aihe / Alkuperäinen teksti (Raw text):</label>
             <textarea id="uusi-raw-teksti" class="teksti-alue" placeholder="Kirjoita aihe, ajatus tai luonnos tähän..." style="min-height:100px;"></textarea>
 
-            <label class="field-label">Valitse kuva (puhelimesta tai koneelta):</label>
-            <input type="file" id="uusi-kuva-tiedosto" accept="image/*" class="valinta-kentta" style="margin-bottom:15px; background: white;">
+            <!-- TIEDOSTON LIITTÄMINEN -->
+            <label class="field-label" id="label-liitetiedosto">Valitse kuva (puhelimesta tai koneelta):</label>
+            <input type="file" id="uusi-kuva-tiedosto" class="valinta-kentta" style="margin-bottom:15px; background: white;">
 
+            <!-- SOME-KOHTAISET VALINNAT (Piilotetaan jos 'projekti' valittu) -->
             <div class="grid-valinnat">
                 <div>
                     <label class="field-label">Julkaisuprofiili:</label>
@@ -512,10 +588,12 @@
                     </select>
                 </div>
             </div>
+
             <div id="uusi-sometili-valinta-lohko" style="margin-bottom: 15px; display: none;">
                 <label class="field-label">Kohdesivu / Sometili:</label>
                 <select id="uusi-sometili-valinta" class="valinta-kentta"></select>
             </div>
+
             <div class="nappi-ryhma" style="margin-top:20px;">
                 <button class="btn-hyvaksy" id="btn-luo-luonnos" onclick="luoUusiPostausKantaan()">🚀 Luo ja käsittele AI:lla</button>
                 <button type="button" class="btn-ulos" style="color:var(--text-main); border: 1px solid #cbd5e1; background: #f1f5f9;" onclick="suljeUusiPostausModaali()">Peruuta</button>
@@ -1053,10 +1131,95 @@
         }
     }
 
+    // --- PROJEKTIEN DYNAMIIKKA JA VALINTA ---
+    function kasitteleProjektiValinta(arvo) {
+        const uusiSyottoLohko = document.getElementById('uusi-projekti-syotto-lohko');
+        if (arvo === '_UUSI_') {
+            uusiSyottoLohko.style.display = 'block';
+            document.getElementById('uusi-projekti-nimi-syotto').focus();
+        } else {
+            uusiSyottoLohko.style.display = 'none';
+        }
+    }
+
+    async function lataaProjektienNimetValikkoon() {
+        const token = localStorage.getItem('supabase_token');
+        const valikko = document.getElementById('uusi-projekti-valinta');
+        if (!valikko || !token) return;
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/solone_projektit?select=projekti`, {
+                headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${token}` }
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            const uniikit = [...new Set(data.map(d => d.projekti).filter(Boolean))];
+
+            if (!uniikit.includes('SolOne')) uniikit.unshift('SolOne');
+            if (!uniikit.includes('Soloset Oy')) uniikit.push('Soloset Oy');
+
+            let html = uniikit.map(p => `<option value="${p}">${p}</option>`).join('');
+            html += '<option value="_UUSI_">+ Luo uusi projekti...</option>';
+            valikko.innerHTML = html;
+        } catch (e) {
+            console.log("Projektien nimien haku ei onnistunut:", e);
+        }
+    }
+
+    function vaihdaTallennusTyyppi(tyyppi) {
+        const someKentat = document.querySelector('#uusi-postaus-modaali .grid-valinnat');
+        const sometiliLohko = document.getElementById('uusi-sometili-valinta-lohko');
+        const projektiKentat = document.getElementById('projekti-lisakentat');
+        const luoNappi = document.getElementById('btn-luo-luonnos');
+        const otsikkoTeksti = document.getElementById('label-raw-teksti');
+        const liiteTeksti = document.getElementById('label-liitetiedosto');
+
+        if (tyyppi === 'projekti') {
+            if (someKentat) someKentat.style.display = 'none';
+            if (sometiliLohko) sometiliLohko.style.display = 'none';
+            if (projektiKentat) projektiKentat.style.display = 'block';
+            if (otsikkoTeksti) otsikkoTeksti.textContent = 'Työvaiheen nimi / Tehtävä:';
+            if (liiteTeksti) liiteTeksti.textContent = 'Liitetiedosto tai kuva (tallentuu yksityiseen säilöön):';
+            luoNappi.textContent = '📁 Tallenna projektilistaan';
+        } else {
+            if (someKentat) someKentat.style.display = 'grid';
+            if (sometiliLohko && kayttajanSometilit && kayttajanSometilit.length > 0) sometiliLohko.style.display = 'block';
+            if (projektiKentat) projektiKentat.style.display = 'none';
+            if (otsikkoTeksti) otsikkoTeksti.textContent = 'Julkaisun aihe / Alkuperäinen teksti (Raw text):';
+            if (liiteTeksti) liiteTeksti.textContent = 'Valitse kuva (puhelimesta tai koneelta):';
+            luoNappi.textContent = '🚀 Luo ja käsittele AI:lla';
+        }
+    }
+
     async function avaaUusiPostausModaali() {
         document.getElementById('uusi-raw-teksti').value = '';
         const kuvaInput = document.getElementById('uusi-kuva-tiedosto');
         if (kuvaInput) kuvaInput.value = '';
+
+        // Nollataan projektikentät
+        const muistiinpanoInput = document.getElementById('uusi-projekti-muistiinpano');
+        if (muistiinpanoInput) muistiinpanoInput.value = '';
+        const linkkiInput = document.getElementById('uusi-projekti-linkki');
+        if (linkkiInput) linkkiInput.value = '';
+        const uusiNimiInput = document.getElementById('uusi-projekti-nimi-syotto');
+        if (uusiNimiInput) uusiNimiInput.value = '';
+        kasitteleProjektiValinta('SolOne');
+
+        // Palautetaan oletus: some
+        const tallennusTyyppiValitsin = document.getElementById('uusi-tallennus-tyyppi');
+        if (tallennusTyyppiValitsin) tallennusTyyppiValitsin.value = 'some';
+        vaihdaTallennusTyyppi('some');
+
+        // Näytetään vaihtoehto ainoastaan ylläpitäjälle pasi@solone.fi
+        const email = localStorage.getItem('user_email');
+        const adminLohko = document.getElementById('admin-tallennustyyppi-lohko');
+        if (adminLohko) {
+            const onAdmin = (email === 'pasi@solone.fi');
+            adminLohko.style.display = onAdmin ? 'block' : 'none';
+            if (onAdmin) {
+                lataaProjektienNimetValikkoon();
+            }
+        }
 
         await lataaKayttajanSometilit();
         const lohko = document.getElementById('uusi-sometili-valinta-lohko');
@@ -1091,14 +1254,93 @@
         const db = haeSupabaseAsiakas();
         const token = localStorage.getItem('supabase_token');
 
+        const tallennusTyyppiElem = document.getElementById('uusi-tallennus-tyyppi');
+        const onProjekti = tallennusTyyppiElem && tallennusTyyppiElem.value === 'projekti';
+
         if (!rawTeksti) {
-            alert("Kirjoita julkaisun aihe tai teksti!");
+            alert(onProjekti ? "Kirjoita työvaiheen nimi!" : "Kirjoita julkaisun aihe tai teksti!");
             return;
         }
 
         nappi.disabled = true;
-        nappi.textContent = '⏳ Ladataan ja luodaan...';
+        nappi.textContent = '⏳ Tallennetaan...';
 
+        // 1. HAARA: TALLENNETAAN PROJEKTILISTAAN KAIKILLA KENTILLÄ (Suojattu Storage)
+        if (onProjekti) {
+            try {
+                let tiedostoPath = null;
+
+                if (valittuTiedosto) {
+                    // Erotetaan tiedostopääte ja käytetään puhdasta aikaleimaa ilman ääkkösiä
+                    const paate = valittuTiedosto.name.includes('.') ? '.' + valittuTiedosto.name.split('.').pop().toLowerCase() : '';
+                    const tiedostoNimi = 'doc_' + Date.now() + paate;
+                    
+                    // Ladataan yksityiseen projekti-dokumentit -buckettiin
+                    const uploadRes = await fetch(db.url + '/storage/v1/object/projekti-dokumentit/' + tiedostoNimi, {
+                        method: 'POST',
+                        headers: {
+                            'apikey': db.key,
+                            'Authorization': 'Bearer ' + token,
+                            'x-upsert': 'true'
+                        },
+                        body: valittuTiedosto
+                    });
+
+                    if (!uploadRes.ok) {
+                        const errJson = await uploadRes.json().catch(function() { return {}; });
+                        throw new Error(errJson.message || ("Tiedoston lataus suojattuun kansioon epäonnistui: status " + uploadRes.status));
+                    }
+
+                    tiedostoPath = 'private:' + tiedostoNimi;
+                }
+
+                // Luetaan projektin nimi
+                const valittuProjektiArvo = document.getElementById('uusi-projekti-valinta').value;
+                let projektiNimi = valittuProjektiArvo;
+                if (valittuProjektiArvo === '_UUSI_') {
+                    projektiNimi = document.getElementById('uusi-projekti-nimi-syotto').value.trim() || 'SolOne';
+                }
+
+                const kategoria = document.getElementById('uusi-projekti-kategoria').value;
+                const prio = document.getElementById('uusi-projekti-prio').value;
+                const tila = document.getElementById('uusi-projekti-tila').value;
+                const muistiinpano = document.getElementById('uusi-projekti-muistiinpano').value.trim();
+                const ulkoinenLinkki = document.getElementById('uusi-projekti-linkki').value.trim();
+
+                const lopullinenDokumenttiUrl = tiedostoPath || ulkoinenLinkki || null;
+
+                const res = await fetch(db.url + '/rest/v1/solone_projektit', {
+                    method: 'POST',
+                    headers: {
+                        'apikey': db.key,
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        projekti: projektiNimi,
+                        vaihe_nimi: rawTeksti,
+                        kategoria: kategoria,
+                        prioriteetti: prio,
+                        tila: tila,
+                        muistiinpanot: muistiinpano || null,
+                        dokumentti_url: lopullinenDokumenttiUrl
+                    })
+                });
+
+                if (!res.ok) throw new Error("Projektin tallennus kantaan epäonnistui.");
+
+                suljeUusiPostausModaali();
+                naytaIlmoitus('✓ Työvaihe, kategoria ja suojattu liite tallennettu onnistuneesti!');
+            } catch (err) {
+                alert("Virhe tallennuksessa: " + err.message);
+            } finally {
+                nappi.disabled = false;
+                nappi.textContent = '📁 Tallenna projektilistaan';
+            }
+            return;
+        }
+
+        // 2. HAARA: NORMAALI SOMEPOSTAUS (Make.com & AI)
         try {
             let lopullinenKuvaUrl = null;
 
