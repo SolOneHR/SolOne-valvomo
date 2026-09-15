@@ -502,7 +502,6 @@
                         <label class="field-label">Valitse projekti:</label>
                         <select id="uusi-projekti-valinta" class="valinta-kentta" onchange="kasitteleProjektiValinta(this.value)">
                             <option value="SolOne">SolOne</option>
-                            <option value="Soloset Oy">Soloset Oy</option>
                             <option value="_UUSI_">+ Luo uusi projekti...</option>
                         </select>
                     </div>
@@ -519,10 +518,9 @@
                         <select id="uusi-projekti-kategoria" class="valinta-kentta">
                             <option value="Yleinen" selected>Yleinen</option>
                             <option value="Infra">Infra</option>
-                            <option value="UI/Kehitys">UI / Kehitys</option>
+                            <option value="Kehitys">Kehitys</option>
                             <option value="Tekoäly/Make">Tekoäly / Make</option>
                             <option value="GDPR/Tietosuoja">GDPR / Tietosuoja</option>
-                            <option value="SOTE/Soloset">SOTE / Soloset</option>
                             <option value="Markkinointi">Markkinointi</option>
                         </select>
                     </div>
@@ -990,15 +988,36 @@
         const token = localStorage.getItem('supabase_token');
 
         try {
-            const res = await fetch(db.url + '/rest/v1/asiakkaan_sometilit?asiakastunnus=eq.' + encodeURIComponent(nykyinenAsiakastunnus) + '&order=ensisijainen.desc', {
+            const headers = {
+                'apikey': db.key,
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            };
+
+            // 1. Haetaan käyttäjän omat tilit
+            const resOmat = await fetch(db.url + '/rest/v1/asiakkaan_sometilit?asiakastunnus=eq.' + encodeURIComponent(nykyinenAsiakastunnus) + '&order=ensisijainen.desc', {
                 method: 'GET',
-                headers: {
-                    'apikey': db.key,
-                    'Authorization': 'Bearer ' + token,
-                    'Content-Type': 'application/json'
+                headers: headers
+            });
+            const omatTilit = await resOmat.json() || [];
+
+            // 2. Haetaan jaetut tilit, joihin käyttäjälle on annettu käyttöoikeus
+            const resJaetut = await fetch(db.url + '/rest/v1/v_kayttajaoikeudet?user_email=eq.' + encodeURIComponent(nykyinenAsiakastunnus), {
+                method: 'GET',
+                headers: headers
+            });
+            const jaetutTilit = await resJaetut.json() || [];
+
+            // 3. Yhdistetään tilit siten, ettei tule tuplarivejä
+            const tilitKartta = new Map();
+            omatTilit.forEach(t => tilitKartta.set(t.id, t));
+            jaetutTilit.forEach(t => {
+                if (!tilitKartta.has(t.id)) {
+                    tilitKartta.set(t.id, t);
                 }
             });
-            kayttajanSometilit = await res.json() || [];
+
+            kayttajanSometilit = Array.from(tilitKartta.values());
         } catch (e) {
             console.error("Virhe ladattaessa sometilejä:", e);
         }
@@ -1020,23 +1039,40 @@
         if (!lista) return;
 
         if (!kayttajanSometilit || kayttajanSometilit.length === 0) {
-            lista.innerHTML = '<div style="font-size: 0.85rem; color: var(--text-muted);">Ei vielä kytkettyjä tilejä. Lisää ensimmäinen alla.</div>';
+            lista.innerHTML = '<div style="font-size: 0.85rem; color: var(--text-muted);">Ei käytettävissä olevia tilejä. Lisää ensimmäinen alla.</div>';
             return;
         }
 
         let html = '';
         kayttajanSometilit.forEach(function(tili) {
+            // Tarkistetaan, onko tili käyttäjän oma vai toisen jakama
+            const onOmaTili = (tili.asiakastunnus === nykyinenAsiakastunnus);
+
             html += '<div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center; background: ' + (tili.ensisijainen ? '#f0fdf4' : '#ffffff') + ';">';
             html += '  <div>';
-            html += '    <strong style="font-size: 0.95rem;">' + (tili.sivun_nimi || 'Nimetön sivu') + '</strong>' + (tili.ensisijainen ? ' <span style="font-size: 0.75rem; background: var(--success); color: white; padding: 2px 6px; border-radius: 4px;">Ensisijainen</span>' : '') + '<br>';
+            html += '    <strong style="font-size: 0.95rem;">' + (tili.sivun_nimi || 'Nimetön sivu') + '</strong>';
+            
+            if (tili.ensisijainen) {
+                html += ' <span style="font-size: 0.75rem; background: var(--success); color: white; padding: 2px 6px; border-radius: 4px;">Ensisijainen</span>';
+            }
+            if (!onOmaTili) {
+                html += ' <span style="font-size: 0.75rem; background: #64748b; color: white; padding: 2px 6px; border-radius: 4px;">Jaettu oikeus</span>';
+            }
+
+            html += '<br>';
             html += '    <span style="font-size: 0.8rem; color: var(--text-muted);">FB: ' + (tili.fb_page_id || '-') + ' | IG: ' + (tili.ig_account_id || '-') + '</span>';
             html += '  </div>';
+            
             html += '  <div style="display: flex; gap: 6px;">';
-            if (!tili.ensisijainen) {
-                html += '    <button class="btn-ulos" style="color: var(--primary); border-color: var(--primary); font-size: 0.75rem; padding: 4px 8px; width: auto;" onclick="asetaEnsisijaiseksi(\'' + tili.id + '\')">Aseta oletukseksi</button>';
+            // Näytetään napit VAIN omien tilien kohdalla
+            if (onOmaTili) {
+                if (!tili.ensisijainen) {
+                    html += '    <button class="btn-ulos" style="color: var(--primary); border-color: var(--primary); font-size: 0.75rem; padding: 4px 8px; width: auto;" onclick="asetaEnsisijaiseksi(\'' + tili.id + '\')">Aseta oletukseksi</button>';
+                }
+                html += '    <button class="btn-ulos" style="color: var(--danger); border-color: var(--danger); font-size: 0.75rem; padding: 4px 8px; width: auto;" onclick="poistaSometili(\'' + tili.id + '\')">Poista</button>';
             }
-            html += '    <button class="btn-ulos" style="color: var(--danger); border-color: var(--danger); font-size: 0.75rem; padding: 4px 8px; width: auto;" onclick="poistaSometili(\'' + tili.id + '\')">Poista</button>';
             html += '  </div>';
+            
             html += '</div>';
         });
         lista.innerHTML = html;
@@ -1156,7 +1192,6 @@
             const uniikit = [...new Set(data.map(d => d.projekti).filter(Boolean))];
 
             if (!uniikit.includes('SolOne')) uniikit.unshift('SolOne');
-            if (!uniikit.includes('Soloset Oy')) uniikit.push('Soloset Oy');
 
             let html = uniikit.map(p => `<option value="${p}">${p}</option>`).join('');
             html += '<option value="_UUSI_">+ Luo uusi projekti...</option>';
@@ -1570,9 +1605,6 @@
             htmlSisalto += '<option value="FB_IG"' + (nykyinenAlusta === 'FB_IG' || nykyinenAlusta === 'Molemmat' ? ' selected' : '') + '>Molemmat (FB & IG)</option>';
             htmlSisalto += '<option value="FB"' + (nykyinenAlusta === 'FB' || nykyinenAlusta === 'Facebook' ? ' selected' : '') + '>Vain Facebook</option>';
             htmlSisalto += '<option value="IG"' + (nykyinenAlusta === 'IG' || nykyinenAlusta === 'Instagram' ? ' selected' : '') + '>Vain Instagram</option>';
-            htmlSisalto += '<option value="Molemmat testi"' + (nykyinenAlusta === 'Molemmat testi' ? ' selected' : '') + '>🛠️ Molemmat (TESTI)</option>';
-            htmlSisalto += '<option value="Facebook testi"' + (nykyinenAlusta === 'Facebook testi' ? ' selected' : '') + '>🛠️ Vain Facebook (TESTI)</option>';
-            htmlSisalto += '<option value="Instagram testi"' + (nykyinenAlusta === 'Instagram testi' ? ' selected' : '') + '>🛠️ Vain Instagram (TESTI)</option>';
             htmlSisalto += '</select>';
             htmlSisalto += '</div>';
 
