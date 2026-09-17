@@ -409,6 +409,15 @@
             color: #991b1b; 
             border: 1px solid #fecaca; 
         }
+
+        .linkedin-osio {
+            opacity: 0.6;
+            background-color: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+        }
     </style>
 </head>
 <body>
@@ -1626,8 +1635,13 @@
             htmlSisalto += '</div>';
         }
 
-        htmlSisalto += '<label class="field-label">Julkaisuteksti:</label>';
+        htmlSisalto += '<label class="field-label">Julkaisuteksti (FB / IG):</label>';
         htmlSisalto += '<textarea id="teksti-' + julkaisu.id + '" class="teksti-alue" rows="7"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.julkaisuteksti || '') + '</textarea>';
+       
+        htmlSisalto += '<div class="linkedin-osio" style="opacity: 1; background-color: #ffffff; border: 1px solid #cbd5e1;">';
+        htmlSisalto += '<label class="field-label" style="color: var(--text-main);">LinkedIn-teksti (B2B / Asiantuntija):</label>';
+        htmlSisalto += '<textarea id="linkedin-teksti-' + julkaisu.id + '" class="teksti-alue" rows="7" style="margin-bottom:0;"' + (onHistoria ? ' readonly' : '') + ' placeholder="LinkedIn-teksti...">' + (julkaisu.draft_text_linkedin || '') + '</textarea>';
+        htmlSisalto += '</div>';
 
         if (!onHistoria) {
             const valmisAika = julkaisu.ajastettu_aika ? new Date(julkaisu.ajastettu_aika).toISOString().slice(0,16) : '';
@@ -1882,10 +1896,13 @@
         const db = haeSupabaseAsiakas();
 
         try {
+            const muokattuLiTeksti = document.getElementById('linkedin-teksti-' + id) ? document.getElementById('linkedin-teksti-' + id).value : '';
+
             const updatePayload = {
                 status: uusiStatus,
                 raw_text: muokattuRawTeksti,
                 julkaisuteksti: muokattuTeksti,
+                draft_text_linkedin: muokattuLiTeksti,
                 profile_id: valittuProfiili,
                 target_channel: valittuKanava,
                 alusta: valittuKanava,

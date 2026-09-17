@@ -409,6 +409,15 @@
             color: #991b1b; 
             border: 1px solid #fecaca; 
         }
+
+        .linkedin-osio {
+            opacity: 0.6;
+            background-color: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+        }
     </style>
 </head>
 <body>
@@ -422,6 +431,7 @@
         <div id="kayttaja-kortti" class="user-info" style="display:none;">
             <span id="kayttaja-email"></span><br>
             <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 5px; flex-wrap: wrap; align-items: center;">
+                <!-- PROJEKTIT-LINKKI (Vain ylläpitäjälle) -->
                 <a href="projektit.html" id="linkki-projektit" style="display: none; background: #0284c7; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 600; align-items: center; gap: 4px;">📁 Projektit</a>
                 
                 <button class="btn-pika" style="padding: 5px 12px; font-size: 0.8rem; width: auto;" onclick="avaaUusiPostausModaali()">➕ Uusi luonnos</button>
@@ -445,7 +455,7 @@
         </div>
     </div>
 
-    <!-- UUDEN SALASANAN ASETUS -MODAALI -->
+    <!-- UUDEN SALASANAN ASETUS -MODAALI (SÄHKÖPOSTILINKISTÄ TULEVALLE) -->
     <div id="uusi-salasana-ikkuna" style="display:none; background: white; border-radius: 12px; padding: 25px 20px; max-width: 400px; margin: 20px auto; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid var(--border-color);">
         <h2 style="margin-top:0;">Aseta uusi salasana</h2>
         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Syötä uusi salasana tilillesi.</p>
@@ -474,6 +484,7 @@
         <div style="background:white; border-radius:12px; padding:25px; width:100%; max-width:580px; box-shadow:0 10px 25px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto; box-sizing: border-box;">
             <h3 style="margin-top:0; color:var(--text-main); font-size: 1.2rem;">➕ Luo uusi julkaisu tai työvaihe</h3>
             
+            <!-- TYYPPIVALINTA (Vain pasi@solone.fi) -->
             <div id="admin-tallennustyyppi-lohko" style="display: none; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
                 <label class="field-label" style="color: var(--primary);">Tallennuksen kohde:</label>
                 <select id="uusi-tallennus-tyyppi" class="valinta-kentta" onchange="vaihdaTallennusTyyppi(this.value)">
@@ -482,7 +493,10 @@
                 </select>
             </div>
 
+            <!-- KAIKKI PROJEKTIN LISÄKENTÄT (Näkyvät vain jos 'projekti' valittu) -->
             <div id="projekti-lisakentat" style="display: none; background: #eff6ff; padding: 14px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #bfdbfe;">
+                
+                <!-- Rivi 1: Projekti & Uuden projektin luonti -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                     <div>
                         <label class="field-label">Valitse projekti:</label>
@@ -497,6 +511,7 @@
                     </div>
                 </div>
 
+                <!-- Rivi 2: Kategoria, Prioriteetti & Tila -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                     <div>
                         <label class="field-label">Kategoria:</label>
@@ -527,6 +542,7 @@
                     </div>
                 </div>
 
+                <!-- Rivi 3: Muistiinpanot & Ulkoinen linkki -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div>
                         <label class="field-label">Vapaat muistiinpanot / Speksit:</label>
@@ -539,20 +555,15 @@
                 </div>
             </div>
 
+            <!-- TEHTÄVÄN KUVAUS / RAW TEKSTI -->
             <label class="field-label" id="label-raw-teksti">Julkaisun aihe / Alkuperäinen teksti (Raw text):</label>
             <textarea id="uusi-raw-teksti" class="teksti-alue" placeholder="Kirjoita aihe, ajatus tai luonnos tähän..." style="min-height:100px;"></textarea>
 
+            <!-- TIEDOSTON LIITTÄMINEN -->
             <label class="field-label" id="label-liitetiedosto">Valitse kuva (puhelimesta tai koneelta):</label>
             <input type="file" id="uusi-kuva-tiedosto" class="valinta-kentta" style="margin-bottom:15px; background: white;">
 
-            <!-- KLOONATUN KUVAN ESIKATSELU JA VAIHTOMAHDOLLISUUS -->
-            <div id="kopioitu-kuva-preview-lohko" style="display:none; margin-bottom:15px; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid var(--border-color); text-align:center;">
-                <span style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:6px;">✓ Aiempi kuva liitetty kloonaukseen (voit myös vaihtaa tai poistaa sen):</span>
-                <img id="kopioitu-kuva-img" src="" style="max-height:130px; border-radius:6px; object-fit:contain;" alt="Liitetty kuva">
-                <br>
-                <button type="button" class="btn-ulos" style="color:var(--danger); border-color:var(--danger); font-size:0.75rem; padding:4px 10px; margin-top:8px; width:auto;" onclick="poistaKopioituKuva()">🗑️ Poista tämä kuva</button>
-            </div>
-
+            <!-- SOME-KOHTAISET VALINNAT (Piilotetaan jos 'projekti' valittu) -->
             <div class="grid-valinnat">
                 <div>
                     <label class="field-label">Julkaisuprofiili:</label>
@@ -590,12 +601,14 @@
         </div>
     </div>
 
-    <!-- SOMETILIT-ASETUKSET MODAALI -->
+    <!-- SOMETILIT-ASETUKSET MODAALI (MONISIVUTUKI) -->
     <div id="asetukset-modaali" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center; padding: 15px; box-sizing: border-box;">
         <div style="background:white; border-radius:12px; padding:25px; width:100%; max-width:550px; box-shadow:0 10px 25px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto; box-sizing: border-box;">
             <h3 style="margin-top:0; color:var(--text-main); font-size: 1.2rem;">⚙️ Kytketyt Sometilit ja Sivut</h3>
             
-            <div id="sometilit-lista" style="margin-bottom: 20px; display: flex-direction: column; gap: 10px;"></div>
+            <div id="sometilit-lista" style="margin-bottom: 20px; display: flex-direction: column; gap: 10px;">
+                <!-- Olemassa olevat tilit listataan tähän dynaamisesti -->
+            </div>
 
             <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
                 <h4 style="margin: 0 0 10px 0; font-size: 0.95rem; color: var(--text-main);">➕ Lisää uusi sivu / tili</h4>
@@ -653,7 +666,6 @@
     
     let nykyinenAsiakastunnus = null;
     let automaattiPäivitysAjastin = null;
-    let kopioituKuvaUrl = null;
 
     async function optimoiKuva(tiedosto) {
         if (!tiedosto) return tiedosto;
@@ -849,6 +861,7 @@
         }
     }
 
+    /* --- KIRJAUTUNEEN SALASANAN VAIHTO --- */
     function avaaSalasananVaihtoModaali() {
         document.getElementById('kirjautunut-uusi-salasana').value = '';
         const virheAlue = document.getElementById('kayttaja-salasana-virhe');
@@ -960,6 +973,7 @@
         document.getElementById('kirjautumis-ikkuna').style.display = 'none';
         document.getElementById('valvomo-sisalto').style.display = 'block';
         
+        // Näytetään Projektit-nappi vain ylläpitäjälle (pasi@solone.fi)
         const projektitLinkki = document.getElementById('linkki-projektit');
         if (projektitLinkki) {
             projektitLinkki.style.display = (email === 'pasi@solone.fi') ? 'inline-flex' : 'none';
@@ -975,6 +989,7 @@
         document.getElementById('kirjautumis-ikkuna').style.display = 'block';
     }
 
+    // --- UUDEN POSTAUKSEN JA SOMETILIEN TOIMINNOT ---
     let kayttajanSometilit = [];
 
     async function lataaKayttajanSometilit() {
@@ -989,18 +1004,21 @@
                 'Content-Type': 'application/json'
             };
 
+            // 1. Haetaan käyttäjän omat tilit
             const resOmat = await fetch(db.url + '/rest/v1/asiakkaan_sometilit?asiakastunnus=eq.' + encodeURIComponent(nykyinenAsiakastunnus) + '&order=ensisijainen.desc', {
                 method: 'GET',
                 headers: headers
             });
             const omatTilit = await resOmat.json() || [];
 
+            // 2. Haetaan jaetut tilit, joihin käyttäjälle on annettu käyttöoikeus
             const resJaetut = await fetch(db.url + '/rest/v1/v_kayttajaoikeudet?user_email=eq.' + encodeURIComponent(nykyinenAsiakastunnus), {
                 method: 'GET',
                 headers: headers
             });
             const jaetutTilit = await resJaetut.json() || [];
 
+            // 3. Yhdistetään tilit siten, ettei tule tuplarivejä
             const tilitKartta = new Map();
             omatTilit.forEach(t => tilitKartta.set(t.id, t));
             jaetutTilit.forEach(t => {
@@ -1037,6 +1055,7 @@
 
         let html = '';
         kayttajanSometilit.forEach(function(tili) {
+            // Tarkistetaan, onko tili käyttäjän oma vai toisen jakama
             const onOmaTili = (tili.asiakastunnus === nykyinenAsiakastunnus);
 
             html += '<div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center; background: ' + (tili.ensisijainen ? '#f0fdf4' : '#ffffff') + ';">';
@@ -1055,6 +1074,7 @@
             html += '  </div>';
             
             html += '  <div style="display: flex; gap: 6px;">';
+            // Näytetään napit VAIN omien tilien kohdalla
             if (onOmaTili) {
                 if (!tili.ensisijainen) {
                     html += '    <button class="btn-ulos" style="color: var(--primary); border-color: var(--primary); font-size: 0.75rem; padding: 4px 8px; width: auto;" onclick="asetaEnsisijaiseksi(\'' + tili.id + '\')">Aseta oletukseksi</button>';
@@ -1160,6 +1180,7 @@
         }
     }
 
+    // --- PROJEKTIEN DYNAMIIKKA JA VALINTA ---
     function kasitteleProjektiValinta(arvo) {
         const uusiSyottoLohko = document.getElementById('uusi-projekti-syotto-lohko');
         if (arvo === '_UUSI_') {
@@ -1223,10 +1244,7 @@
         const kuvaInput = document.getElementById('uusi-kuva-tiedosto');
         if (kuvaInput) kuvaInput.value = '';
 
-        const previewLohko = document.getElementById('kopioitu-kuva-preview-lohko');
-        if (previewLohko) previewLohko.style.display = 'none';
-        kopioituKuvaUrl = null;
-
+        // Nollataan projektikentät
         const muistiinpanoInput = document.getElementById('uusi-projekti-muistiinpano');
         if (muistiinpanoInput) muistiinpanoInput.value = '';
         const linkkiInput = document.getElementById('uusi-projekti-linkki');
@@ -1235,10 +1253,12 @@
         if (uusiNimiInput) uusiNimiInput.value = '';
         kasitteleProjektiValinta('SolOne');
 
+        // Palautetaan oletus: some
         const tallennusTyyppiValitsin = document.getElementById('uusi-tallennus-tyyppi');
         if (tallennusTyyppiValitsin) tallennusTyyppiValitsin.value = 'some';
         vaihdaTallennusTyyppi('some');
 
+        // Näytetään vaihtoehto ainoastaan ylläpitäjälle pasi@solone.fi
         const email = localStorage.getItem('user_email');
         const adminLohko = document.getElementById('admin-tallennustyyppi-lohko');
         if (adminLohko) {
@@ -1270,52 +1290,6 @@
 
     function suljeUusiPostausModaali() {
         document.getElementById('uusi-postaus-modaali').style.display = 'none';
-        kopioituKuvaUrl = null;
-        const previewLohko = document.getElementById('kopioitu-kuva-preview-lohko');
-        if (previewLohko) previewLohko.style.display = 'none';
-    }
-
-    function kloonaaVanhaJulkaisu(rawTeksti, profiili, kanava, kuvaUrl) {
-        avaaUusiPostausModaali();
-        
-        document.getElementById('uusi-raw-teksti').value = rawTeksti || '';
-        
-        const profiiliSelect = document.getElementById('uusi-profiili');
-        if (profiiliSelect && profiili) profiiliSelect.value = profiili;
-        
-        const kanavaSelect = document.getElementById('uusi-kanava');
-        if (kanavaSelect && kanava) kanavaSelect.value = kanava;
-        
-        kopioituKuvaUrl = kuvaUrl || null;
-        
-        const previewLohko = document.getElementById('kopioitu-kuva-preview-lohko');
-        const previewImg = document.getElementById('kopioitu-kuva-img');
-        
-        if (kopioituKuvaUrl && previewLohko && previewImg) {
-            let toimivaKuvaUrl = kopioituKuvaUrl;
-            let kuvaId = '';
-            if (toimivaKuvaUrl.includes('id=')) {
-                kuvaId = toimivaKuvaUrl.split('id=')[1].split('&')[0];
-            } else if (toimivaKuvaUrl.includes('/d/')) {
-                kuvaId = toimivaKuvaUrl.split('/d/')[1].split('/')[0];
-            }
-            if (kuvaId) {
-                toimivaKuvaUrl = 'https://lh3.googleusercontent.com/d/' + kuvaId;
-            }
-            previewImg.src = toimivaKuvaUrl;
-            previewLohko.style.display = 'block';
-            naytaIlmoitus('📋 Vanha julkaisu ja kuva tuotu pohjaksi!');
-        } else {
-            if (previewLohko) previewLohko.style.display = 'none';
-            naytaIlmoitus('📋 Vanha julkaisu tuotu pohjaksi!');
-        }
-    }
-
-    function poistaKopioituKuva() {
-        kopioituKuvaUrl = null;
-        const previewLohko = document.getElementById('kopioitu-kuva-preview-lohko');
-        if (previewLohko) previewLohko.style.display = 'none';
-        naytaIlmoitus('Kuva poistettu kloonauksesta. Voit nyt ladata halutessasi uuden kuvan.');
     }
 
     async function luoUusiPostausKantaan() {
@@ -1339,14 +1313,17 @@
         nappi.disabled = true;
         nappi.textContent = '⏳ Tallennetaan...';
 
+        // 1. HAARA: TALLENNETAAN PROJEKTILISTAAN KAIKILLA KENTILLÄ (Suojattu Storage)
         if (onProjekti) {
             try {
                 let tiedostoPath = null;
 
                 if (valittuTiedosto) {
+                    // Erotetaan tiedostopääte ja käytetään puhdasta aikaleimaa ilman ääkkösiä
                     const paate = valittuTiedosto.name.includes('.') ? '.' + valittuTiedosto.name.split('.').pop().toLowerCase() : '';
                     const tiedostoNimi = 'doc_' + Date.now() + paate;
                     
+                    // Ladataan yksityiseen projekti-dokumentit -buckettiin
                     const uploadRes = await fetch(db.url + '/storage/v1/object/projekti-dokumentit/' + tiedostoNimi, {
                         method: 'POST',
                         headers: {
@@ -1365,6 +1342,7 @@
                     tiedostoPath = 'private:' + tiedostoNimi;
                 }
 
+                // Luetaan projektin nimi
                 const valittuProjektiArvo = document.getElementById('uusi-projekti-valinta').value;
                 let projektiNimi = valittuProjektiArvo;
                 if (valittuProjektiArvo === '_UUSI_') {
@@ -1410,6 +1388,7 @@
             return;
         }
 
+        // 2. HAARA: NORMAALI SOMEPOSTAUS (Make.com & AI)
         try {
             let lopullinenKuvaUrl = null;
 
@@ -1434,8 +1413,6 @@
                 }
 
                 lopullinenKuvaUrl = db.url + '/storage/v1/object/public/somekuvat/' + tiedostoNimi;
-            } else if (kopioituKuvaUrl) {
-                lopullinenKuvaUrl = kopioituKuvaUrl;
             }
 
             const valintaElem = document.getElementById('uusi-sometili-valinta');
@@ -1626,8 +1603,13 @@
             htmlSisalto += '</div>';
         }
 
-        htmlSisalto += '<label class="field-label">Julkaisuteksti:</label>';
+        htmlSisalto += '<label class="field-label">Julkaisuteksti (FB / IG):</label>';
         htmlSisalto += '<textarea id="teksti-' + julkaisu.id + '" class="teksti-alue" rows="7"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.julkaisuteksti || '') + '</textarea>';
+       
+        htmlSisalto += '<div class="linkedin-osio" style="opacity: 1; background-color: #ffffff; border: 1px solid #cbd5e1;">';
+        htmlSisalto += '<label class="field-label" style="color: var(--text-main);">LinkedIn-teksti (B2B / Asiantuntija):</label>';
+        htmlSisalto += '<textarea id="linkedin-teksti-' + julkaisu.id + '" class="teksti-alue" rows="7" style="margin-bottom:0;"' + (onHistoria ? ' readonly' : '') + ' placeholder="LinkedIn-teksti...">' + (julkaisu.draft_text_linkedin || '') + '</textarea>';
+        htmlSisalto += '</div>';
 
         if (!onHistoria) {
             const valmisAika = julkaisu.ajastettu_aika ? new Date(julkaisu.ajastettu_aika).toISOString().slice(0,16) : '';
@@ -1669,14 +1651,6 @@
             htmlSisalto += '<button class="btn-hyvaksy" onclick="paivitaStatus(\'' + julkaisu.id + '\', \'hyvaksytty\')">✓ Hyväksy jonoon</button>';
             htmlSisalto += '<button class="btn-pika" onclick="paivitaStatus(\'' + julkaisu.id + '\', \'hyvaksytty\', true);">🚀 Julkaise välittömästi</button>';
             htmlSisalto += '<button class="btn-hylkaa" onclick="paivitaStatus(\'' + julkaisu.id + '\', \'hylatty\')">✕ Hylkää</button>';
-            htmlSisalto += '</div>';
-        }
-
-        if (onHistoria) {
-            const turvattuTeksti = (julkaisu.raw_text || '').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/"/g, '&quot;');
-            const turvattuKuvaUrl = julkaisu.kuva_url || '';
-            htmlSisalto += '<div style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 12px;">';
-            htmlSisalto += '<button type="button" class="btn-pika" style="background-color: #0284c7; width: 100%;" onclick="kloonaaVanhaJulkaisu(\'' + turvattuTeksti + '\', \'' + (julkaisu.julkaisuprofiili || 'Yleinen') + '\', \'' + (julkaisu.target_channel || 'FB_IG') + '\', \'' + turvattuKuvaUrl + '\')">📋 Kloonaa ja julkaise uudelle kanavalle</button>';
             htmlSisalto += '</div>';
         }
 
@@ -1756,8 +1730,7 @@
             }
         }
     }
-
-    let viimeisinHistoriaData = [];
+let viimeisinHistoriaData = [];
 
     function paivitaHistoriaSuodatinValikko() {
         const valikko = document.getElementById('historia-suodatin-tili');
@@ -1799,7 +1772,6 @@
             });
         }
     }
-
     async function haeValvomonTiedot() {
         const aktiivinenElementti = document.activeElement;
         const kirjoittaaParhaillaan = aktiivinenElementti && 
@@ -1827,6 +1799,7 @@
                 'Content-Type': 'application/json'
             };
 
+            // Haetaan odottavat ja käsittelyssä olevat (RLS rajaa automaattisesti omat ja jaetut)
             const resOdottavat = await fetch(db.url + '/rest/v1/somepostaukset?status=in.(odotetaan,kasittelyssa)&order=luotu_aika.asc', { method: 'GET', headers: headers });
             if (resOdottavat.status === 401) { 
                 kirjauduUlos(); 
@@ -1834,6 +1807,7 @@
             }
             const dataOdottavat = await resOdottavat.json();
 
+            // Haetaan julkaisuhistoria (RLS rajaa automaattisesti omat ja jaetut)
             const resHistoria = await fetch(db.url + '/rest/v1/somepostaukset?status=not.in.(odotetaan,kasittelyssa)&order=luotu_aika.desc&limit=25', { method: 'GET', headers: headers });
             const dataHistoria = await resHistoria.json();
 
@@ -1843,6 +1817,7 @@
                 odottavatLista.innerHTML = '';
                 dataOdottavat.forEach(function(julkaisu) { odottavatLista.appendChild(luoKorttiHtml(julkaisu, false)); });
             }
+            // Tallennetaan historiadata ja päivitetään suodatinvalikko
             viimeisinHistoriaData = dataHistoria || [];
             paivitaHistoriaSuodatinValikko();
             suodataHistoria();
@@ -1882,10 +1857,13 @@
         const db = haeSupabaseAsiakas();
 
         try {
+            const muokattuLiTeksti = document.getElementById('linkedin-teksti-' + id) ? document.getElementById('linkedin-teksti-' + id).value : '';
+
             const updatePayload = {
                 status: uusiStatus,
                 raw_text: muokattuRawTeksti,
                 julkaisuteksti: muokattuTeksti,
+                draft_text_linkedin: muokattuLiTeksti,
                 profile_id: valittuProfiili,
                 target_channel: valittuKanava,
                 alusta: valittuKanava,
