@@ -643,8 +643,13 @@
         <div id="julkaisut-lista">Ladataan odottavia julkaisuja...</div>
 
         <div class="osio-otsikko">
-            <span>Julkaisuhistoria</span>
-            <span class="osio-infoteksti">Näytetään 10 viimeisintä julkaisua</span>
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <span>Julkaisuhistoria</span>
+                <select id="historia-suodatin-tili" class="valinta-kentta" style="width: auto; padding: 4px 8px; font-size: 0.85rem;" onchange="suodataHistoria()">
+                    <option value="KAIKKI">Kaikki tilit</option>
+                </select>
+            </div>
+            <span class="osio-infoteksti">Näytetään viimeisimmät julkaisut</span>
         </div>
         <div id="historia-lista">Ladataan historiaa...</div>
     </div>
@@ -1471,7 +1476,8 @@
             card.id = 'card-' + julkaisu.id;
             let htmlK = '';
             htmlK += '<div class="tilamerkinta kasittelyssa-badge">⏳ Uusi julkaisu käsittelyssä (valmis hetken päästä)</div>';
-            htmlK += '<div class="meta-info"><span><strong>Luotu:</strong> ' + pvm + '</span></div>';
+            const laatijaK = julkaisu.asiakastunnus || 'Tuntematon';
+            htmlK += '<div class="meta-info"><span><strong>Luotu:</strong> ' + pvm + '</span><span><strong>Laatija:</strong> ' + laatijaK + '</span></div>';
             htmlK += '<label class="field-label">Alkuperäinen teksti:</label>';
             htmlK += '<textarea class="teksti-alue" readonly>' + (julkaisu.raw_text || '') + '</textarea>';
             card.innerHTML = htmlK;
@@ -1519,8 +1525,21 @@
         const valittuTiliOlio = kayttajanSometilit.find(function(t) { return t.id === julkaisu.sometili_id; });
         const sivunNimiTeksti = julkaisu.sivun_nimi || (valittuTiliOlio ? valittuTiliOlio.sivun_nimi : (kayttajanSometilit[0] ? kayttajanSometilit[0].sivun_nimi : 'Oletussivu'));
 
+        const laatijaTeksti = julkaisu.asiakastunnus || 'Tuntematon';
+        const julkaisijaTeksti = julkaisu.julkaissut_kayttaja || null;
+
+        let tekijaKenttaHtml = '';
+        if (!julkaisijaTeksti) {
+            tekijaKenttaHtml = '<span><strong>Laatija:</strong> ' + laatijaTeksti + '</span>';
+        } else if (julkaisijaTeksti === laatijaTeksti) {
+            tekijaKenttaHtml = '<span><strong>Laatija & Julkaisija:</strong> ' + laatijaTeksti + '</span>';
+        } else {
+            tekijaKenttaHtml = '<span><strong>Laatija:</strong> ' + laatijaTeksti + '</span><span><strong>Julkaisija:</strong> ' + julkaisijaTeksti + '</span>';
+        }
+
         htmlSisalto += '<div class="meta-info">';
         htmlSisalto += '<span><strong>Luotu:</strong> ' + pvm + '</span>';
+        htmlSisalto += tekijaKenttaHtml;
         htmlSisalto += '<span><strong>Kohdesivu:</strong> ' + sivunNimiTeksti + '</span>';
         htmlSisalto += '<span><strong>Profiili:</strong> ' + nykyinenProfiili + '</span>';
         htmlSisalto += '<span><strong>Kanava:</strong> ' + kanavaTeksti + '</span>';
@@ -1697,7 +1716,48 @@
             }
         }
     }
+let viimeisinHistoriaData = [];
 
+    function paivitaHistoriaSuodatinValikko() {
+        const valikko = document.getElementById('historia-suodatin-tili');
+        if (!valikko || !kayttajanSometilit) return;
+
+        const nykyinenValinta = valikko.value;
+        let html = '<option value="KAIKKI">Kaikki tilit</option>';
+
+        kayttajanSometilit.forEach(function(tili) {
+            html += '<option value="' + tili.id + '">' + (tili.sivun_nimi || 'Nimetön sivu') + '</option>';
+        });
+
+        valikko.innerHTML = html;
+        if (nykyinenValinta && valikko.querySelector('option[value="' + nykyinenValinta + '"]')) {
+            valikko.value = nykyinenValinta;
+        }
+    }
+
+    function suodataHistoria() {
+        const historiaLista = document.getElementById('historia-lista');
+        const valikko = document.getElementById('historia-suodatin-tili');
+        if (!historiaLista) return;
+
+        const valittuTiliId = valikko ? valikko.value : 'KAIKKI';
+        
+        let naytettavat = viimeisinHistoriaData;
+        if (valittuTiliId !== 'KAIKKI') {
+            naytettavat = viimeisinHistoriaData.filter(function(j) {
+                return j.sometili_id === valittuTiliId;
+            });
+        }
+
+        if (!naytettavat || naytettavat.length === 0) {
+            historiaLista.innerHTML = '<div class="tyhja-tila">Ei aiemmin julkaistuja viestejä tälle tilille.</div>';
+        } else {
+            historiaLista.innerHTML = '';
+            naytettavat.forEach(function(julkaisu) {
+                historiaLista.appendChild(luoKorttiHtml(julkaisu, true));
+            });
+        }
+    }
     async function haeValvomonTiedot() {
         const aktiivinenElementti = document.activeElement;
         const kirjoittaaParhaillaan = aktiivinenElementti && 
@@ -1725,19 +1785,16 @@
                 'Content-Type': 'application/json'
             };
 
-            let asiakasSuodatus = '';
-            if (nykyinenAsiakastunnus) {
-                asiakasSuodatus = '&or=(asiakastunnus.eq.' + nykyinenAsiakastunnus + ',asiakastunnus.is.null)';
-            }
-
-            const resOdottavat = await fetch(db.url + '/rest/v1/somepostaukset?status=in.(odotetaan,kasittelyssa)' + asiakasSuodatus + '&order=luotu_aika.asc', { method: 'GET', headers: headers });
+            // Haetaan odottavat ja käsittelyssä olevat (RLS rajaa automaattisesti omat ja jaetut)
+            const resOdottavat = await fetch(db.url + '/rest/v1/somepostaukset?status=in.(odotetaan,kasittelyssa)&order=luotu_aika.asc', { method: 'GET', headers: headers });
             if (resOdottavat.status === 401) { 
                 kirjauduUlos(); 
                 return; 
             }
             const dataOdottavat = await resOdottavat.json();
 
-            const resHistoria = await fetch(db.url + '/rest/v1/somepostaukset?status=not.in.(odotetaan,kasittelyssa)' + asiakasSuodatus + '&order=luotu_aika.desc&limit=10', { method: 'GET', headers: headers });
+            // Haetaan julkaisuhistoria (RLS rajaa automaattisesti omat ja jaetut)
+            const resHistoria = await fetch(db.url + '/rest/v1/somepostaukset?status=not.in.(odotetaan,kasittelyssa)&order=luotu_aika.desc&limit=25', { method: 'GET', headers: headers });
             const dataHistoria = await resHistoria.json();
 
             if (!dataOdottavat || dataOdottavat.length === 0) {
@@ -1746,13 +1803,10 @@
                 odottavatLista.innerHTML = '';
                 dataOdottavat.forEach(function(julkaisu) { odottavatLista.appendChild(luoKorttiHtml(julkaisu, false)); });
             }
-
-            if (!dataHistoria || dataHistoria.length === 0) {
-                historiaLista.innerHTML = '<div class="tyhja-tila">Ei aiemmin julkaistuja viestejä historiassa.</div>';
-            } else {
-                historiaLista.innerHTML = '';
-                dataHistoria.forEach(function(julkaisu) { historiaLista.appendChild(luoKorttiHtml(julkaisu, true)); });
-            }
+            // Tallennetaan historiadata ja päivitetään suodatinvalikko
+            viimeisinHistoriaData = dataHistoria || [];
+            paivitaHistoriaSuodatinValikko();
+            suodataHistoria();
 
             if (automaattiPäivitysAjastin) clearTimeout(automaattiPäivitysAjastin);
 
@@ -1799,7 +1853,8 @@
                 sometili_id: valittuSometiliId,
                 sivun_nimi: sivunNimi,
                 ajastettu_aika: kaynnistaPika ? null : (valittuAika ? new Date(valittuAika).toISOString() : null),
-                julkaistu_aika: (kaynnistaPika || (uusiStatus === 'hyvaksytty' && !valittuAika)) ? new Date().toISOString() : null
+                julkaistu_aika: (kaynnistaPika || (uusiStatus === 'hyvaksytty' && !valittuAika)) ? new Date().toISOString() : null,
+                julkaissut_kayttaja: (uusiStatus === 'hyvaksytty' || kaynnistaPika) ? nykyinenAsiakastunnus : null
             };
 
             const response = await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
