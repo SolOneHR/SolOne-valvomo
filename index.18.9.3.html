@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Palvelut – SolOne</title>
+    <title>SolOne – Älykästä automaatiota ja helppoja digitaalisia ratkaisuja</title>
     <style>
         :root {
             --bg-main: #f8fafc;
@@ -188,26 +188,29 @@
         .ilmoitus-pieni { color: var(--danger); font-size: 12px; margin-bottom: 10px; display: none; font-weight: bold; }
         .ilmoitus-onni { color: var(--success); font-size: 12px; margin-bottom: 10px; display: none; font-weight: bold; }
 
-        /* Yläbanneri taustakuvalla */
-        .page-header {
+        /* Hero */
+        .hero {
             background: linear-gradient(rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.75)), url('soloneverkkosivu.jpg') center/cover no-repeat;
             color: white;
-            padding: 40px 30px;
+            padding: 45px 25px;
             border-radius: 12px;
             text-align: center;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
             margin-bottom: 30px;
         }
 
-        .page-header h1 {
+        .hero h1 {
             margin: 0 0 10px 0;
-            font-size: 28px;
-            color: #ffffff;
+            font-size: 32px;
+            letter-spacing: -0.4px;
             font-weight: 700;
         }
 
-        .page-header p {
-            margin: 0;
+        .logo-hero-sol { color: #ffffff; font-weight: 700; }
+        .logo-hero-one { color: #38bdf8; font-weight: 600; }
+
+        .hero p {
+            margin: 0 0 22px 0;
             color: #e2e8f0;
             font-size: 16px;
             max-width: 680px;
@@ -216,7 +219,19 @@
             line-height: 1.5;
         }
 
-        /* Kortit ja Grid */
+        .btn-cta {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .btn-cta:hover { background-color: var(--primary-hover); }
+
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -238,53 +253,104 @@
             text-transform: uppercase;
         }
 
-        .palvelu-osio {
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
         }
 
-        .palvelu-osio:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
+        /* Hinnoittelukortit */
+        .hinta-kortti {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 22px 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .palvelu-lista {
-            margin: 8px 0 16px 0;
-            padding-left: 18px;
-            font-size: 14px;
+        .hinta-kortti:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+        }
+
+        .hinta-kortti.korostettu {
+            border: 2px solid var(--primary);
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        .hinta-hinta {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 10px 0 4px 0;
+        }
+
+        .hinta-hinta span {
+            font-size: 12px;
             color: var(--text-muted);
-            line-height: 1.6;
+            font-weight: normal;
+            display: block;
+            margin-top: 2px;
         }
 
-        .palvelu-lista li {
-            margin-bottom: 6px;
-        }
-
-        .btn-kysy {
-            display: inline-block;
-            background-color: var(--primary);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: bold;
+        .ominaisuus-lista {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0 20px 0;
             font-size: 13px;
-            text-decoration: none;
-            transition: background-color 0.2s;
+            color: var(--text-muted);
+            line-height: 1.7;
         }
 
-        .btn-kysy:hover {
-            background-color: var(--primary-hover);
+        .ominaisuus-lista li {
+            position: relative;
+            padding-left: 18px;
         }
 
-        /* Alabanneri 180 astetta käännetyllä taustakuvalla */
+        .ominaisuus-lista li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Työkalujen esittelylaatikot (Pika vs Valvomo) */
+        .tyokalu-box {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .tyokalu-box h4 {
+            margin: 0 0 6px 0;
+            font-size: 16px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .uutis-kortti {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
         .bottom-banner {
             position: relative;
             border-radius: 8px;
             padding: 25px 20px;
             text-align: center;
-            margin-top: 20px;
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
             color: white;
@@ -293,10 +359,7 @@
         .bottom-banner::before {
             content: "";
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.65)), url('soloneverkkosivu.jpg') center/cover no-repeat;
             transform: rotate(180deg);
             z-index: 1;
@@ -307,7 +370,6 @@
             z-index: 2;
         }
 
-        /* Footer */
         .footer {
             text-align: center;
             padding: 30px 0;
@@ -329,8 +391,11 @@
                     <span class="sol">Sol</span><span class="one">One</span>
                 </a>
                 <nav class="paanavigaatio">
-                    <a href="index.html">Etusivu</a>
-                    <a href="palvelut.html" class="aktiivinen">Palvelut</a>
+                    <a href="index.html" class="aktiivinen">Etusivu</a>
+                    <a href="#paketit">Palvelupaketit</a>
+                    <a href="#tyokalut">Työkalut</a>
+                    <a href="#uutiset">Uutiset</a>
+                    <a href="palvelut.html">Palvelut</a>
                     <a href="vastuullisuus.html">Vastuullisuus</a>
                     <a href="yhteystiedot.html">Yhteystiedot</a>
                     <a href="tietosuoja.html">Tietosuojaseloste</a>
@@ -370,83 +435,167 @@
             <button style="width: 100%; background: var(--success); color: white; border: none; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="tallennaUusiSalasana()">Tallenna uusi salasana</button>
         </div>
 
-        <!-- YLÄBANNERI -->
-        <header class="page-header">
-            <h1>Palvelut</h1>
-            <p>Autamme muuttamaan tekemisen näkyväksi, jotta voit onnistua siinä, mikä sinulle on tärkeää!</p>
+        <!-- HERO-BANNERI -->
+        <header class="hero">
+            <h1><span class="logo-hero-sol">Sol</span><span class="logo-hero-one">One</span></h1>
+            <p>Autamme muuttamaan tekemisen näkyväksi, jotta voit onnistua siinä, mikä sinulle on tärkeää! Ota kuva sieltä missä tapahtuu – SolOne hoitaa muotoilun, sinulla on 100 % hallinta.</p>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <a href="#paketit" class="btn-cta">Tutustu ratkaisuihin</a>
+                <a href="somevalvomo_demo.html" class="btn-cta" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);">Kokeile demoa</a>
+            </div>
         </header>
 
-        <!-- PÄÄSISÄLTÖ: PAKETTIEN SYVENTÄVÄT ESITTELYT -->
-        <div class="card">
-            
-            <!-- 1. SolOne Tekijä -->
-            <div class="palvelu-osio">
-                <span class="badge" style="background: #f1f5f9; color: #334155;">YKSINYRITTÄJÄLLE / AMMATINHARJOITTAJALLE</span>
-                <h2 style="margin: 4px 0 8px 0; font-size: 20px;">SolOne Tekijä</h2>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0;">
-                    <strong>Kenelle:</strong> Yksinyrittäjille, asentajille, remontoijille, kädentaitajille ja asiantuntijoille.
-                </p>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0;">
-                    <strong>Arjen haaste:</strong> Työpäivä kuluu asiakaskohteissa ja kentällä. Työpäivän päätteeksi ei riitä aikaa eikä energiaa istua tietokoneella miettimässä julkaisutekstejä, valitsemassa hashtageja tai kirjautumassa useaan eri kanavaan.
-                </p>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 6px 0;">
-                    <strong>Miten SolOne ratkaisee tämän:</strong>
-                </p>
-                <ul class="palvelu-lista">
-                    <li><strong>SolOne Pika</strong> kulkee aina mukana puhelimessa: ota kuva työkohteesta ja sanele tai kirjoita muutama sana kentältä sekunneissa.</li>
-                    <li>Tekoäly luonnostelee puolestasi sujuvan, laadukkaan tekstin ja valmiit hashtagit.</li>
-                    <li><strong>SolOne Valvomo</strong> kokoaa luonnokset selkeään näkymään: tarkistat ja hyväksyt julkaisun Meta-kanaviin (Facebook & Instagram) sekä LinkedIniin silloin, kun sinulle sopii.</li>
-                </ul>
-                <a href="mailto:info@solone.fi?subject=Tiedustelu:%20SolOne%20Tekijä" class="btn-kysy">Kysy lisää Tekijä-paketista</a>
-            </div>
+        <!-- TYÖKALUT: PIKA JA VALVOMO -->
+        <div id="tyokalut" class="card" style="border-top: 4px solid var(--primary);">
+            <span class="badge">TYÖKALUT ARKEESI</span>
+            <h2 style="margin: 0 0 10px 0; font-size: 21px;">Kaksi tapaa hallita näkyvyyttäsi</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+                Ei uusia opeteltavia järjestelmiä. Nappaa kuva talteen lennosta ja kuittaa valmis julkaisu silloin, kun sinulle parhaiten sopii.
+            </p>
 
-            <!-- 2. SolOne Palveluyritys -->
-            <div class="palvelu-osio">
-                <span class="badge" style="background: #dbeafe; color: #1e40af;">KIVIJALKA & PALVELUT</span>
-                <h2 style="margin: 4px 0 8px 0; font-size: 20px;">SolOne Palveluyritys</h2>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0;">
-                    <strong>Kenelle:</strong> Myymälöille, korjaamoille, paikallisille palveluyrityksille ja yrityksille, joilla on useampi toimipiste tai eri kohderyhmiä palvelevia brändejä.
-                </p>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0;">
-                    <strong>Arjen haaste:</strong> Useamman eri sivun ja some-tilin ylläpito samanaikaisesti aiheuttaa sekaannusta, jatkuvaa tilien vaihtoa ja vie turhaa työaikaa.
-                </p>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 6px 0;">
-                    <strong>Miten SolOne ratkaisee tämän:</strong>
-                </p>
-                <ul class="palvelu-lista">
-                    <li>Hallitse jopa 3 brändiä tai 6 eri sivua (Meta FB/IG + LinkedIn) yhdestä ja samasta näkymästä ilman jatkuvaa ulos- ja sisäänkirjautumista.</li>
-                    <li>3 käyttäjätiliä ja <strong>SolOne Pika</strong> -mobiilityökalu kuvien ja ajatusten taltioimiseksi suoraan arjen työn keskeltä.</li>
-                    <li>Tekoäly luonnostelee valmiin tekstin ja hashtagit valitsemasi julkaisuprofiilin (kuten B2B tai B2C) mukaan.</li>
-                    <li>Keskitetty ajastus ja tarkistus: hyväksyt ja ajastat usean eri sivun julkaisut helposti samasta paikasta.</li>
-                </ul>
-                <a href="mailto:info@solone.fi?subject=Tiedustelu:%20SolOne%20Palveluyritys" class="btn-kysy">Kysy lisää Palveluyritys-paketista</a>
+            <div class="grid">
+                <div class="tyokalu-box">
+                    <h4>⚡ SolOne Pika (Puhelinsovellus)</h4>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+                        Kevyt kotivalikon pikatyökalu kenttäolosuhteisiin. Avaa kamera 1 sekunnissa, sanele tai kirjoita pari sanaa ja paina tallenna. Tekoäly aloittaa muotoilun heti taustalla.
+                    </p>
+                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">✓ Kulkee aina taskussa</span>
+                </div>
+                <div class="tyokalu-box">
+                    <h4>💻 SolOne Valvomo (Hallintakeskus)</h4>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+                        Selkeä selainnäkymä tietokoneelle tai tabletille. Tarkista ja hio tekoälyn tekstit, aseta ajastukset ja kuittaa julkaisut yhdellä klikkauksella Facebookiin, Instagramiin ja LinkedIniin.
+                    </p>
+                    <span style="font-size: 12px; font-weight: bold; color: var(--success);">✓ 100 % inhimillinen kontrolli</span>
+                </div>
             </div>
-
-            <!-- 3. SolOne Tiimi -->
-            <div class="palvelu-osio">
-                <span class="badge" style="background: #f1f5f9; color: #334155;">YHTEISÖILLE & SEUROILLE</span>
-                <h2 style="margin: 4px 0 8px 0; font-size: 20px;">SolOne Tiimi</h2>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0;">
-                    <strong>Kenelle:</strong> Yhdistyksille, urheiluseuroille, yhteisöille ja useamman työntekijän tiimeille.
-                </p>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0;">
-                    <strong>Arjen haaste:</strong> Kuvat ja juttuaiheet tulevat eri henkilöiltä sekavasti eri viestikanavissa (WhatsApp, sähköposti, tekstiviestit), jolloin viestintä pirstaloituu ja vastuuhenkilön aika kuluu asioiden etsimiseen ja kokoamiseen.
-                </p>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 6px 0;">
-                    <strong>Miten SolOne ratkaisee tämän:</strong>
-                </p>
-                <ul class="palvelu-lista">
-                    <li><strong>SolOne Pika</strong> koko tiimille: jokainen kentällä tai tapahtumassa oleva voi lähettää kuvan ja lyhyen tervehdyksen suoraan puhelimestaan.</li>
-                    <li>Kaikki ehdotukset kertyvät yhteen ja samaan <strong>SolOne Valvomon</strong> jonoon selkeiksi luonnoksiksi.</li>
-                    <li>Tekoäly luonnostelee tekstit ja hashtagit valitun profiilin mukaan.</li>
-                    <li>2 pääkäyttäjää voi tarkistaa, hioa ja hyväksyä julkaisut Meta-kanaviin (Facebook & Instagram) sekä LinkedIniin silloin, kun se sopii yhteisön aikatauluun.</li>
-                </ul>
-                <a href="mailto:info@solone.fi?subject=Tiedustelu:%20SolOne%20Tiimi" class="btn-kysy">Kysy lisää Tiimi-paketista</a>
-            </div>
-
         </div>
 
-        <!-- ALABANNERI -->
+        <!-- PALVELUPAKETIT -->
+        <div id="paketit" class="card">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <span class="badge">TUOTTEISTETUT PALVELUT</span>
+                <h2 style="font-size: 22px; color: var(--text-main); margin: 6px 0 8px 0;">Valitse toimintaasi sopiva SolOne-paketti</h2>
+                <p style="color: var(--text-muted); font-size: 14px; max-width: 600px; margin: 0 auto;">
+                    Jatkuva tuki osaamisesi esille tuomiseen. Ei piilokuluja tai sitoutumispakkoa.
+                </p>
+            </div>
+
+            <div class="grid">
+                <!-- Paketti 1: Tekijä -->
+                <div class="hinta-kortti">
+                    <div>
+                        <span class="badge" style="background: #f1f5f9; color: #334155;">YKSINYRITTÄJÄLLE / AMMATINHARJOITTAJALLE</span>
+                        <h3 style="margin: 0; font-size: 18px; color: var(--text-main);">SolOne Tekijä</h3>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0 0 0;">Suunniteltu liikkuville asentajille, remontoijille, kädentaitajille ja asiantuntijoille, jotka tekevät työn itse eivätkä ehdi istua koneen ääressä.</p>
+                        <div class="hinta-hinta">
+                            Alkaen n. 29 € / kk
+                            <span>(Alustava hinta-arvio, ALV 0 %)</span>
+                        </div>
+                        <ul class="ominaisuus-lista">
+                            <li>1 Meta-kanavapari (FB & IG) + LinkedIn</li>
+                            <li><strong>SolOne Pika</strong> -mobiilikenttäsyöttö</li>
+                            <li>Tekoälyn tekstinmuotoilu & <strong>älykkäät julkaisuprofiilit</strong></li>
+                            <li><strong>SolOne Valvomo</strong> (1 käyttäjätili)</li>
+                            <li>Ajastukset ja pikajulkaisu</li>
+                        </ul>
+                    </div>
+                    <a href="mailto:info@solone.fi?subject=Tiedustelu:%20SolOne%20Tekijä" class="btn-cta" style="text-align: center; font-size: 13px; padding: 10px;">Kysy lisää Tekijä-paketista</a>
+                </div>
+
+                <!-- Paketti 2: Palveluyritys -->
+                <div class="hinta-kortti korostettu">
+                    <div style="position: absolute; top: -10px; right: 15px; background: var(--primary); color: white; font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 4px;">SUOSITUS</div>
+                    <div>
+                        <span class="badge" style="background: #dbeafe; color: #1e40af;">KIVIJALKA & PALVELUT</span>
+                        <h3 style="margin: 0; font-size: 18px; color: var(--text-main);">SolOne Palveluyritys</h3>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0 0 0;">Myymälöille, korjaamoille, paikallisille palveluyrityksille ja monitoimijoille, joilla on useampi toimipiste tai useita sivuja hallinnoitavana.</p>
+                        <div class="hinta-hinta">
+                            Alkaen n. 49 € / kk
+                            <span>(Alustava hinta-arvio, ALV 0 %)</span>
+                        </div>
+                        <ul class="ominaisuus-lista">
+                            <li>3 brändiä tai 6 sivua (Meta FB/IG + LinkedIn)</li>
+                            <li><strong>SolOne Pika</strong> & <strong>SolOne Valvomo</strong></li>
+                            <li>3 käyttäjätiliä</li>
+                            <li>Tekoälyn tekstinmuotoilu & <strong>älykkäät julkaisuprofiilit</strong></li>
+                            <li>Keskitetty monisivunäkymä</li>
+                            <li>Ajastukset ja pikajulkaisu</li>
+                        </ul>
+                    </div>
+                    <a href="mailto:info@solone.fi?subject=Tiedustelu:%20SolOne%20Palveluyritys" class="btn-cta" style="text-align: center; font-size: 13px; padding: 10px;">Kysy lisää Palveluyritys-paketista</a>
+                </div>
+
+                <!-- Paketti 3: Tiimi -->
+                <div class="hinta-kortti">
+                    <div>
+                        <span class="badge" style="background: #f1f5f9; color: #334155;">YHTEISÖILLE & SEUROILLE</span>
+                        <h3 style="margin: 0; font-size: 18px; color: var(--text-main);">SolOne Tiimi</h3>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0 0 0;">Yhdistyksille, urheiluseuroille, yhteisöille ja useamman työntekijän tiimeille.</p>
+                        <div class="hinta-hinta">
+                            Alkaen n. 49 € / kk
+                            <span>(Alustava hinta-arvio, ALV 0 %)</span>
+                        </div>
+                        <ul class="ominaisuus-lista">
+                            <li>1 Meta-kanavapari (FB & IG) + LinkedIn</li>
+                            <li>Rajattomat kenttäsyöttäjät (koko tiimi voi tuottaa luonnoksia)</li>
+                            <li>Yhteinen hyväksyntäjono Valvomossa</li>
+                            <li>2 pääkäyttäjää hallintaan ja hyväksyntään</li>
+                            <li>Tekoälyn tekstinmuotoilu & <strong>älykkäät julkaisuprofiilit</strong></li>
+                            <li>Ajastukset ja pikajulkaisu</li>
+                        </ul>
+                    </div>
+                    <a href="mailto:info@solone.fi?subject=Tiedustelu:%20SolOne%20Tiimi" class="btn-cta" style="text-align: center; font-size: 13px; padding: 10px;">Kysy lisää Tiimi-paketista</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- UUTISET & AJANKOHTAISTA -OSIO -->
+        <div id="uutiset" class="card" style="margin-top: 25px; margin-bottom: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+                <div>
+                    <span class="badge" style="background-color: #f1f5f9; color: #334155;">AJANKOHTAISTA & KEHITYS</span>
+                    <h2 style="margin: 4px 0 0 0; font-size: 20px; color: var(--text-main);">SolOne News 📢</h2>
+                </div>
+                <span style="font-size: 13px; color: var(--text-muted);">Viimeisimmät päivitykset, tietosuoja ja ratkaisut</span>
+            </div>
+
+            <div id="uutiset-sailio" class="grid">
+                <div class="uutis-kortti">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 12px; font-weight: bold; color: var(--primary);">Mobiilipäivitys</span>
+                            <span style="font-size: 12px; color: var(--text-muted);">18.9.2026</span>
+                        </div>
+                        <h3 style="font-size: 16px; margin: 0 0 8px 0; color: var(--text-main);">SolOne Pika -kenttäsovellus julkaistu</h3>
+                        <p style="font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.5;">
+                            Uusi mobiilityökalu mahdollistaa kuvien taltioinnin ja sanelun suoraan työmaalta puhelimen kotinäytöltä sekunneissa. Tekoäly esikäsittelee julkaisut suoraan Valvomoon hyväksyttäväksi.
+                        </p>
+                    </div>
+                    <div class="uutis-kanavat" style="display: flex; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #e2e8f0; font-size: 11px; color: var(--text-muted);">
+                        <span>🌐 Web</span> • <span>📱 PWA</span>
+                    </div>
+                </div>
+
+                <div class="uutis-kortti">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 12px; font-weight: bold; color: #059669;">Tietosuoja & Infra</span>
+                            <span style="font-size: 12px; color: var(--text-muted);">9.9.2026</span>
+                        </div>
+                        <h3 style="font-size: 16px; margin: 0 0 8px 0; color: var(--text-main);">Varmistamme GDPR:n toteutumisen – data pysyy EU-alueen konesaleissa</h3>
+                        <p style="font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.5;">
+                            SolOnen pilvi- ja tietokantaratkaisut on rakennettu varmistamaan, että kaikki asiakasdata tallennetaan ja käsitellään turvallisesti EU:n alueella sijaitsevissa konesaleissa.
+                        </p>
+                    </div>
+                    <div class="uutis-kanavat" style="display: flex; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #e2e8f0; font-size: 11px; color: var(--text-muted);">
+                        <span>🌐 Web</span> • <span>💼 LinkedIn</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALKUPERÄINEN ALABANNERI -->
         <div class="bottom-banner">
             <div class="bottom-banner-sisalto">
                 <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #ffffff;">Haluatko testata maksutta?</h3>
@@ -460,7 +609,7 @@
             </div>
         </div>
 
-        <!-- FOOTER -->
+        <!-- ALKUPERÄINEN FOOTER -->
         <footer class="footer">
             <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business</strong></p>
             <p style="margin: 5px 0;">SolOne Automaatioratkaisut</p>

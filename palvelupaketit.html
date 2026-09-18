@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Palvelut – SolOne</title>
+    <title>Palvelupaketit – SolOne</title>
     <style>
         :root {
             --bg-main: #f8fafc;
@@ -239,15 +239,33 @@
         }
 
         .palvelu-osio {
-            margin-bottom: 25px;
-            padding-bottom: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 24px;
             border-bottom: 1px solid var(--border-color);
+            scroll-margin-top: 30px;
         }
 
         .palvelu-osio:last-child {
             margin-bottom: 0;
             padding-bottom: 0;
             border-bottom: none;
+        }
+
+        .hinta-nosto {
+            display: inline-block;
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            font-size: 13px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin: 4px 0 12px 0;
+        }
+
+        .hinta-nosto span {
+            font-weight: normal;
+            color: var(--text-muted);
+            font-size: 12px;
         }
 
         .palvelu-lista {
@@ -330,7 +348,7 @@
                 </a>
                 <nav class="paanavigaatio">
                     <a href="index.html">Etusivu</a>
-                    <a href="palvelut.html" class="aktiivinen">Palvelut</a>
+                    <a href="palvelupaketit.html" class="aktiivinen">Palvelupaketit</a>
                     <a href="vastuullisuus.html">Vastuullisuus</a>
                     <a href="yhteystiedot.html">Yhteystiedot</a>
                     <a href="tietosuoja.html">Tietosuojaseloste</a>
@@ -372,7 +390,7 @@
 
         <!-- YLÄBANNERI -->
         <header class="page-header">
-            <h1>Palvelut</h1>
+            <h1>Palvelupaketit</h1>
             <p>Autamme muuttamaan tekemisen näkyväksi, jotta voit onnistua siinä, mikä sinulle on tärkeää!</p>
         </header>
 
@@ -380,9 +398,10 @@
         <div class="card">
             
             <!-- 1. SolOne Tekijä -->
-            <div class="palvelu-osio">
+            <div class="palvelu-osio" id="tekija">
                 <span class="badge" style="background: #f1f5f9; color: #334155;">YKSINYRITTÄJÄLLE / AMMATINHARJOITTAJALLE</span>
-                <h2 style="margin: 4px 0 8px 0; font-size: 20px;">SolOne Tekijä</h2>
+                <h2 style="margin: 4px 0 4px 0; font-size: 20px;">SolOne Tekijä</h2>
+                <div class="hinta-nosto">Alkaen n. 29 € / kk <span>(Alustava hinta-arvio, ALV 0 %)</span></div>
                 <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0;">
                     <strong>Kenelle:</strong> Yksinyrittäjille, asentajille, remontoijille, kädentaitajille ja asiantuntijoille.
                 </p>
@@ -397,13 +416,14 @@
                     <li>Tekoäly luonnostelee puolestasi sujuvan, laadukkaan tekstin ja valmiit hashtagit.</li>
                     <li><strong>SolOne Valvomo</strong> kokoaa luonnokset selkeään näkymään: tarkistat ja hyväksyt julkaisun Meta-kanaviin (Facebook & Instagram) sekä LinkedIniin silloin, kun sinulle sopii.</li>
                 </ul>
-                <a href="mailto:info@solone.fi?subject=Tiedustelu:%20SolOne%20Tekijä" class="btn-kysy">Kysy lisää Tekijä-paketista</a>
+                <a href="yhteystiedot.html" class="btn-kysy">Kysy lisää Tekijä-paketista</a>
             </div>
 
             <!-- 2. SolOne Palveluyritys -->
-            <div class="palvelu-osio">
+            <div class="palvelu-osio" id="palveluyritys">
                 <span class="badge" style="background: #dbeafe; color: #1e40af;">KIVIJALKA & PALVELUT</span>
-                <h2 style="margin: 4px 0 8px 0; font-size: 20px;">SolOne Palveluyritys</h2>
+                <h2 style="margin: 4px 0 4px 0; font-size: 20px;">SolOne Palveluyritys</h2>
+                <div class="hinta-nosto">Alkaen n. 49 € / kk <span>(Alustava hinta-arvio, ALV 0 %)</span></div>
                 <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0;">
                     <strong>Kenelle:</strong> Myymälöille, korjaamoille, paikallisille palveluyrityksille ja yrityksille, joilla on useampi toimipiste tai eri kohderyhmiä palvelevia brändejä.
                 </p>
@@ -419,13 +439,14 @@
                     <li>Tekoäly luonnostelee valmiin tekstin ja hashtagit valitsemasi julkaisuprofiilin (kuten B2B tai B2C) mukaan.</li>
                     <li>Keskitetty ajastus ja tarkistus: hyväksyt ja ajastat usean eri sivun julkaisut helposti samasta paikasta.</li>
                 </ul>
-                <a href="mailto:info@solone.fi?subject=Tiedustelu:%20SolOne%20Palveluyritys" class="btn-kysy">Kysy lisää Palveluyritys-paketista</a>
+                <a href="yhteystiedot.html" class="btn-kysy">Kysy lisää Palveluyritys-paketista</a>
             </div>
 
             <!-- 3. SolOne Tiimi -->
-            <div class="palvelu-osio">
+            <div class="palvelu-osio" id="tiimi">
                 <span class="badge" style="background: #f1f5f9; color: #334155;">YHTEISÖILLE & SEUROILLE</span>
-                <h2 style="margin: 4px 0 8px 0; font-size: 20px;">SolOne Tiimi</h2>
+                <h2 style="margin: 4px 0 4px 0; font-size: 20px;">SolOne Tiimi</h2>
+                <div class="hinta-nosto">Alkaen n. 49 € / kk <span>(Alustava hinta-arvio, ALV 0 %)</span></div>
                 <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0;">
                     <strong>Kenelle:</strong> Yhdistyksille, urheiluseuroille, yhteisöille ja useamman työntekijän tiimeille.
                 </p>
@@ -441,7 +462,7 @@
                     <li>Tekoäly luonnostelee tekstit ja hashtagit valitun profiilin mukaan.</li>
                     <li>2 pääkäyttäjää voi tarkistaa, hioa ja hyväksyä julkaisut Meta-kanaviin (Facebook & Instagram) sekä LinkedIniin silloin, kun se sopii yhteisön aikatauluun.</li>
                 </ul>
-                <a href="mailto:info@solone.fi?subject=Tiedustelu:%20SolOne%20Tiimi" class="btn-kysy">Kysy lisää Tiimi-paketista</a>
+                <a href="yhteystiedot.html" class="btn-kysy">Kysy lisää Tiimi-paketista</a>
             </div>
 
         </div>
