@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SolOne Valvomo (DEMO)</title>
+    
+    <!-- Demon PWA-määritykset -->
+    <link rel="manifest" href="manifest_demo.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         
     <style>
@@ -516,6 +525,7 @@
         <div id="kayttaja-kortti" class="user-info" style="display:none;">
             <span>Kirjautunut: <strong id="kayttaja-email"></strong></span><br>
             <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 5px; flex-wrap: wrap;">
+                <a href="pikasyotto_demo.html" class="btn-auth" style="background:#0f172a; color:#38bdf8; border:1px solid #334155; text-decoration:none; padding: 5px 12px; font-size: 0.8rem; width: auto; display:inline-flex; align-items:center;">⚡ Pika</a>
                 <button class="btn-auth" style="padding: 5px 12px; font-size: 0.8rem; width: auto;" onclick="avaaUusiPostausModaali()">➕ Uusi luonnos</button>
                 <button class="btn-ulos" style="margin-top: 0; width: auto;" onclick="kirjauduUlos()">Kirjaudu ulos</button>
             </div>
@@ -1216,7 +1226,14 @@
         }
     }
 
-    window.addEventListener('load', alustaNakyma);
+    window.addEventListener('load', () => {
+        alustaNakyma();
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw_demo.js')
+                .then(reg => console.log('Demo SW rekisteröity', reg))
+                .catch(err => console.error('Demo SW virhe', err));
+        }
+    });
 </script>
 
 </body>

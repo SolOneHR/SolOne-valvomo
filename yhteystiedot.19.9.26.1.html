@@ -523,8 +523,8 @@
     const SUPABASE_URL = 'https://oajnnrrnatqqymmvncxf.supabase.co';
     const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
 
-    // Oikea Make.com Custom Webhook yhteydenottolomakkeelle
-    const MAKE_YHTEYDENOTTO_WEBHOOK = 'https://hook.eu1.make.com/9av13g8cjmyl3lvtjn2ypgmt3k3cieik';
+    // Make.com Custom Webhook yhteydenottolomakkeelle
+    const MAKE_YHTEYDENOTTO_WEBHOOK = 'https://hook.eu1.make.com/d9jphj9qf7j63v1g5g5i87tq5y3k2v6b';
 
     async function lahetaYhteydenotto(event) {
         event.preventDefault();
@@ -532,41 +532,47 @@
         const nappi = document.getElementById('btn-lomake-laheta');
         const statusBox = document.getElementById('lomake-ilmoitus');
 
+        // Kerätään yhteydenottotavat
         const toivePuhelin = document.getElementById('toive-puhelin').checked;
         const toiveEmail = document.getElementById('toive-email').checked;
         let tapaLista = [];
         if (toivePuhelin) tapaLista.push('Puhelin');
         if (toiveEmail) tapaLista.push('Sähköposti');
 
-        // FormData lähettää tiedot suoraan ilman CORS-preflightia
-        const formData = new FormData();
-        formData.append('nimi', document.getElementById('lomake-nimi').value.trim());
-        formData.append('yritys', document.getElementById('lomake-yritys').value.trim());
-        formData.append('sahkoposti', document.getElementById('lomake-email').value.trim());
-        formData.append('puhelin', document.getElementById('lomake-puhelin').value.trim());
-        formData.append('aihe', document.getElementById('lomake-aihe').value);
-        formData.append('yhteydenottotapa', tapaLista.join(', ') || 'Ei eritelty');
-        formData.append('toivottu_aika', document.getElementById('toive-aika').value.trim());
-        formData.append('viesti', document.getElementById('lomake-viesti').value.trim());
-        formData.append('aikaleima', new Date().toISOString());
+        const lahetysData = {
+            nimi: document.getElementById('lomake-nimi').value.trim(),
+            yritys: document.getElementById('lomake-yritys').value.trim(),
+            sahkoposti: document.getElementById('lomake-email').value.trim(),
+            puhelin: document.getElementById('lomake-puhelin').value.trim(),
+            aihe: document.getElementById('lomake-aihe').value,
+            yhteydenottotapa: tapaLista.join(', ') || 'Ei eritelty',
+            toivottu_aika: document.getElementById('toive-aika').value.trim(),
+            viesti: document.getElementById('lomake-viesti').value.trim(),
+            aikaleima: new Date().toISOString(),
+            lahde: window.location.pathname
+        };
 
         nappi.disabled = true;
         nappi.textContent = '⏳ Lähetetään viestiä...';
         statusBox.style.display = 'none';
 
         try {
-            await fetch(MAKE_YHTEYDENOTTO_WEBHOOK, {
+            const res = await fetch(MAKE_YHTEYDENOTTO_WEBHOOK, {
                 method: 'POST',
-                mode: 'no-cors',
-                body: formData
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(lahetysData)
             });
+
+            if (!res.ok) {
+                throw new Error("Palvelinvirhe lähetyksessä (" + res.status + ")");
+            }
 
             statusBox.textContent = '✓ Kiitos yhteydenotostasi! Viestisi on vastaanotettu ja palaamme asiaan pian.';
             statusBox.className = 'lomake-status success';
             statusBox.style.display = 'block';
 
             document.getElementById('solone-yhteydenotto-form').reset();
-            document.getElementById('toive-email').checked = true;
+            document.getElementById('toive-email').checked = true; // palautetaan sähköposti oletukseksi
         } catch (error) {
             console.error("Lomakevirhe:", error);
             statusBox.textContent = '⚠️ Viestin lähetys epäonnistui. Voit laittaa viestin myös suoraan osoitteeseen info@solone.fi.';

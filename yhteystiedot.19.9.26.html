@@ -211,132 +211,6 @@
             box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
         }
 
-        /* Yhteydenottolomakkeen tyylit */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 14px;
-        }
-
-        @media (min-width: 600px) {
-            .form-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .form-ryhma {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-ryhma.koko-leveys {
-            grid-column: 1 / -1;
-        }
-
-        .form-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 6px;
-        }
-
-        .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            box-sizing: border-box;
-            background: #ffffff;
-            color: var(--text-main);
-            transition: border-color 0.2s;
-        }
-
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .form-textarea {
-            resize: vertical;
-            min-height: 110px;
-        }
-
-        /* Toive yhteydenottotavasta */
-        .valinta-laatikko {
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .checkbox-rivi {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13.5px;
-            color: var(--text-main);
-            cursor: pointer;
-        }
-
-        .checkbox-rivi input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-
-        .btn-laheta {
-            background-color: var(--primary);
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: background-color 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-laheta:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .btn-laheta:disabled {
-            background-color: var(--text-muted);
-            cursor: not-allowed;
-        }
-
-        .lomake-status {
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-top: 15px;
-            display: none;
-        }
-
-        .lomake-status.success {
-            background-color: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
-
-        .lomake-status.error {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-
         /* Footer */
         .footer {
             text-align: center;
@@ -360,7 +234,7 @@
                 </a>
                 <nav class="paanavigaatio">
                     <a href="index.html">Etusivu</a>
-                    <a href="palvelupaketit.html">Palvelupaketit</a>
+                    <a href="palvelut.html">Palvelut</a>
                     <a href="yhteystiedot.html" class="aktiivinen">Yhteystiedot</a>
                 </nav>
             </div>
@@ -406,10 +280,6 @@
                     <a href="mailto:info@solone.fi" style="color: var(--primary); text-decoration: none; margin-left: 5px;">info@solone.fi</a>
                 </div>
                 <div>
-                    <strong>Puhelinpalvelu:</strong> 
-                    <span style="margin-left: 5px; color: var(--text-muted);">Soitamme sinulle toivomanasi ajankohtana. Jätä soittopyyntö alla olevalla lomakkeella!</span>
-                </div>
-                <div>
                     <strong>Verkkosivusto:</strong> 
                     <a href="https://www.solone.fi" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: none; margin-left: 5px;">www.solone.fi</a>
                 </div>
@@ -436,80 +306,6 @@
             </div>
         </div>
 
-        <!-- UUSI YHTEYDENOTTOLOMAKE -->
-        <div class="card">
-            <h2 style="margin-top: 0; font-size: 20px; color: var(--text-main);">Ota yhteyttä, pyydä esittely tai anna palautetta</h2>
-            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
-                Jätä viesti tai kerro tarpeestasi. Vastaamme yleensä 24 tunnin kuluessa arkisin.
-            </p>
-
-            <form id="solone-yhteydenotto-form" onsubmit="lahetaYhteydenotto(event)">
-                <div class="form-grid">
-                    <div class="form-ryhma">
-                        <label class="form-label" for="lomake-nimi">Nimi *</label>
-                        <input type="text" id="lomake-nimi" class="form-input" placeholder="Matti Meikäläinen" required>
-                    </div>
-
-                    <div class="form-ryhma">
-                        <label class="form-label" for="lomake-yritys">Yritys / Organisaatio</label>
-                        <input type="text" id="lomake-yritys" class="form-input" placeholder="Esimerkki Oy">
-                    </div>
-
-                    <div class="form-ryhma">
-                        <label class="form-label" for="lomake-email">Sähköposti *</label>
-                        <input type="email" id="lomake-email" class="form-input" placeholder="matti@yritys.fi" required>
-                    </div>
-
-                    <div class="form-ryhma">
-                        <label class="form-label" for="lomake-puhelin">Puhelinnumero</label>
-                        <input type="tel" id="lomake-puhelin" class="form-input" placeholder="040 123 4567">
-                    </div>
-
-                    <div class="form-ryhma koko-leveys">
-                        <label class="form-label" for="lomake-aihe">Aihe / Yhteydenoton syy</label>
-                        <select id="lomake-aihe" class="form-select">
-                            <option value="SolOne Valvomo & Pika">SolOne Somevalvomo & Pika -automaatio</option>
-                            <option value="Yleinen yhteydenotto / muu kysymys">Yleinen yhteydenotto / muu kysymys</option>
-                            <option value="Palaute">Palaute</option>
-                        </select>
-                    </div>
-
-                    <!-- Toivottu yhteydenottotapa ja aika -->
-                    <div class="form-ryhma koko-leveys">
-                        <label class="form-label">Toivottu yhteydenottotapa ja ajankohta:</label>
-                        <div class="valinta-laatikko">
-                            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-                                <label class="checkbox-rivi">
-                                    <input type="checkbox" id="toive-puhelin">
-                                    <span>Toivon yhteydenottoa puhelimitse</span>
-                                </label>
-                                <label class="checkbox-rivi">
-                                    <input type="checkbox" id="toive-email" checked>
-                                    <span>Toivon yhteydenottoa sähköpostilla</span>
-                                </label>
-                            </div>
-                            <div style="margin-top: 6px;">
-                                <input type="text" id="toive-aika" class="form-input" style="font-size: 13px;" placeholder="Toivottu yhteydenottoaika (esim. arkisin klo 12–15 tai iltapäivällä)">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-ryhma koko-leveys">
-                        <label class="form-label" for="lomake-viesti">Viesti tai lisätiedot *</label>
-                        <textarea id="lomake-viesti" class="form-textarea" placeholder="Kirjoita viestisi, toiveesi tai palautteesi tähän..." required></textarea>
-                    </div>
-
-                    <div class="form-ryhma koko-leveys">
-                        <button type="submit" id="btn-lomake-laheta" class="btn-laheta">
-                            ✉️ Lähetä viesti
-                        </button>
-                    </div>
-                </div>
-
-                <div id="lomake-ilmoitus" class="lomake-status"></div>
-            </form>
-        </div>
-
         <!-- Yhteystiedot / Footer -->
         <footer class="footer">
             <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business</strong></p>
@@ -522,61 +318,6 @@
 <script>
     const SUPABASE_URL = 'https://oajnnrrnatqqymmvncxf.supabase.co';
     const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
-
-    // Oikea Make.com Custom Webhook yhteydenottolomakkeelle
-    const MAKE_YHTEYDENOTTO_WEBHOOK = 'https://hook.eu1.make.com/9av13g8cjmyl3lvtjn2ypgmt3k3cieik';
-
-    async function lahetaYhteydenotto(event) {
-        event.preventDefault();
-
-        const nappi = document.getElementById('btn-lomake-laheta');
-        const statusBox = document.getElementById('lomake-ilmoitus');
-
-        const toivePuhelin = document.getElementById('toive-puhelin').checked;
-        const toiveEmail = document.getElementById('toive-email').checked;
-        let tapaLista = [];
-        if (toivePuhelin) tapaLista.push('Puhelin');
-        if (toiveEmail) tapaLista.push('Sähköposti');
-
-        // FormData lähettää tiedot suoraan ilman CORS-preflightia
-        const formData = new FormData();
-        formData.append('nimi', document.getElementById('lomake-nimi').value.trim());
-        formData.append('yritys', document.getElementById('lomake-yritys').value.trim());
-        formData.append('sahkoposti', document.getElementById('lomake-email').value.trim());
-        formData.append('puhelin', document.getElementById('lomake-puhelin').value.trim());
-        formData.append('aihe', document.getElementById('lomake-aihe').value);
-        formData.append('yhteydenottotapa', tapaLista.join(', ') || 'Ei eritelty');
-        formData.append('toivottu_aika', document.getElementById('toive-aika').value.trim());
-        formData.append('viesti', document.getElementById('lomake-viesti').value.trim());
-        formData.append('aikaleima', new Date().toISOString());
-
-        nappi.disabled = true;
-        nappi.textContent = '⏳ Lähetetään viestiä...';
-        statusBox.style.display = 'none';
-
-        try {
-            await fetch(MAKE_YHTEYDENOTTO_WEBHOOK, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: formData
-            });
-
-            statusBox.textContent = '✓ Kiitos yhteydenotostasi! Viestisi on vastaanotettu ja palaamme asiaan pian.';
-            statusBox.className = 'lomake-status success';
-            statusBox.style.display = 'block';
-
-            document.getElementById('solone-yhteydenotto-form').reset();
-            document.getElementById('toive-email').checked = true;
-        } catch (error) {
-            console.error("Lomakevirhe:", error);
-            statusBox.textContent = '⚠️ Viestin lähetys epäonnistui. Voit laittaa viestin myös suoraan osoitteeseen info@solone.fi.';
-            statusBox.className = 'lomake-status error';
-            statusBox.style.display = 'block';
-        } finally {
-            nappi.disabled = false;
-            nappi.textContent = '✉️ Lähetä viesti';
-        }
-    }
 
     function vaihdaLomakeNakyvyys() {
         const lomake = document.getElementById('portaali-lomake');

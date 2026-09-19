@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SolOne Pika (DEMO)</title>
+    <link rel="manifest" href="manifest_demo.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+
+    <style>
+        :root {
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 10px 12px 30px 12px;
+            user-select: none;
+        }
+
+        .container { max-width: 500px; margin: 0 auto; }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0f172a;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .top-bar h1 {
+            font-size: 1.1rem;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .top-bar a.valvomo-link {
+            color: #38bdf8;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .user-status {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 2px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logout-link {
+            color: #f87171;
+            text-decoration: none;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-main);
+        }
+
+        .input-field, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: #fff;
+            margin-bottom: 14px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        textarea { resize: none; }
+
+        .kuva-valinta-napit {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-kuva {
+            background: #f8fafc;
+            border: 1px dashed var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            color: var(--text-main);
+        }
+
+        .file-preview {
+            width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            margin-top: 8px;
+            margin-bottom: 14px;
+            display: none;
+            object-fit: contain;
+            background: #000;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-save { background: var(--primary); color: white; }
+        .btn-save:active { background: var(--primary-hover); }
+
+        .banner-msg {
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            display: none;
+            word-break: break-word;
+        }
+        .banner-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .banner-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="top-bar">
+        <div>
+            <h1>⚡ SolOne Pika (DEMO)</h1>
+            <div class="user-status">
+                <span id="kayttaja-status-teksti">Ei kirjautunut</span>
+                <a href="javascript:void(0)" id="linkki-kirjaudu-ulos" class="logout-link" style="display:none;" onclick="kirjauduUlosDemo()">Poistu</a>
+            </div>
+        </div>
+        <a href="somevalvomo_demo.html" class="valvomo-link">🖥️ Demo-valvomo ↗</a>
+    </div>
+
+    <div id="viestipalkki" class="banner-msg"></div>
+
+    <!-- KIRJAUTUMISRUUTU -->
+    <div id="nakyma-kirjautuminen" class="card" style="display:none;">
+        <h3 style="margin-top:0; font-size:1.1rem;">⚡ Kirjaudu Demo-Pikaan</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Syötä sama demo-tunnuksesi kuin Valvomossa (esim. DEMO-12345).</p>
+        <label>Demo-tunnus:</label>
+        <input type="text" id="demo-login-tunnus" class="input-field" placeholder="DEMO-XXXXX">
+        <button class="btn-action btn-save" onclick="suoritaDemoKirjautuminen()">Kirjaudu sisään</button>
+    </div>
+
+    <!-- PÄÄLOMAKE -->
+    <div id="pwa-paasisalto" style="display:none;">
+        <div class="card">
+            <label>📷 Liitä kuva:</label>
+            <div class="kuva-valinta-napit">
+                <button type="button" class="btn-kuva" onclick="document.getElementById('kamera-suora').click()">📸 Ota kuva</button>
+                <button type="button" class="btn-kuva" onclick="document.getElementById('galleria-valinta').click()">🖼️ Galleriasta</button>
+            </div>
+
+            <input type="file" id="kamera-suora" accept="image/*" capture="environment" style="display:none;" onchange="esikatseleKuva(this)">
+            <input type="file" id="galleria-valinta" accept="image/*" style="display:none;" onchange="esikatseleKuva(this)">
+
+            <img id="kuva-preview" class="file-preview" alt="Kuvaesikatselu">
+
+            <label>✏️ Aihe / Ajatus kentältä:</label>
+            <textarea id="kentta-teksti" rows="3" placeholder="Sanele tai kirjoita lyhyesti..."></textarea>
+
+            <div class="grid-2">
+                <div>
+                    <label>Kohdekanava:</label>
+                    <select id="kentta-kanava" class="input-field">
+                        <option value="FB_IG" selected>Meta (FB & IG)</option>
+                        <option value="FB">Vain FB</option>
+                        <option value="IG">Vain IG</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Profiili:</label>
+                    <select id="kentta-profiili" class="input-field">
+                        <option value="Somesisällöntuottaja" selected>Sisällöntuotto</option>
+                        <option value="Yritys & B2B">Yritys & B2B</option>
+                        <option value="Yritys & B2C">Yritys & B2C</option>
+                        <option value="Yleinen">Yleinen</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn-action btn-save" id="btn-tallenna-kentta" onclick="lahetaDemoSyotto()">
+                🚀 Tallenna kentältä
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // DEMO-YMPÄRISTÖN ASETUKSET
+    const SUPABASE_URL = 'https://urdyprqepkkxdohrzkpv.supabase.co';
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZHlwcnFlcGtreGRvaHJ6a3B2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDY2NTIsImV4cCI6MjA5Mjc4MjY1Mn0.jlryhbO8t0tZaJnuV9FzEok3p3DBdGPSfygibKKDD5A';
+    const MAKE_WEBHOOK_AI = 'https://hook.eu1.make.com/jp8bcuqtpbagjvoa3zotgi27fgwyau9p';
+
+    let valittuKuvaTiedosto = null;
+    let nykyinenDemoTunnus = localStorage.getItem('demo_kirjautunut_tunnus') || null;
+
+    function naytaIlmoitus(teksti, tyyppi = 'banner-success') {
+        const p = document.getElementById('viestipalkki');
+        p.className = 'banner-msg ' + tyyppi;
+        p.textContent = teksti;
+        p.style.display = 'block';
+        setTimeout(() => { p.style.display = 'none'; }, 5000);
+    }
+
+    function tarkistaIstunto() {
+        nykyinenDemoTunnus = localStorage.getItem('demo_kirjautunut_tunnus');
+        const loginRuutu = document.getElementById('nakyma-kirjautuminen');
+        const paaSisalto = document.getElementById('pwa-paasisalto');
+        const statusTeksti = document.getElementById('kayttaja-status-teksti');
+        const linkkiUlos = document.getElementById('linkki-kirjaudu-ulos');
+
+        if (!nykyinenDemoTunnus) {
+            loginRuutu.style.display = 'block';
+            paaSisalto.style.display = 'none';
+            statusTeksti.textContent = 'Kirjaudu demoon';
+            linkkiUlos.style.display = 'none';
+        } else {
+            loginRuutu.style.display = 'none';
+            paaSisalto.style.display = 'block';
+            statusTeksti.textContent = nykyinenDemoTunnus;
+            linkkiUlos.style.display = 'inline';
+        }
+    }
+
+    async function suoritaDemoKirjautuminen() {
+        const tunnus = document.getElementById('demo-login-tunnus').value.trim();
+        if (!tunnus) {
+            naytaIlmoitus("Syötä demo-tunnus!", "banner-error");
+            return;
+        }
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/demotunnukset?tunnus=eq.${encodeURIComponent(tunnus)}&aktiivinen=eq.true`, {
+                headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
+            });
+            const data = await res.json();
+
+            if (data && data.length > 0) {
+                localStorage.setItem('demo_kirjautunut_tunnus', tunnus);
+                naytaIlmoitus("✓ Kirjauduttu sisään!");
+                tarkistaIstunto();
+            } else {
+                naytaIlmoitus("Virheellinen tai vanhentunut demo-tunnus!", "banner-error");
+            }
+        } catch (e) {
+            naytaIlmoitus("Yhteysvirhe: " + e.message, "banner-error");
+        }
+    }
+
+    function kirjauduUlosDemo() {
+        localStorage.removeItem('demo_kirjautunut_tunnus');
+        tarkistaIstunto();
+    }
+
+    function esikatseleKuva(input) {
+        if (input.files && input.files[0]) {
+            valittuKuvaTiedosto = input.files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.getElementById('kuva-preview');
+                img.src = e.target.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    async function lahetaDemoSyotto() {
+        const teksti = document.getElementById('kentta-teksti').value.trim();
+        const profiili = document.getElementById('kentta-profiili').value;
+        const kanava = document.getElementById('kentta-kanava').value;
+        const nappi = document.getElementById('btn-tallenna-kentta');
+
+        if (!teksti && !valittuKuvaTiedosto) {
+            naytaIlmoitus("Syötä vähintään teksti tai kuva!", "banner-error");
+            return;
+        }
+
+        nappi.disabled = true;
+        nappi.textContent = "⏳ Tallennetaan...";
+
+        try {
+            let kuvaUrl = null;
+            if (valittuKuvaTiedosto) {
+                const tiedostoNimi = `${nykyinenDemoTunnus}_${Date.now()}.jpg`;
+                const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/somekuvat/${tiedostoNimi}`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': ANON_KEY,
+                        'Authorization': `Bearer ${ANON_KEY}`,
+                        'Content-Type': valittuKuvaTiedosto.type || 'image/jpeg'
+                    },
+                    body: valittuKuvaTiedosto
+                });
+
+                if (uploadRes.ok) {
+                    kuvaUrl = `${SUPABASE_URL}/storage/v1/object/public/somekuvat/${tiedostoNimi}`;
+                }
+            }
+
+            const payload = [{
+                raw_text: teksti,
+                kuva_url: kuvaUrl,
+                julkaisuprofiili: profiili,
+                profile_id: profiili,
+                target_channel: kanava,
+                alusta: `${nykyinenDemoTunnus} ${kanava}`,
+                asiakastunnus: nykyinenDemoTunnus,
+                status: 'kasittelyssa',
+                luotu_aika: new Date().toISOString()
+            }];
+
+            const dbRes = await fetch(`${SUPABASE_URL}/rest/v1/somepostaukset`, {
+                method: 'POST',
+                headers: {
+                    'apikey': ANON_KEY,
+                    'Authorization': `Bearer ${ANON_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=representation'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const luodut = await dbRes.json();
+            if (luodut && luodut[0]) {
+                fetch(MAKE_WEBHOOK_AI, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: luodut[0].id,
+                        tyyli: profiili,
+                        rawTeksti: teksti
+                    })
+                });
+            }
+
+            document.getElementById('kentta-teksti').value = '';
+            document.getElementById('kuva-preview').style.display = 'none';
+            valittuKuvaTiedosto = null;
+
+            naytaIlmoitus("⚡ Demo tallennettu! AI käsittelee luonnoksen.");
+        } catch (e) {
+            naytaIlmoitus("Virhe: " + e.message, "banner-error");
+        } finally {
+            nappi.disabled = false;
+            nappi.textContent = "🚀 Tallenna kentältä";
+        }
+    }
+
+    window.addEventListener('load', () => {
+        tarkistaIstunto();
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw_demo.js').catch(console.error);
+        }
+    });
+</script>
+
+</body>
+</html>
