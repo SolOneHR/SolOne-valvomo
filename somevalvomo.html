@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SolOne Autopublish - Somevalvomo</title>
+    <title>SolOne - Somevalvomo</title>
         
     <style>
         :root {
@@ -416,7 +416,7 @@
 <div class="container">
     <div class="header-banner">
         <div>
-            <h1><span class="logo-valvomo-sol">Sol</span><span class="logo-valvomo-one">One</span> Autopublish - Somevalvomo</h1>
+            <h1><span class="logo-valvomo-sol">Sol</span><span class="logo-valvomo-one">One</span> - Somevalvomo</h1>
             <p>Tarkista, muokkaa ja hyväksy odottavat somejulkaisut tuotantoalustoille.</p>
         </div>
         <div id="kayttaja-kortti" class="user-info" style="display:none;">
@@ -637,11 +637,11 @@
         <div class="osio-otsikko">
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <span>Julkaisuhistoria</span>
-                <select id="historia-suodatin-tili" class="valinta-kentta" style="width: auto; padding: 4px 8px; font-size: 0.85rem;" onchange="suodataHistoria()">
+                <select id="historia-suodatin-tili" class="valinta-kentta" style="width: auto; padding: 4px 8px; font-size: 0.85rem;" onchange="suodataHistoria(true)">
                     <option value="KAIKKI">Kaikki tilit</option>
                 </select>
             </div>
-            <span class="osio-infoteksti">Näytetään viimeisimmät julkaisut</span>
+            <span class="osio-infoteksti">Näytetään 10 kerrallaan</span>
         </div>
         <div id="historia-lista">Ladataan historiaa...</div>
     </div>
@@ -654,6 +654,10 @@
     let nykyinenAsiakastunnus = null;
     let automaattiPäivitysAjastin = null;
     let kopioituKuvaUrl = null;
+
+    let viimeisinHistoriaData = [];
+    let historiaSivu = 0;
+    const HISTORIA_SIVUKOKO = 10;
 
     async function optimoiKuva(tiedosto) {
         if (!tiedosto) return tiedosto;
@@ -1497,6 +1501,30 @@
         }
     }
 
+    async function poistaJulkaisuKannasta(id) {
+        if (!confirm("Haluatko varmasti poistaa tämän julkaisun kokonaan arkistosta?")) return;
+        const db = haeSupabaseAsiakas();
+        const token = localStorage.getItem('supabase_token');
+
+        try {
+            const res = await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
+                method: 'DELETE',
+                headers: {
+                    'apikey': db.key,
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+
+            if (!res.ok) throw new Error("Poisto epäonnistui");
+
+            naytaIlmoitus('✓ Julkaisu poistettu arkistosta!');
+            viimeisinHistoriaData = viimeisinHistoriaData.filter(function(j) { return j.id !== id; });
+            suodataHistoria();
+        } catch (e) {
+            naytaIlmoitus('Virhe poistettaessa julkaisua: ' + e.message, 'error');
+        }
+    }
+
     function luoKorttiHtml(julkaisu, onHistoria) {
         onHistoria = onHistoria || false;
         const pvm = julkaisu.luotu_aika ? new Date(julkaisu.luotu_aika).toLocaleString('fi-FI') : '-';
@@ -1675,8 +1703,13 @@
         if (onHistoria) {
             const turvattuTeksti = (julkaisu.raw_text || '').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/"/g, '&quot;');
             const turvattuKuvaUrl = julkaisu.kuva_url || '';
-            htmlSisalto += '<div style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 12px;">';
+            htmlSisalto += '<div style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">';
             htmlSisalto += '<button type="button" class="btn-pika" style="background-color: #0284c7; width: 100%;" onclick="kloonaaVanhaJulkaisu(\'' + turvattuTeksti + '\', \'' + (julkaisu.julkaisuprofiili || 'Yleinen') + '\', \'' + (julkaisu.target_channel || 'FB_IG') + '\', \'' + turvattuKuvaUrl + '\')">📋 Kloonaa ja julkaise uudelle kanavalle</button>';
+            
+            if (onHylatty || onVirhe) {
+                htmlSisalto += '<button type="button" class="btn-hylkaa" style="width: 100%;" onclick="poistaJulkaisuKannasta(\'' + julkaisu.id + '\')">🗑️ Poista julkaisu arkistosta</button>';
+            }
+            
             htmlSisalto += '</div>';
         }
 
@@ -1757,8 +1790,6 @@
         }
     }
 
-    let viimeisinHistoriaData = [];
-
     function paivitaHistoriaSuodatinValikko() {
         const valikko = document.getElementById('historia-suodatin-tili');
         if (!valikko || !kayttajanSometilit) return;
@@ -1776,7 +1807,10 @@
         }
     }
 
-    function suodataHistoria() {
+    function suodataHistoria(nollaaSivu) {
+        if (nollaaSivu) {
+            historiaSivu = 0;
+        }
         const historiaLista = document.getElementById('historia-lista');
         const valikko = document.getElementById('historia-suodatin-tili');
         if (!historiaLista) return;
@@ -1792,11 +1826,65 @@
 
         if (!naytettavat || naytettavat.length === 0) {
             historiaLista.innerHTML = '<div class="tyhja-tila">Ei aiemmin julkaistuja viestejä tälle tilille.</div>';
-        } else {
-            historiaLista.innerHTML = '';
-            naytettavat.forEach(function(julkaisu) {
-                historiaLista.appendChild(luoKorttiHtml(julkaisu, true));
-            });
+            return;
+        }
+
+        const maxSivut = Math.ceil(naytettavat.length / HISTORIA_SIVUKOKO);
+        if (historiaSivu >= maxSivut) {
+            historiaSivu = Math.max(0, maxSivut - 1);
+        }
+
+        const aloitusIndeksi = historiaSivu * HISTORIA_SIVUKOKO;
+        const sivuData = naytettavat.slice(aloitusIndeksi, aloitusIndeksi + HISTORIA_SIVUKOKO);
+
+        historiaLista.innerHTML = '';
+        sivuData.forEach(function(julkaisu) {
+            historiaLista.appendChild(luoKorttiHtml(julkaisu, true));
+        });
+
+        // Sivunvaihtopainikkeet kun julkaisuja on yli 10
+        if (naytettavat.length > HISTORIA_SIVUKOKO) {
+            const naviDiv = document.createElement('div');
+            naviDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding: 10px 0; gap: 10px; flex-wrap: wrap;';
+            
+            const btnEdelliset = document.createElement('button');
+            btnEdelliset.type = 'button';
+            btnEdelliset.className = 'btn-testi';
+            btnEdelliset.style.width = 'auto';
+            btnEdelliset.textContent = '⬅️ Uudemmat 10';
+            btnEdelliset.disabled = (historiaSivu === 0);
+            if (historiaSivu === 0) btnEdelliset.style.opacity = '0.5';
+            btnEdelliset.onclick = function() {
+                if (historiaSivu > 0) {
+                    historiaSivu--;
+                    suodataHistoria(false);
+                    historiaLista.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            };
+
+            const infoSpan = document.createElement('span');
+            infoSpan.style.cssText = 'font-size: 0.85rem; color: var(--text-muted); font-weight: 500;';
+            infoSpan.textContent = 'Sivu ' + (historiaSivu + 1) + ' / ' + maxSivut + ' (yht. ' + naytettavat.length + ' kpl)';
+
+            const btnSeuraavat = document.createElement('button');
+            btnSeuraavat.type = 'button';
+            btnSeuraavat.className = 'btn-testi';
+            btnSeuraavat.style.width = 'auto';
+            btnSeuraavat.textContent = 'Vanhemmat 10 ➡️';
+            btnSeuraavat.disabled = (historiaSivu >= maxSivut - 1);
+            if (historiaSivu >= maxSivut - 1) btnSeuraavat.style.opacity = '0.5';
+            btnSeuraavat.onclick = function() {
+                if (historiaSivu < maxSivut - 1) {
+                    historiaSivu++;
+                    suodataHistoria(false);
+                    historiaLista.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            };
+
+            naviDiv.appendChild(btnEdelliset);
+            naviDiv.appendChild(infoSpan);
+            naviDiv.appendChild(btnSeuraavat);
+            historiaLista.appendChild(naviDiv);
         }
     }
 
@@ -1811,7 +1899,6 @@
             return;
         }
         const odottavatLista = document.getElementById('julkaisut-lista');
-        const historiaLista = document.getElementById('historia-lista');
         const db = haeSupabaseAsiakas();
         const token = localStorage.getItem('supabase_token');
 
@@ -1834,7 +1921,7 @@
             }
             const dataOdottavat = await resOdottavat.json();
 
-            const resHistoria = await fetch(db.url + '/rest/v1/somepostaukset?status=not.in.(odotetaan,kasittelyssa)&order=luotu_aika.desc&limit=25', { method: 'GET', headers: headers });
+            const resHistoria = await fetch(db.url + '/rest/v1/somepostaukset?status=not.in.(odotetaan,kasittelyssa)&order=luotu_aika.desc&limit=100', { method: 'GET', headers: headers });
             const dataHistoria = await resHistoria.json();
 
             if (!dataOdottavat || dataOdottavat.length === 0) {
@@ -1845,7 +1932,7 @@
             }
             viimeisinHistoriaData = dataHistoria || [];
             paivitaHistoriaSuodatinValikko();
-            suodataHistoria();
+            suodataHistoria(false);
 
             if (automaattiPäivitysAjastin) clearTimeout(automaattiPäivitysAjastin);
 

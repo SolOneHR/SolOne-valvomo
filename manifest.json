@@ -1,9 +1,11 @@
 {
+  "id": "/pikasyotto.html",
   "name": "SolOne Pika",
-  "short_name": "SolOne",
+  "short_name": "Pika",
   "start_url": "pikasyotto.html",
+  "scope": "/pikasyotto.html",
   "display": "standalone",
-  "background_color": "#0f172a",
+  "background_color": "#f1f5f9",
   "theme_color": "#0f172a",
   "icons": [
     {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'solone-pika-v1';
+const CACHE_NAME = 'solone-pika-v2';
 const ASSETS = [
   'pikasyotto.html',
   'manifest.json'
