@@ -277,7 +277,7 @@
 
                 <img id="kuva-preview" class="file-preview" alt="Kuvaesikatselu">
 
-                <!-- SOMETILIN VALINTA -->
+                <!-- UUSI SOMETILIN VALINTA -->
                 <label>🌐 Valitse Sometili / Sivu:</label>
                 <select id="kentta-sometili" class="input-field" onchange="paivitaKanavatValitulleTilille()">
                     <option value="">Haetaan tilejä...</option>
@@ -300,13 +300,10 @@
                     <div>
                         <label>Profiili:</label>
                         <select id="kentta-profiili" class="input-field">
-                            <option value="Yleinen" selected>Yleinen</option>
-                            <option value="Somesisällöntuottaja">Somesisällöntuottaja</option>
+                            <option value="Somesisällöntuottaja" selected>Sisällöntuotto</option>
                             <option value="Yritys & B2B">Yritys & B2B</option>
                             <option value="Yritys & B2C">Yritys & B2C</option>
-                            <option value="Yhdistys/yhteisö">Yhdistys/yhteisö</option>
-                            <option value="Blogi">Blogi</option>
-                            <option value="Säilytä teksti (vain emojit & tagit)">✨ Säilytä teksti (vain emojit & tagit)</option>
+                            <option value="Yleinen">Yleinen</option>
                         </select>
                     </div>
                 </div>
@@ -342,21 +339,22 @@
         setTimeout(() => { p.style.display = 'none'; }, 5000);
     }
 
+    // Ladataan kaikki käyttäjän käytettävissä olevat tilit pudotusvalikkoon
     async function lataaKayttajanSometilit() {
         const email = localStorage.getItem('user_email');
         const token = localStorage.getItem('supabase_token');
+        if (!email || !token) return;
+
         const select = document.getElementById('kentta-sometili');
-        if (!email || !token) {
-            select.innerHTML = '<option value="">Ei kirjautunut</option>';
-            return;
-        }
 
         try {
             const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${token}` };
             
+            // Haetaan omat tilit
             const res = await fetch(`${SUPABASE_URL}/rest/v1/asiakkaan_sometilit?asiakastunnus=eq.${encodeURIComponent(email)}&order=ensisijainen.desc`, { headers });
             let tilit = await res.json() || [];
 
+            // Jos ei omia, haetaan jaetut käyttöoikeudet
             if (tilit.length === 0) {
                 const resJaetut = await fetch(`${SUPABASE_URL}/rest/v1/v_kayttajaoikeudet?user_email=eq.${encodeURIComponent(email)}`, { headers });
                 tilit = await resJaetut.json() || [];
@@ -385,6 +383,7 @@
         }
     }
 
+    // Päivitetään kohdekanavan oletus tilin ominaisuuksien mukaan
     function paivitaKanavatValitulleTilille() {
         const selectTili = document.getElementById('kentta-sometili');
         const selectKanava = document.getElementById('kentta-kanava');
@@ -393,6 +392,8 @@
         const tili = kayttajanKaikkiTilit.find(t => String(t.id) === String(valittuId));
         if (!tili) return;
 
+        // Jos tilillä on tiedossa kanavat, valitaan oletus:
+        // Ensisijainen oletus on aina Meta (FB & IG), ellei kyseessä ole pelkkä LinkedIn-tili
         const kanavaTieto = (tili.kanavat || tili.alusta || '').toUpperCase();
         
         if (kanavaTieto.includes('LI') && !kanavaTieto.includes('FB') && !kanavaTieto.includes('IG')) {
@@ -402,10 +403,12 @@
         } else if (kanavaTieto.includes('IG') && !kanavaTieto.includes('FB')) {
             selectKanava.value = 'IG';
         } else {
+            // Oletus: Meta (FB & IG)
             selectKanava.value = 'FB_IG';
         }
     }
 
+    // Istunnon hallinta
     async function tarkistaPwaIstunto() {
         const token = localStorage.getItem('supabase_token');
         const email = localStorage.getItem('user_email');
@@ -519,7 +522,7 @@
                     const MAX = 1920;
                     let w = img.width, h = img.height;
                     if (w > h && w > MAX) { h = Math.round((h * MAX) / w); w = MAX; }
-                    else if (h > MAX) { w = Math.round((w * MAX) / h); h = MAX; }
+                    else if (h > MAX) { h = Math.round((h * MAX) / h); h = MAX; }
 
                     const canvas = document.createElement('canvas');
                     canvas.width = w;
@@ -550,6 +553,7 @@
         }
     }
 
+    // 1-2 s PIKASYÖTTÖ
     async function lahetaKenttaSyotto() {
         const teksti = document.getElementById('kentta-teksti').value.trim();
         const profiili = document.getElementById('kentta-profiili').value;
@@ -633,7 +637,7 @@
             const uusiRivi = luodut && luodut[0] ? luodut[0] : null;
 
             if (uusiRivi && uusiRivi.id) {
-                await fetch(MAKE_AI_WEBHOOK, {
+                fetch(MAKE_AI_WEBHOOK, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -645,6 +649,7 @@
                 });
             }
 
+            // Lomakkeen nollaus
             document.getElementById('kentta-teksti').value = '';
             document.getElementById('kuva-preview').style.display = 'none';
             document.getElementById('kamera-suora').value = '';
@@ -660,6 +665,7 @@
         }
     }
 
+    // ODOTTAVIEN LISTAUS JA HYVÄKSYNTÄ
     async function lataaOdottavatJulkaisut() {
         const lista = document.getElementById('odottavat-lista');
         lista.innerHTML = "Ladataan odottavia...";

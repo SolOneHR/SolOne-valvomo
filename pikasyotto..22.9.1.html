@@ -300,11 +300,11 @@
                     <div>
                         <label>Profiili:</label>
                         <select id="kentta-profiili" class="input-field">
-                            <option value="Yleinen" selected>Yleinen</option>
-                            <option value="Somesisällöntuottaja">Somesisällöntuottaja</option>
+                            <option value="Somesisällöntuottaja" selected>Somesisällöntuottaja</option>
                             <option value="Yritys & B2B">Yritys & B2B</option>
                             <option value="Yritys & B2C">Yritys & B2C</option>
                             <option value="Yhdistys/yhteisö">Yhdistys/yhteisö</option>
+                            <option value="Yleinen">Yleinen</option>
                             <option value="Blogi">Blogi</option>
                             <option value="Säilytä teksti (vain emojit & tagit)">✨ Säilytä teksti (vain emojit & tagit)</option>
                         </select>
@@ -633,7 +633,7 @@
             const uusiRivi = luodut && luodut[0] ? luodut[0] : null;
 
             if (uusiRivi && uusiRivi.id) {
-                await fetch(MAKE_AI_WEBHOOK, {
+                fetch(MAKE_AI_WEBHOOK, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
