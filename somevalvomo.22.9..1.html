@@ -544,7 +544,7 @@
 
             <!-- VALINTARUUTU: OHITA AI JA KÄYTÄ TEKSTI SELLAISENAAN -->
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
-                <input type="checkbox" id="uusi-ohita-ai" style="width: 16px; height: 16px; cursor: pointer;" onchange="paivitaLuoNapinTeksti()">
+                <input type="checkbox" id="uusi-ohita-ai" style="width: 16px; height: 16px; cursor: pointer;">
                 <label for="uusi-ohita-ai" style="font-size: 0.85rem; cursor: pointer; font-weight: 600;">
                     Käytä teksti sellaisenaan (ohita AI-muotoilu)
                 </label>
@@ -566,7 +566,6 @@
                     <label class="field-label">Julkaisuprofiili:</label>
                     <select id="uusi-profiili" class="valinta-kentta">
                         <option value="Yleinen">Yleinen</option>
-                        <option value="Säilytä teksti (vain emojit & tagit)">✨ Säilytä teksti (vain emojit & tagit)</option>
                         <option value="Yritys & B2B">Yritys & B2B</option>
                         <option value="Yritys & B2C">Yritys & B2C</option>
                         <option value="Somesisällöntuottaja">Somesisällöntuottaja</option>
@@ -667,14 +666,6 @@
     let viimeisinHistoriaData = [];
     let historiaSivu = 0;
     const HISTORIA_SIVUKOKO = 10;
-
-    function paivitaLuoNapinTeksti() {
-        const nappi = document.getElementById('btn-luo-luonnos');
-        const ohita = document.getElementById('uusi-ohita-ai')?.checked;
-        if (nappi) {
-            nappi.textContent = ohita ? '💾 Tallenna luonnos sellaisenaan' : '🚀 Luo ja käsittele AI:lla';
-        }
-    }
 
     async function optimoiKuva(tiedosto) {
         if (!tiedosto) return tiedosto;
@@ -1235,7 +1226,7 @@
             if (projektiKentat) projektiKentat.style.display = 'none';
             if (otsikkoTeksti) otsikkoTeksti.textContent = 'Julkaisun aihe / Alkuperäinen teksti (Raw text):';
             if (liiteTeksti) liiteTeksti.textContent = 'Valitse kuva (puhelimesta tai koneelta):';
-            paivitaLuoNapinTeksti();
+            luoNappi.textContent = '🚀 Luo ja käsittele AI:lla';
         }
     }
 
@@ -1289,7 +1280,6 @@
             }
         }
 
-        paivitaLuoNapinTeksti();
         document.getElementById('uusi-postaus-modaali').style.display = 'flex';
     }
 
@@ -1526,7 +1516,7 @@
             alert("Virhe luonnoksen luonnissa: " + err.message);
         } finally {
             nappi.disabled = false;
-            paivitaLuoNapinTeksti();
+            nappi.textContent = '🚀 Luo ja käsittele AI:lla';
         }
     }
 
@@ -1703,7 +1693,6 @@
             const prof = julkaisu.julkaisuprofiili || 'Yleinen';
             htmlSisalto += '<select id="profiili-' + julkaisu.id + '" class="valinta-kentta" onchange="paivitaProfiiliKantaan(\'' + julkaisu.id + '\', this.value)">';
             htmlSisalto += '  <option value="Yleinen"' + (prof === 'Yleinen' ? ' selected' : '') + '>Yleinen</option>';
-            htmlSisalto += '  <option value="Säilytä teksti (vain emojit & tagit)"' + (prof === 'Säilytä teksti (vain emojit & tagit)' ? ' selected' : '') + '>✨ Säilytä teksti (vain emojit & tagit)</option>';
             htmlSisalto += '  <option value="Yritys & B2B"' + (prof === 'Yritys & B2B' ? ' selected' : '') + '>Yritys & B2B</option>';
             htmlSisalto += '  <option value="Yritys & B2C"' + (prof === 'Yritys & B2C' ? ' selected' : '') + '>Yritys & B2C</option>';
             htmlSisalto += '  <option value="Somesisällöntuottaja"' + (prof === 'Somesisällöntuottaja' ? ' selected' : '') + '>Somesisällöntuottaja</option>';
@@ -1822,7 +1811,7 @@
             console.log("Esitallennus epäonnistui, jatketaan Make-pyyntöön.");
         }
 
-        const webhookUrl = 'https://hook.eu1.make.com/gy1aohydxbsuzftgrxekchsjh5v6nqma';
+        const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
         const cardElem = document.getElementById('card-' + id) || document.querySelector('.julkaisu-card:not(.historia)');
         const kuvaElem = cardElem ? cardElem.querySelector('.kuva-esikatselu') : null;
         const kuvaUrlValmis = kuvaElem ? kuvaElem.src : null;
@@ -1911,6 +1900,7 @@
             historiaLista.appendChild(luoKorttiHtml(julkaisu, true));
         });
 
+        // Sivunvaihtopainikkeet kun julkaisuja on yli 10
         if (naytettavat.length > HISTORIA_SIVUKOKO) {
             const naviDiv = document.createElement('div');
             naviDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding: 10px 0; gap: 10px; flex-wrap: wrap;';
