@@ -423,8 +423,6 @@
             <span id="kayttaja-email"></span><br>
             <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 5px; flex-wrap: wrap; align-items: center;">
                 <a href="projektit.html" id="linkki-projektit" style="display: none; background: #0284c7; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 600; align-items: center; gap: 4px;">📁 Projektit</a>
-                <!-- LISÄTTY VAIN TÄMÄ ASIAKKAAT-NAPPI PÄÄKÄYTTÄJÄLLE -->
-                <a href="lisaa_asiakas.html" id="linkki-asiakkaat" style="display: none; background: #0d9488; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 600; align-items: center; gap: 4px;">👥 Asiakkaat</a>
                 
                 <button class="btn-pika" style="padding: 5px 12px; font-size: 0.8rem; width: auto;" onclick="avaaUusiPostausModaali()">➕ Uusi luonnos</button>
                 <button class="btn-testi" style="padding: 5px 12px; font-size: 0.8rem; width: auto;" onclick="avaaAsetuksetModaali()">⚙️ Sometilit</button>
@@ -986,12 +984,6 @@
         const projektitLinkki = document.getElementById('linkki-projektit');
         if (projektitLinkki) {
             projektitLinkki.style.display = (email === 'pasi@solone.fi') ? 'inline-flex' : 'none';
-        }
-
-        // LISÄTTY VAIN TÄMÄ PÄÄKÄYTTÄJÄN EHTO ASIAKKAAT-NAPILLE
-        const asiakkaatLinkki = document.getElementById('linkki-asiakkaat');
-        if (asiakkaatLinkki) {
-            asiakkaatLinkki.style.display = (email === 'pasi@solone.fi') ? 'inline-flex' : 'none';
         }
 
         nykyinenAsiakastunnus = email;
