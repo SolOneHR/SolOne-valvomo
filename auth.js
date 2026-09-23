@@ -23,7 +23,7 @@ async function suoritaKirjautuminen() {
     if (response.ok) {
         localStorage.setItem('supabase_token', data.access_token);
         alert("Kirjautuminen onnistui!");
-        window.location.href = 'SolOne_valvomo_index.html'; 
+        window.location.href = 'index.html'; 
     } else {
         alert('Kirjautuminen epäonnistui: ' + data.error_description);
     }
