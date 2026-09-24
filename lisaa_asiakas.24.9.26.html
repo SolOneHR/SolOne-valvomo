@@ -54,11 +54,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1">Tilauksen status *</label>
-                    <select id="status" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition">
-                        <option value="odottaa_maksua" selected>Odottaa maksua</option>
-                        <option value="aktiivinen">Aktiivinen</option>
-                    </select>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Status</label>
+                    <input type="text" id="status" value="aktiivinen" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition">
                 </div>
 
                 <!-- Palvelupaketti ja Tilaustyyppi -->
@@ -105,16 +102,10 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             const token = localStorage.getItem('supabase_token');
-            const userEmail = localStorage.getItem('user_email');
-
-            // Turvatarkistus: Vain pasi@solone.fi pääsee tälle sivulle[cite: 6]
-            if (!token || userEmail !== 'pasi@solone.fi') {
-                alert('Ei käyttöoikeutta tälle sivulle.');
-                window.location.href = 'login.html';
-                return;
-            }
+            if (!token) return; // auth.js hoitaa ohjauksen login.html-sivulle
 
             try {
+                // Haetaan palvelut-taulusta tiedot käyttäen auth.js:ssä määriteltyjä vakioita
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/palvelut?select=id,nimi`, {
                     method: 'GET',
                     headers: {
@@ -146,6 +137,7 @@
             }
         });
 
+        // Uloskirjausnappi hyödyntää auth.js:n funktiota
         document.getElementById('logoutBtn')?.addEventListener('click', () => {
             if (typeof kirjauduUlos === 'function') {
                 kirjauduUlos();
@@ -155,28 +147,26 @@
             }
         });
 
+        // Lomakkeen lähetys webhookiin
         document.getElementById('customerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const btn = document.getElementById('submitBtn');
             const msgBox = document.getElementById('responseMessage');
-            const selectPalvelu = document.getElementById('palvelu_id');
             
             btn.disabled = true;
             btn.textContent = 'Lähetetään...';
             msgBox.className = 'hidden mt-6 p-4 rounded-lg text-sm';
-
-            const selectedOption = selectPalvelu.options[selectPalvelu.selectedIndex];
 
             const formData = {
                 nimi: document.getElementById('nimi').value,
                 sahkoposti: document.getElementById('sahkoposti').value,
                 puhelinnumero: document.getElementById('puhelinnumero').value,
                 osoite: document.getElementById('osoite').value,
-                status: document.getElementById('status').value, // 'odottaa_maksua' tai 'aktiivinen'
+                status: document.getElementById('status').value,
                 erityishuomiot: document.getElementById('erityishuomiot').value,
-                palvelu_id: selectPalvelu.value,
-                palvelun_nimi: selectedOption ? selectedOption.text : '', 
+                palvelu_id: document.getElementById('palvelu_id').value,
+                palvelun_nimi: selectedOption.text, // <-- OTETAAN TÄSTÄ SUORAAN TEKSTI TALTEEN
                 tilaustyyppi: document.getElementById('tilaustyyppi').value
             };
 
