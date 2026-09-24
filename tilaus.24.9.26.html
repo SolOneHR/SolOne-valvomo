@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SolOne – Tilaa palvelu</title>
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --header-bg: #0f172a;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Yläpalkki ja navigaatio (sama tyyli kuin index.html) */
+        .asiakasportaalipalkki {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .logo-nav-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .logo-palkki {
+            font-size: 21px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+        .logo-palkki .sol { color: #1e3a8a; }
+        .logo-palkki .one { color: #0284c7; }
+
+        .paanavigaatio {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: nowrap;
+        }
+
+        .paanavigaatio a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13.5px;
+            padding: 4px 6px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .paanavigaatio a:hover {
+            color: var(--primary);
+            background-color: #f1f5f9;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: #dbeafe;
+            color: #1e40af;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .lomake-kentta {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+            background-color: #ffffff;
+            color: var(--text-main);
+        }
+
+        .lomake-kentta:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-cta {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-size: 15px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-cta:hover { background-color: var(--primary-hover); }
+
+        .ilmoitus-pieni { color: var(--danger); font-size: 13px; margin-bottom: 15px; display: none; font-weight: bold; }
+        .ilmoitus-onni { color: var(--success); font-size: 13px; margin-bottom: 15px; display: none; font-weight: bold; }
+
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--text-muted);
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+    </style>
+    <!-- Tuodaan auth.js, jotta istunto ja Supabase-asetukset ovat käytettävissä -->
+    <script src="auth.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- YLÄPALKKI -->
+        <div class="asiakasportaalipalkki">
+            <div class="logo-nav-group">
+                <a href="index.html" class="logo-palkki">
+                    <span class="sol">Sol</span><span class="one">One</span>
+                </a>
+                <nav class="paanavigaatio">
+                    <a href="index.html">Etusivu</a>
+                    <a href="palvelupaketit.html">Palvelupaketit</a>
+                    <a href="tilaus.html" style="color: var(--primary); font-weight: 700; background-color: #eff6ff;">Tilaa palvelu</a>
+                    <a href="yhteystiedot.html">Yhteystiedot</a>
+                </nav>
+            </div>
+            <div class="portaali-toiminnot">
+                <span id="userEmail" style="font-size: 12px; color: var(--text-muted);"></span>
+            </div>
+        </div>
+
+        <!-- TILAUSLOMAKE KORTTI -->
+        <div class="card">
+            <span class="badge">TILAUS JA REKISTERÖINTI</span>
+            <h2 style="font-size: 22px; margin-top: 5px; margin-bottom: 10px;">Tilaa SolOne-palvelu</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+                Valitse haluamasi palvelupaketti suoraan hinnastostamme. Järjestelmä laskee hinnan automaattisesti ja lähettää tilauksen käsittelyyn.
+            </p>
+
+            <div id="tilaus-virhe" class="ilmoitus-pieni"></div>
+            <div id="tilaus-onni" class="ilmoitus-onni"></div>
+
+            <form id="tilaus-lomake" onsubmit="lahetaTilaus(event)">
+                <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Koko nimi / Yritys *</label>
+                <input type="text" id="t-nimi" class="lomake-kentta" required placeholder="Esim. Matti Meikäläinen">
+
+                <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Sähköpostiosoite *</label>
+                <input type="email" id="t-sahkoposti" class="lomake-kentta" required placeholder="matti@yritys.fi">
+
+                <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Puhelinnumero</label>
+                <input type="text" id="t-puhelin" class="lomake-kentta" placeholder="040 1234567">
+
+                <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Osoite</label>
+                <input type="text" id="t-osoite" class="lomake-kentta" placeholder="Katuosoite, Postinumero Toimipaikka">
+
+                <input type="hidden" id="t-status" value="odotetaan_maksua">
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Valitse palvelupaketti *</label>
+                        <select id="t-palvelu" class="lomake-kentta" required>
+                            <option value="">Ladataan palveluita...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Hinta (ALV 0%)</label>
+                        <div id="hintaNaytto" style="padding: 10px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; font-weight: bold; color: var(--primary);">
+                            Valitse palvelu
+                        </div>
+                    </div>
+                </div>
+
+                <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Tilaustyyppi *</label>
+                <select id="t-tilaustyyppi" class="lomake-kentta" required>
+                    <option value="kuukausitilaus">Kuukausitilaus (1 kk)</option>
+                    <option value="vuositilaus">Vuositilaus (12 kk)</option>
+                </select>
+
+                <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Erityishuomiot</label>
+                <textarea id="t-erityishuomiot" rows="3" class="lomake-kentta" placeholder="Mahdolliset lisätiedot..."></textarea>
+
+                <button type="submit" class="btn-cta" id="laheta-btn" style="margin-top: 10px;">Lähetä tilaus</button>
+            </form>
+        </div>
+
+        <footer class="footer">
+            <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business</strong></p>
+            <p style="margin: 5px 0; font-size: 13px; color: var(--text-muted);">Y-tunnus: 1391767-8</p>
+            <p style="font-size: 12px; color: #94a3b8; margin-top: 15px;">&copy; SolOne. Kaikki oikeudet pidätetään.</p>
+        </footer>
+    </div>
+
+<script>
+    const WEBHOOK_URL = 'https://hook.eu1.make.com/l84equn6syc9jc69ah8p1xesb4txp2ws';
+    let palvelutData = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('supabase_token');
+        
+        try {
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/palvelut?select=id,nimi,yksikkohinta,alv_prosentti`, {
+                method: 'GET',
+                headers: {
+                    'apikey': ANON_KEY,
+                    'Authorization': token ? `Bearer ${token}` : `Bearer ${ANON_KEY}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) throw new Error('Palveluiden haku epäonnistui');
+
+            palvelutData = await response.json();
+            const selectEl = document.getElementById('t-palvelu');
+
+            selectEl.innerHTML = '<option value="">Valitse palvelupaketti...</option>';
+            if (palvelutData && palvelutData.length > 0) {
+                palvelutData.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.id;
+                    opt.textContent = p.nimi;
+                    selectEl.appendChild(opt);
+                });
+            } else {
+                selectEl.innerHTML = '<option value="">Ei palveluita löydy</option>';
+            }
+        } catch (err) {
+            console.error('Virhe palveluiden haussa:', err);
+            document.getElementById('t-palvelu').innerHTML = '<option value="">Virhe ladattaessa palveluita</option>';
+        }
+    });
+
+    document.getElementById('t-palvelu').addEventListener('change', function() {
+        const valittuId = this.value;
+        const hintaBox = document.getElementById('hintaNaytto');
+
+        if (!valittuId) {
+            hintaBox.textContent = 'Valitse palvelu';
+            return;
+        }
+
+        const loytynyt = palvelutData.find(p => p.id === valittuId);
+        if (loytynyt) {
+            const hintaNum = parseFloat(loytynyt.yksikkohinta).toFixed(2);
+            hintaBox.textContent = `${hintaNum} € (ALV ${loytynyt.alv_prosentti}%)`;
+        } else {
+            hintaBox.textContent = 'Ei hintatietoa';
+        }
+    });
+
+    async function lahetaTilaus(event) {
+        event.preventDefault();
+        
+        const virheAlue = document.getElementById('tilaus-virhe');
+        const onniAlue = document.getElementById('tilaus-onni');
+        const nappi = document.getElementById('laheta-btn');
+        const selectPalvelu = document.getElementById('t-palvelu');
+
+        virheAlue.style.display = 'none';
+        onniAlue.style.display = 'none';
+        nappi.disabled = true;
+        nappi.textContent = 'Lähetetään...';
+
+        const valittuPalveluObj = palvelutData.find(p => p.id === selectPalvelu.value);
+
+        const tilausData = {
+            nimi: document.getElementById('t-nimi').value,
+            sahkoposti: document.getElementById('t-sahkoposti').value,
+            puhelinnumero: document.getElementById('t-puhelin').value,
+            osoite: document.getElementById('t-osoite').value,
+            status: document.getElementById('t-status').value, // 'odotetaan_maksua'
+            erityishuomiot: document.getElementById('t-erityishuomiot').value,
+            palvelu_id: selectPalvelu.value,
+            palvelun_nimi: valittuPalveluObj ? valittuPalveluObj.nimi : '',
+            yksikkohinta: valittuPalveluObj ? valittuPalveluObj.yksikkohinta : 0,
+            tilaustyyppi: document.getElementById('t-tilaustyyppi').value
+        };
+
+        try {
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(tilausData)
+            });
+
+            if (!response.ok) throw new Error("Lähetys epäonnistui");
+
+            onniAlue.textContent = "✓ Tilaus vastaanotettu onnistuneesti! Tarkista sähköpostisi vahvistusta varten.";
+            onniAlue.style.display = 'block';
+            document.getElementById('tilaus-lomake').reset();
+            document.getElementById('hintaNaytto').textContent = 'Valitse palvelu';
+        } catch (err) {
+            virheAlue.textContent = "Virhe tilauksen lähetyksessä. Yritä uudelleen tai ota yhteyttä info@solone.fi";
+            virheAlue.style.display = 'block';
+        } finally {
+            nappi.disabled = false;
+            nappi.textContent = 'Lähetä tilaus';
+        }
+    }
+</script>
+</body>
+</html>
