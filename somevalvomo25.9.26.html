@@ -423,6 +423,8 @@
             <span id="kayttaja-email"></span><br>
             <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 5px; flex-wrap: wrap; align-items: center;">
                 <a href="projektit.html" id="linkki-projektit" style="display: none; background: #0284c7; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 600; align-items: center; gap: 4px;">📁 Projektit</a>
+                <!-- LISÄTTY VAIN TÄMÄ ASIAKKAAT-NAPPI PÄÄKÄYTTÄJÄLLE -->
+                <a href="lisaa_asiakas.html" id="linkki-asiakkaat" style="display: none; background: #0d9488; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 600; align-items: center; gap: 4px;">👥 Asiakkaat</a>
                 
                 <button class="btn-pika" style="padding: 5px 12px; font-size: 0.8rem; width: auto;" onclick="avaaUusiPostausModaali()">➕ Uusi luonnos</button>
                 <button class="btn-testi" style="padding: 5px 12px; font-size: 0.8rem; width: auto;" onclick="avaaAsetuksetModaali()">⚙️ Sometilit</button>
@@ -544,7 +546,7 @@
 
             <!-- VALINTARUUTU: OHITA AI JA KÄYTÄ TEKSTI SELLAISENAAN -->
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
-                <input type="checkbox" id="uusi-ohita-ai" style="width: 16px; height: 16px; cursor: pointer;">
+                <input type="checkbox" id="uusi-ohita-ai" style="width: 16px; height: 16px; cursor: pointer;" onchange="paivitaLuoNapinTeksti()">
                 <label for="uusi-ohita-ai" style="font-size: 0.85rem; cursor: pointer; font-weight: 600;">
                     Käytä teksti sellaisenaan (ohita AI-muotoilu)
                 </label>
@@ -566,6 +568,7 @@
                     <label class="field-label">Julkaisuprofiili:</label>
                     <select id="uusi-profiili" class="valinta-kentta">
                         <option value="Yleinen">Yleinen</option>
+                        <option value="Säilytä teksti (vain emojit & tagit)">✨ Säilytä teksti (vain emojit & tagit)</option>
                         <option value="Yritys & B2B">Yritys & B2B</option>
                         <option value="Yritys & B2C">Yritys & B2C</option>
                         <option value="Somesisällöntuottaja">Somesisällöntuottaja</option>
@@ -666,6 +669,14 @@
     let viimeisinHistoriaData = [];
     let historiaSivu = 0;
     const HISTORIA_SIVUKOKO = 10;
+
+    function paivitaLuoNapinTeksti() {
+        const nappi = document.getElementById('btn-luo-luonnos');
+        const ohita = document.getElementById('uusi-ohita-ai')?.checked;
+        if (nappi) {
+            nappi.textContent = ohita ? '💾 Tallenna luonnos sellaisenaan' : '🚀 Luo ja käsittele AI:lla';
+        }
+    }
 
     async function optimoiKuva(tiedosto) {
         if (!tiedosto) return tiedosto;
@@ -977,6 +988,12 @@
             projektitLinkki.style.display = (email === 'pasi@solone.fi') ? 'inline-flex' : 'none';
         }
 
+        // LISÄTTY VAIN TÄMÄ PÄÄKÄYTTÄJÄN EHTO ASIAKKAAT-NAPILLE
+        const asiakkaatLinkki = document.getElementById('linkki-asiakkaat');
+        if (asiakkaatLinkki) {
+            asiakkaatLinkki.style.display = (email === 'pasi@solone.fi') ? 'inline-flex' : 'none';
+        }
+
         nykyinenAsiakastunnus = email;
         return true;
     }
@@ -1226,7 +1243,7 @@
             if (projektiKentat) projektiKentat.style.display = 'none';
             if (otsikkoTeksti) otsikkoTeksti.textContent = 'Julkaisun aihe / Alkuperäinen teksti (Raw text):';
             if (liiteTeksti) liiteTeksti.textContent = 'Valitse kuva (puhelimesta tai koneelta):';
-            luoNappi.textContent = '🚀 Luo ja käsittele AI:lla';
+            paivitaLuoNapinTeksti();
         }
     }
 
@@ -1280,6 +1297,7 @@
             }
         }
 
+        paivitaLuoNapinTeksti();
         document.getElementById('uusi-postaus-modaali').style.display = 'flex';
     }
 
@@ -1516,7 +1534,7 @@
             alert("Virhe luonnoksen luonnissa: " + err.message);
         } finally {
             nappi.disabled = false;
-            nappi.textContent = '🚀 Luo ja käsittele AI:lla';
+            paivitaLuoNapinTeksti();
         }
     }
 
@@ -1693,6 +1711,7 @@
             const prof = julkaisu.julkaisuprofiili || 'Yleinen';
             htmlSisalto += '<select id="profiili-' + julkaisu.id + '" class="valinta-kentta" onchange="paivitaProfiiliKantaan(\'' + julkaisu.id + '\', this.value)">';
             htmlSisalto += '  <option value="Yleinen"' + (prof === 'Yleinen' ? ' selected' : '') + '>Yleinen</option>';
+            htmlSisalto += '  <option value="Säilytä teksti (vain emojit & tagit)"' + (prof === 'Säilytä teksti (vain emojit & tagit)' ? ' selected' : '') + '>✨ Säilytä teksti (vain emojit & tagit)</option>';
             htmlSisalto += '  <option value="Yritys & B2B"' + (prof === 'Yritys & B2B' ? ' selected' : '') + '>Yritys & B2B</option>';
             htmlSisalto += '  <option value="Yritys & B2C"' + (prof === 'Yritys & B2C' ? ' selected' : '') + '>Yritys & B2C</option>';
             htmlSisalto += '  <option value="Somesisällöntuottaja"' + (prof === 'Somesisällöntuottaja' ? ' selected' : '') + '>Somesisällöntuottaja</option>';
@@ -1811,7 +1830,7 @@
             console.log("Esitallennus epäonnistui, jatketaan Make-pyyntöön.");
         }
 
-        const webhookUrl = 'https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi';
+        const webhookUrl = 'https://hook.eu1.make.com/gy1aohydxbsuzftgrxekchsjh5v6nqma';
         const cardElem = document.getElementById('card-' + id) || document.querySelector('.julkaisu-card:not(.historia)');
         const kuvaElem = cardElem ? cardElem.querySelector('.kuva-esikatselu') : null;
         const kuvaUrlValmis = kuvaElem ? kuvaElem.src : null;
@@ -1900,7 +1919,6 @@
             historiaLista.appendChild(luoKorttiHtml(julkaisu, true));
         });
 
-        // Sivunvaihtopainikkeet kun julkaisuja on yli 10
         if (naytettavat.length > HISTORIA_SIVUKOKO) {
             const naviDiv = document.createElement('div');
             naviDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding: 10px 0; gap: 10px; flex-wrap: wrap;';
