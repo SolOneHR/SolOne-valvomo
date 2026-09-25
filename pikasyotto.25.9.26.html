@@ -342,30 +342,6 @@
         setTimeout(() => { p.style.display = 'none'; }, 5000);
     }
 
-    // TURVALLINEN TARKISTUS: Tarkistaa tilauksen vain lähetyshetkellä
-    async function tarkistaTilauksenAktiivisuusEnnenTallennusta() {
-        const email = localStorage.getItem('user_email');
-        const token = localStorage.getItem('supabase_token');
-        if (!email || !token) return false;
-
-        try {
-            const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${token}` };
-            const asiakasRes = await fetch(`${SUPABASE_URL}/rest/v1/asiakkaat?sahkoposti=eq.${encodeURIComponent(email)}&select=id`, { headers });
-            const asiakasData = await asiakasRes.json();
-            if (!asiakasData || asiakasData.length === 0) return false;
-
-            const asiakasId = asiakasData[0].id;
-            const tilausRes = await fetch(`${SUPABASE_URL}/rest/v1/tilaukset?asiakas_id=eq.${asiakasId}&select=status`, { headers });
-            const tilausData = await tilausRes.json();
-            if (!tilausData || tilausData.length === 0) return false;
-
-            return tilausData.some(t => t.status === 'aktiivinen' || t.status === 'ACCEPTED');
-        } catch (e) {
-            console.log("Tilaustarkistusvirhe:", e);
-            return false;
-        }
-    }
-
     async function lataaKayttajanSometilit() {
         const email = localStorage.getItem('user_email');
         const token = localStorage.getItem('supabase_token');
@@ -575,13 +551,6 @@
     }
 
     async function lahetaKenttaSyotto() {
-        // TARKISTETAAN ETTÄ TILAUS ON AKTIIVINEN ENNEN TALLENNUSTA
-        const tilaOk = await tarkistaTilauksenAktiivisuusEnnenTallennusta();
-        if (!tilaOk) {
-            naytaIlmoitus("⚠️ Tallennus vaatii aktiivisen tilauksen.", "banner-error");
-            return;
-        }
-
         const teksti = document.getElementById('kentta-teksti').value.trim();
         const profiili = document.getElementById('kentta-profiili').value;
         const kanava = document.getElementById('kentta-kanava').value;
@@ -735,13 +704,6 @@
     }
 
     async function pikaJulkaise(id) {
-        // TARKISTETAAN TILAUS MYÖS PIKAJULKAISUSSA
-        const tilaOk = await tarkistaTilauksenAktiivisuusEnnenTallennusta();
-        if (!tilaOk) {
-            naytaIlmoitus("⚠️ Julkaiseminen vaatii aktiivisen tilauksen.", "banner-error");
-            return;
-        }
-
         const uusiTeksti = document.getElementById(`edit-teksti-${id}`).value;
         const token = localStorage.getItem('supabase_token');
         const kayttajaEmail = localStorage.getItem('user_email');
