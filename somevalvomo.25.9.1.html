@@ -423,9 +423,13 @@
             <span id="kayttaja-email"></span><br>
             <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 5px; flex-wrap: wrap; align-items: center;">
                 <a href="projektit.html" id="linkki-projektit" style="display: none; background: #0284c7; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 600; align-items: center; gap: 4px;">📁 Projektit</a>
+                <!-- LISÄTTY VAIN TÄMÄ ASIAKKAAT-NAPPI PÄÄKÄYTTÄJÄLLE -->
+                <a href="lisaa_asiakas.html" id="linkki-asiakkaat" style="display: none; background: #0d9488; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 600; align-items: center; gap: 4px;">👥 Asiakkaat</a>
                 
                 <button class="btn-pika" style="padding: 5px 12px; font-size: 0.8rem; width: auto;" onclick="avaaUusiPostausModaali()">➕ Uusi luonnos</button>
                 <button class="btn-testi" style="padding: 5px 12px; font-size: 0.8rem; width: auto;" onclick="avaaAsetuksetModaali()">⚙️ Sometilit</button>
+                <!-- TILAUKSET-NAPPI LISÄTTY TÄHÄN YLÄPALKKIIN -->
+                <button class="btn-testi" style="padding: 5px 12px; font-size: 0.8rem; width: auto; background-color: #0369a1;" onclick="avaaTilauksetModaali()">📦 Tilaukset</button>
                 <button class="btn-testi" style="padding: 5px 12px; font-size: 0.8rem; width: auto; background-color: #475569;" onclick="avaaSalasananVaihtoModaali()">🔑 Vaihda salasana</button>
                 <button class="btn-ulos" style="margin-top: 0; width: auto;" onclick="kirjauduUlos()">Kirjaudu ulos</button>
             </div>
@@ -465,6 +469,20 @@
             <div class="nappi-ryhma">
                 <button class="btn-hyvaksy" style="width: 100%;" onclick="paivitaKirjautuneenSalasana()">✓ Tallenna uusi salasana</button>
                 <button type="button" class="btn-ulos" style="color:var(--text-main); border: 1px solid #cbd5e1; background: #f1f5f9; width: 100%;" onclick="suljeSalasananVaihtoModaali()">Peruuta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TILAUKSET MODAALI LISÄTTY TÄHÄN -->
+    <div id="tilaukset-modaali" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center; padding: 15px; box-sizing: border-box;">
+        <div style="background:white; border-radius:12px; padding:25px; width:100%; max-width:600px; box-shadow:0 10px 25px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto; box-sizing: border-box;">
+            <h3 style="margin-top:0; color:var(--text-main); font-size: 1.2rem;">📦 Omat tilaukset</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Voimassa olevat tilaukset ja jaksot.</p>
+            
+            <div id="tilaukset-lista" style="margin-bottom: 20px;">Ladataan tilauksia...</div>
+
+            <div class="nappi-ryhma">
+                <button type="button" class="btn-ulos" style="color:var(--text-main); border: 1px solid #cbd5e1; background: #f1f5f9; width: 100%;" onclick="suljeTilauksetModaali()">Sulje</button>
             </div>
         </div>
     </div>
@@ -986,6 +1004,11 @@
             projektitLinkki.style.display = (email === 'pasi@solone.fi') ? 'inline-flex' : 'none';
         }
 
+        const asiakkaatLinkki = document.getElementById('linkki-asiakkaat');
+        if (asiakkaatLinkki) {
+            asiakkaatLinkki.style.display = (email === 'pasi@solone.fi') ? 'inline-flex' : 'none';
+        }
+
         nykyinenAsiakastunnus = email;
         return true;
     }
@@ -1045,6 +1068,15 @@
     function suljeAsetuksetModaali() {
         document.getElementById('asetukset-modaali').style.display = 'none';
         haeValvomonTiedot();
+    }
+
+    async function avaaTilauksetModaali() {
+        document.getElementById('tilaukset-modaali').style.display = 'flex';
+        await haeKayttajanTilaukset();
+    }
+
+    function suljeTilauksetModaali() {
+        document.getElementById('tilaukset-modaali').style.display = 'none';
     }
 
     function paivitaAsetuksetListaHtml() {
@@ -1589,6 +1621,69 @@
             naytaIlmoitus('✓ Alkuperäinen teksti kopioitu julkaisutekstiksi!');
         } catch (e) {
             naytaIlmoitus('Virhe tallennettaessa: ' + e.message, 'error');
+        }
+    }
+
+    async function haeKayttajanTilaukset() {
+        const tilauksetLista = document.getElementById('tilaukset-lista');
+        if (!tilauksetLista || !nykyinenAsiakastunnus) return;
+        const db = haeSupabaseAsiakas();
+        const token = localStorage.getItem('supabase_token');
+
+        try {
+            const headers = {
+                'apikey': db.key,
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            };
+
+            const resAsiakas = await fetch(db.url + '/rest/v1/asiakkaat?sahkoposti=eq.' + encodeURIComponent(nykyinenAsiakastunnus) + '&select=id', {
+                method: 'GET',
+                headers: headers
+            });
+            const asiakasData = await resAsiakas.json();
+
+            if (!asiakasData || asiakasData.length === 0) {
+                tilauksetLista.innerHTML = '<div class="tyhja-tila">Ei löytynyt asiakastietoja tälle sähköpostille.</div>';
+                return;
+            }
+
+            const asiakasId = asiakasData[0].id;
+
+            const resTilaukset = await fetch(db.url + '/rest/v1/tilaukset?asiakas_id=eq.' + asiakasId + '&select=id,status,tilaustyyppi,alku_pvm,loppu_pvm,palvelut(nimi)&order=luotu_aika.desc', {
+                method: 'GET',
+                headers: headers
+            });
+            const tilauksetData = await resTilaukset.json();
+
+            if (!tilauksetData || tilauksetData.length === 0) {
+                tilauksetLista.innerHTML = '<div class="tyhja-tila">Sinulla ei ole vielä tilauksia.</div>';
+                return;
+            }
+
+            let html = '';
+            tilauksetData.forEach(function(tilaus) {
+                const palvelunNimi = (tilaus.palvelut && tilaus.palvelut.nimi) ? tilaus.palvelut.nimi : 'Palvelu';
+                const alkuPvm = tilaus.alku_pvm ? new Date(tilaus.alku_pvm).toLocaleDateString('fi-FI') : 'Ei vielä alkanut';
+                const loppuPvm = tilaus.loppu_pvm ? new Date(tilaus.loppu_pvm).toLocaleDateString('fi-FI') : 'Toistaiseksi voimassa / Ikuinen';
+                const statusBadgeClass = tilaus.status === 'aktiivinen' ? 'tilamerkinta' : 'tilamerkinta kasittelyssa-badge';
+
+                html += '<div class="julkaisu-card" style="margin-bottom: 15px; padding: 16px;">';
+                html += '  <div class="' + statusBadgeClass + '">Status: ' + (tilaus.status || 'ei määritelty') + '</div>';
+                html += '  <div class="meta-info" style="margin-top: 10px;">';
+                html += '    <span><strong>Palvelu:</strong> ' + palvelunNimi + '</span>';
+                html += '    <span><strong>Tilaustyyppi:</strong> ' + (tilaus.tilaustyyppi || '-') + '</span>';
+                html += '    <span><strong>Alkupäivä:</strong> ' + alkuPvm + '</span>';
+                html += '    <span><strong>Loppupäivä:</strong> ' + loppuPvm + '</span>';
+                html += '  </div>';
+                html += '</div>';
+            });
+
+            tilauksetLista.innerHTML = html;
+
+        } catch (error) {
+            console.error("Virhe tilauksien latauksessa:", error);
+            tilauksetLista.innerHTML = '<div class="tyhja-tila">Virhe ladattaessa tilauksia.</div>';
         }
     }
 

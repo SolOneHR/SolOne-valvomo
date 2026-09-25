@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SolOne - Uuden asiakkaan syöttö</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Tuodaan olemassa oleva auth.js, joka hoitaa tarkistukset -->
     <script src="auth.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -33,6 +32,14 @@
 
             <form id="customerForm" class="space-y-5">
                 <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Asiakastyyppi *</label>
+                    <select id="asiakastyyppi" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition" onchange="paivitaAsiakastyyppi()">
+                        <option value="Yksityishenkilö" selected>Yksityishenkilö</option>
+                        <option value="Yritys">Yritys</option>
+                    </select>
+                </div>
+
+                <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1">Asiakkaan / Yrityksen nimi *</label>
                     <input type="text" id="nimi" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition">
                 </div>
@@ -48,9 +55,30 @@
                     </div>
                 </div>
 
+                <div id="ytunnus-wrapper" class="hidden">
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Y-tunnus (yrityslaskutukseen) *</label>
+                    <input type="text" id="ytunnus" placeholder="1234567-8" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition">
+                </div>
+
                 <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1">Osoite</label>
-                    <input type="text" id="osoite" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition">
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Maa</label>
+                    <input type="text" id="maa" value="FI" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Katuosoite *</label>
+                    <input type="text" id="katuosoite" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Postinumero *</label>
+                        <input type="text" id="postinumero" placeholder="00100" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Kaupunki *</label>
+                        <input type="text" id="kaupunki" placeholder="Helsinki" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition">
+                    </div>
                 </div>
 
                 <div>
@@ -101,13 +129,28 @@
 
     <!-- Logiikka -->
     <script>
-        const WEBHOOK_URL = 'https://hook.eu1.make.com/l84equn6syc9jc69ah8p1xesb4txp2ws';
+        const WEBHOOK_URL = 'https://hook.eu1.make.com/xxprtnhyfgewwr9ngxkobuzs8ayybu9o';
+
+        function paivitaAsiakastyyppi() {
+            const tyyppi = document.getElementById('asiakastyyppi').value;
+            const ytunnusWrapper = document.getElementById('ytunnus-wrapper');
+            const ytunnusInput = document.getElementById('ytunnus');
+
+            if (tyyppi === 'Yritys') {
+                ytunnusWrapper.classList.remove('hidden');
+                ytunnusInput.setAttribute('required', 'required');
+            } else {
+                ytunnusWrapper.classList.add('hidden');
+                ytunnusInput.removeAttribute('required');
+                ytunnusInput.value = '';
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', async () => {
+            paivitaAsiakastyyppi(); // Asetetaan alkutilanne
             const token = localStorage.getItem('supabase_token');
             const userEmail = localStorage.getItem('user_email');
 
-            // Turvatarkistus: Vain pasi@solone.fi pääsee tälle sivulle[cite: 6]
             if (!token || userEmail !== 'pasi@solone.fi') {
                 alert('Ei käyttöoikeutta tälle sivulle.');
                 window.location.href = 'login.html';
@@ -167,13 +210,20 @@
             msgBox.className = 'hidden mt-6 p-4 rounded-lg text-sm';
 
             const selectedOption = selectPalvelu.options[selectPalvelu.selectedIndex];
+            const generoituAsiakastunnus = 'SOL-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString().slice(-4);
 
             const formData = {
+                asiakastunnus: generoituAsiakastunnus,
+                asiakastyyppi: document.getElementById('asiakastyyppi').value,
                 nimi: document.getElementById('nimi').value,
                 sahkoposti: document.getElementById('sahkoposti').value,
                 puhelinnumero: document.getElementById('puhelinnumero').value,
-                osoite: document.getElementById('osoite').value,
-                status: document.getElementById('status').value, // 'odottaa_maksua' tai 'aktiivinen'
+                ytunnus: document.getElementById('ytunnus').value || '',
+                katuosoite: document.getElementById('katuosoite').value,
+                postinumero: document.getElementById('postinumero').value,
+                kaupunki: document.getElementById('kaupunki').value,
+                maa: document.getElementById('maa').value,
+                status: document.getElementById('status').value,
                 erityishuomiot: document.getElementById('erityishuomiot').value,
                 palvelu_id: selectPalvelu.value,
                 palvelun_nimi: selectedOption ? selectedOption.text : '', 
@@ -193,6 +243,7 @@
                     msgBox.textContent = 'Tiedot lähetetty onnistuneesti ja tilaus luodaan järjestelmään!';
                     msgBox.className = 'mt-6 p-4 rounded-lg text-sm bg-emerald-900/50 border border-emerald-700 text-emerald-200 block';
                     document.getElementById('customerForm').reset();
+                    paivitaAsiakastyyppi();
                 } else {
                     throw new Error('Palvelinvirhe lähetyksessä.');
                 }

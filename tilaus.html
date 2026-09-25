@@ -216,8 +216,38 @@
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div>
-                        <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Maa</label>
-                        <input type="text" id="t-maa" class="lomake-kentta" value="FI">
+                        <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Maa *</label>
+                        <select id="t-maa" class="lomake-kentta" required>
+                            <option value="FI" selected>Suomi (FI)</option>
+                            <option value="SE">Ruotsi (SE)</option>
+                            <option value="EE">Viro (EE)</option>
+                            <option value="DE">Saksa (DE)</option>
+                            <option value="NO">Norja (NO)</option>
+                            <option value="DK">Tanska (DK)</option>
+                            <option value="BE">Belgia (BE)</option>
+                            <option value="BG">Bulgaria (BG)</option>
+                            <option value="ES">Espanja (ES)</option>
+                            <option value="IE">Irlanti (IE)</option>
+                            <option value="IT">Italia (IT)</option>
+                            <option value="AT">Itävalta (AT)</option>
+                            <option value="GR">Kreikka (GR)</option>
+                            <option value="HR">Kroatia (HR)</option>
+                            <option value="CY">Kypros (CY)</option>
+                            <option value="LV">Latvia (LV)</option>
+                            <option value="LT">Liettua (LT)</option>
+                            <option value="LU">Luxemburg (LU)</option>
+                            <option value="MT">Malta (MT)</option>
+                            <option value="NL">Alankomaat (NL)</option>
+                            <option value="PL">Puola (PL)</option>
+                            <option value="PT">Portugali (PT)</option>
+                            <option value="FR">Ranska (FR)</option>
+                            <option value="RO">Romania (RO)</option>
+                            <option value="SE">Ruotsi (SE)</option>
+                            <option value="SK">Slovakia (SK)</option>
+                            <option value="SI">Slovenia (SI)</option>
+                            <option value="CZ">Tšekki (CZ)</option>
+                            <option value="HU">Unkari (UN / HU)</option>
+                        </select>
                     </div>
                     <div>
                         <!-- Tyhjä tila tasapainottamaan gridiä -->
@@ -269,6 +299,12 @@
                 <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Erityishuomiot</label>
                 <textarea id="t-erityishuomiot" rows="3" class="lomake-kentta" placeholder="Mahdolliset lisätiedot..."></textarea>
 
+                <div style="margin: 15px 0 10px 0; font-size: 13px;">
+                    <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; color: var(--text-main);">
+                        <input type="checkbox" id="t-ehdot" required style="margin-top: 3px;">
+                        <span>Hyväksyn SolOnen <a href="tilausehdot.html" target="_blank" style="color: var(--primary); text-decoration: underline;">tilausehdot</a> ja vahvistan antamani tiedot. *</span>
+                    </label>
+                </div>
                 <button type="submit" class="btn-cta" id="laheta-btn" style="margin-top: 10px;">Lähetä tilaus</button>
             </form>
         </div>
