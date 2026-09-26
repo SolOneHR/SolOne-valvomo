@@ -3,11 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="/favicon.png?v=2">
-    <!-- iPhone / iPad aloitusnäyttö -->
-    <link rel="apple-touch-icon" href="/icon-192.2.png">
-    <!-- Android Chrome aloitusnäyttö -->
-    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.2.png">
     <title>Yhteystiedot – SolOne HR & Business</title>
     <style>
         :root {
@@ -17,17 +12,13 @@
             --border-color: #e2e8f0;
             --text-main: #0f172a;
             --text-muted: #64748b;
-            --primary: #0284c7;
-            --primary-hover: #0369a1;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
             --success: #10b981;
             --info-bg: #eff6ff;
             --info-border: #bfdbfe;
             --info-text: #1e40af;
             --danger: #ef4444;
-        }
-
-        * {
-            box-sizing: border-box;
         }
 
         body {
@@ -39,30 +30,33 @@
             line-height: 1.6;
         }
 
+        /* Leveyden keskitys ja rajaus (Max 900px) */
         .container {
-            max-width: 960px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 20px 16px 40px 16px;
+            padding: 20px;
         }
 
-        /* YLÄPALKKI */
+        /* Yläpalkki ja navigaatio */
         .asiakasportaalipalkki {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0 16px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 12px 0;
             border-bottom: 1px solid var(--border-color);
-            margin-bottom: 25px;
-            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .logo-nav-group {
+            display: flex;
+            align-items: center;
+            gap: 24px;
             flex-wrap: wrap;
         }
 
-        .ylapalkki-vasen {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
+        /* Ohennettu tekstilogo yläpalkkiin */
         .logo-palkki {
             font-size: 21px;
             font-weight: 600;
@@ -71,25 +65,27 @@
             display: inline-flex;
             align-items: center;
         }
-        .logo-palkki .sol { color: #1e3a8a; }
-        .logo-palkki .one { color: #0284c7; }
+        .logo-palkki .sol {
+            color: #1e3a8a;
+        }
+        .logo-palkki .one {
+            color: #0284c7;
+        }
 
-        /* TYYLIT TYÖPÖYDÄLLÄ */
         .paanavigaatio {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 16px;
         }
 
         .paanavigaatio a {
-            color: #334155;
+            color: var(--text-main);
             text-decoration: none;
             font-weight: 500;
-            font-size: 13.5px;
-            padding: 6px 10px;
+            font-size: 14px;
+            padding: 4px 8px;
             border-radius: 6px;
             transition: all 0.2s ease;
-            white-space: nowrap;
         }
 
         .paanavigaatio a:hover {
@@ -100,189 +96,119 @@
         .paanavigaatio a.aktiivinen {
             color: var(--primary);
             font-weight: 700;
-            background-color: #e0f2fe;
+            background-color: #eff6ff;
         }
 
         .portaali-toiminnot {
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
-
-        .hampurilainen-btn {
-            display: none;
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 6px 10px;
-            cursor: pointer;
-            color: #0f172a;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            line-height: 1;
-        }
-
-        /* MOBIILIMUUTOKSET KUN NÄYTTÖ ON ALLE 920px */
-        @media (max-width: 920px) {
-            .hampurilainen-btn {
-                display: inline-flex;
-            }
-
-            .paanavigaatio {
-                display: none;
-                flex-direction: column;
-                width: 100%;
-                background: #ffffff;
-                border: 1px solid var(--border-color);
-                border-radius: 10px;
-                padding: 12px;
-                margin-top: 15px;
-                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
-                order: 3;
-            }
-
-            .paanavigaatio.auki {
-                display: flex !important;
-            }
-
-            .paanavigaatio a {
-                width: 100%;
-                padding: 11px 14px;
-                font-size: 15px;
-                border-bottom: 1px solid #f1f5f9;
-            }
-
-            .paanavigaatio a:last-child {
-                border-bottom: none;
-            }
-
-            .portaali-toiminnot {
-                margin-left: auto;
-                margin-right: 10px;
-            }
-        }
-
-        .portal-linkki {
-            color: #1e293b;
-            text-decoration: none;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 13px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
-            border-radius: 6px;
-            background-color: #ffffff;
-            border: 1px solid var(--border-color);
-        }
-
-        .portal-linkki svg {
-            width: 15px;
-            height: 15px;
-            color: var(--primary);
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
         #portaali-kirjautunut {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
         }
+
+        .portal-linkki {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .portal-linkki:hover { text-decoration: underline; }
 
         .btn-valvomo-linkki {
             background-color: var(--primary);
             color: white;
-            padding: 6px 10px;
+            padding: 6px 12px;
             border-radius: 6px;
             text-decoration: none;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 13px;
+            transition: background-color 0.2s;
+            white-space: nowrap;
         }
-
-        .btn-pika-linkki {
-            background-color: #0f172a;
-            color: #38bdf8;
-            border: 1px solid #334155;
-            padding: 6px 10px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 12px;
-        }
+        .btn-valvomo-linkki:hover { background-color: var(--primary-hover); }
 
         .btn-ulos-pieni {
             background: transparent;
             border: 1px solid var(--text-muted);
             color: var(--text-muted);
-            padding: 5px 8px;
+            padding: 4px 10px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 12px;
+            white-space: nowrap;
         }
+        .btn-ulos-pieni:hover { color: var(--danger); border-color: var(--danger); }
 
-        /* LOMAKKEET */
         #portaali-lomake {
             display: none;
             background: white;
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
             text-align: left;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
             max-width: 320px;
             margin-left: auto;
         }
 
         .lomake-kentta {
             width: 100%;
-            padding: 9px 12px;
-            margin-bottom: 12px;
+            padding: 8px;
+            margin-bottom: 10px;
             border: 1px solid #cbd5e1;
-            border-radius: 6px;
+            border-radius: 4px;
             box-sizing: border-box;
-            font-size: 13.5px;
+            font-size: 13px;
         }
 
-        .ilmoitus-pieni { color: var(--danger); font-size: 12px; margin-bottom: 10px; display: none; font-weight: bold; }
-        .ilmoitus-onni { color: var(--success); font-size: 12px; margin-bottom: 10px; display: none; font-weight: bold; }
+        .ilmoitus-pieni {
+            color: var(--danger);
+            font-size: 12px;
+            margin-bottom: 10px;
+            display: none;
+            font-weight: bold;
+        }
 
-        /* YLÄBANNERI */
+        /* Yläbanneri taustakuvalla */
         .page-header {
-            background: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.8)), url('soloneverkkosivu.jpg') center/cover no-repeat;
+            background: linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.65)), url('soloneverkkosivu.jpg') center/cover no-repeat;
             color: white;
-            padding: 45px 22px;
-            border-radius: 16px;
+            padding: 40px 30px;
+            border-radius: 12px;
             text-align: center;
-            margin-bottom: 35px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            margin-bottom: 30px;
         }
 
         .page-header h1 {
-            margin: 0 0 12px 0;
-            font-size: 30px;
+            margin: 0 0 8px 0;
+            font-size: 28px;
             color: #ffffff;
-            font-weight: 800;
+            font-weight: 600;
         }
 
         .page-header p {
             margin: 0;
             color: #e2e8f0;
-            font-size: 16px;
-            max-width: 680px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.6;
+            font-size: 15px;
         }
 
-        /* KORTIT JA SISÄLTÖ */
+        /* Kortit */
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 26px 20px;
-            margin-bottom: 30px;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
         }
 
         /* Yhteydenottolomakkeen tyylit */
@@ -337,6 +263,7 @@
             min-height: 110px;
         }
 
+        /* Toive yhteydenottotavasta */
         .valinta-laatikko {
             background: #f8fafc;
             border: 1px solid var(--border-color);
@@ -410,7 +337,7 @@
             border: 1px solid #fecaca;
         }
 
-        /* FOOTER */
+        /* Footer */
         .footer {
             text-align: center;
             padding: 30px 0;
@@ -425,69 +352,36 @@
 
     <div class="container">
         
-        <!-- YLÄPALKKI -->
-        <header class="asiakasportaalipalkki">
-            <div class="ylapalkki-vasen">
+        <!-- ASIAKASPORTAALIPALKKI JA LOGO YLÄREUNASSA -->
+        <div class="asiakasportaalipalkki">
+            <div class="logo-nav-group">
                 <a href="index.html" class="logo-palkki">
                     <span class="sol">Sol</span><span class="one">One</span>
                 </a>
+                <nav class="paanavigaatio">
+                    <a href="index.html">Etusivu</a>
+                    <a href="palvelupaketit.html">Palvelupaketit</a>
+                    <a href="yhteystiedot.html" class="aktiivinen">Yhteystiedot</a>
+                </nav>
             </div>
-
-            <!-- Asiakasportaalin toiminnot -->
             <div class="portaali-toiminnot">
                 <div id="portaali-vieras">
-                    <span class="portal-linkki" onclick="vaihdaLomakeNakyvyys()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        Asiakasportaali / Kirjaudu
-                    </span>
+                    <span class="portal-linkki" onclick="vaihdaLomakeNakyvyys()">🔒 Asiakasportaali / Kirjaudu sisään</span>
                 </div>
                 <div id="portaali-kirjautunut" style="display: none;">
-                    <span style="color: var(--text-muted); font-size: 12px; font-weight: 500;" id="kayttaja-tunnus"></span>
-                    <a href="pikasyotto.html" class="btn-pika-linkki">⚡ Pika</a>
-                    <a href="somevalvomo.html" class="btn-valvomo-linkki">💻 Valvomo</a>
+                    <span style="color: var(--text-muted); margin-right: 5px;" id="kayttaja-tunnus"></span>
+                    <a href="somevalvomo.html" class="btn-valvomo-linkki">💻 Avaa Somevalvomo</a>
                     <button class="btn-ulos-pieni" onclick="kirjauduUlos()">Ulos</button>
                 </div>
             </div>
-
-            <!-- Hampurilaispainike mobiilille -->
-            <button class="hampurilainen-btn" id="hampurilais-nappi" onclick="toggleMobiilivalikko()" aria-label="Valikko">
-                ☰
-            </button>
-
-            <!-- Navigaatiovalikko -->
-            <nav class="paanavigaatio" id="paanavigaatio">
-                <a href="index.html">Etusivu</a>
-                <a href="palvelupaketit.html">Palvelupaketit</a>
-                <a href="index.html#tyokalut" onclick="suljeMobiilivalikko()">Työkalut</a>
-                <a href="index.html#uutiset" onclick="suljeMobiilivalikko()">Uutiset</a>
-                <a href="vastuullisuus.html">Vastuullisuus</a>
-                <a href="yhteystiedot.html" class="aktiivinen">Yhteystiedot</a>
-                <a href="tietosuoja.html">Tietosuojaseloste</a>
-            </nav>
-        </header>
+        </div>
 
         <!-- KIRJAUTUMISLOMAKE -->
         <div id="portaali-lomake">
             <div id="pika-virhe" class="ilmoitus-pieni"></div>
-            <div id="pika-info" class="ilmoitus-onni"></div>
             <input type="email" id="pika-email" class="lomake-kentta" placeholder="Sähköposti">
             <input type="password" id="pika-password" class="lomake-kentta" placeholder="Salasana">
-            <button style="width: 100%; background: var(--primary); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 10px;" onclick="suoritaKirjautuminen()">Kirjaudu</button>
-            <div style="text-align: center;">
-                <a href="javascript:void(0)" onclick="lahetaSalasananPalautus()" style="font-size: 12px; color: var(--primary); text-decoration: none;">Unohditko salasanasi?</a>
-            </div>
-        </div>
-
-        <!-- UUDEN SALASANAN ASETUS -->
-        <div id="salasanan-vaihto-laatikko" style="display: none; background: white; border: 2px solid var(--primary); border-radius: 8px; padding: 20px; margin-bottom: 25px; max-width: 380px; margin-left: auto; margin-right: auto; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
-            <h3 style="margin-top: 0; font-size: 16px;">🔑 Aseta uusi salasana</h3>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Syötä uusi salasana tilillesi.</p>
-            <div id="salasana-nollaus-virhe" class="ilmoitus-pieni"></div>
-            <input type="password" id="uusi-salasana-kentta" class="lomake-kentta" placeholder="Uusi salasana (väh. 6 merkkiä)">
-            <button style="width: 100%; background: var(--success); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="tallennaUusiSalasana()">Tallenna uusi salasana</button>
+            <button style="width: 100%; background: var(--primary); color: white; border: none; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="suoritaKirjautuminen()">Kirjaudu</button>
         </div>
 
         <!-- Sivun otsikko / Yläbanneri taustakuvalla -->
@@ -542,7 +436,7 @@
             </div>
         </div>
 
-        <!-- YHTEYDENOTTOLOMAKE -->
+        <!-- UUSI YHTEYDENOTTOLOMAKE -->
         <div class="card">
             <h2 style="margin-top: 0; font-size: 20px; color: var(--text-main);">Ota yhteyttä, pyydä esittely tai anna palautetta</h2>
             <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
@@ -616,16 +510,11 @@
             </form>
         </div>
 
-        <!-- FOOTER -->
+        <!-- Yhteystiedot / Footer -->
         <footer class="footer">
             <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business</strong></p>
             <p style="margin: 5px 0;">SolOne Automaatioratkaisut</p>
             <p style="margin: 5px 0; font-size: 13px; color: var(--text-muted);">Y-tunnus: 1391767-8</p>
-            <p style="margin: 10px 0; font-size: 13px;">
-                <a href="vastuullisuus.html" style="color: var(--text-muted); text-decoration: none;">Vastuullisuus</a>
-                <span style="color: var(--border-color); margin: 0 8px;">|</span>
-                <a href="tietosuoja.html" style="color: var(--text-muted); text-decoration: none;">Tietosuojaseloste</a>
-            </p>
             <p style="font-size: 12px; color: #94a3b8; margin-top: 15px;">&copy; SolOne. Kaikki oikeudet pidätetään.</p>
         </footer>
     </div>
@@ -634,23 +523,8 @@
     const SUPABASE_URL = 'https://oajnnrrnatqqymmvncxf.supabase.co';
     const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
 
+    // Oikea Make.com Custom Webhook yhteydenottolomakkeelle
     const MAKE_YHTEYDENOTTO_WEBHOOK = 'https://hook.eu1.make.com/9av13g8cjmyl3lvtjn2ypgmt3k3cieik';
-
-    function toggleMobiilivalikko() {
-        const navi = document.getElementById('paanavigaatio');
-        const nappi = document.getElementById('hampurilais-nappi');
-        navi.classList.toggle('auki');
-        nappi.textContent = navi.classList.contains('auki') ? '✕' : '☰';
-    }
-
-    function suljeMobiilivalikko() {
-        const navi = document.getElementById('paanavigaatio');
-        const nappi = document.getElementById('hampurilais-nappi');
-        if (navi.classList.contains('auki')) {
-            navi.classList.remove('auki');
-            nappi.textContent = '☰';
-        }
-    }
 
     async function lahetaYhteydenotto(event) {
         event.preventDefault();
@@ -664,6 +538,7 @@
         if (toivePuhelin) tapaLista.push('Puhelin');
         if (toiveEmail) tapaLista.push('Sähköposti');
 
+        // FormData lähettää tiedot suoraan ilman CORS-preflightia
         const formData = new FormData();
         formData.append('nimi', document.getElementById('lomake-nimi').value.trim());
         formData.append('yritys', document.getElementById('lomake-yritys').value.trim());
@@ -712,7 +587,6 @@
         const email = document.getElementById('pika-email').value;
         const password = document.getElementById('pika-password').value;
         const virheAlue = document.getElementById('pika-virhe');
-        const infoAlue = document.getElementById('pika-info');
 
         try {
             const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
@@ -722,131 +596,19 @@
             });
 
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error_description || data.msg || "Kirjautuminen epäonnistui");
+            if (!res.ok) throw new Error(data.error_description || data.msg || "Virhe");
 
             localStorage.setItem('supabase_token', data.access_token);
             localStorage.setItem('supabase_refresh_token', data.refresh_token);
             localStorage.setItem('user_email', data.user.email);
 
             virheAlue.style.display = 'none';
-            if (infoAlue) infoAlue.style.display = 'none';
             document.getElementById('portaali-lomake').style.display = 'none';
             tarkistaIstunto();
         } catch (err) {
             virheAlue.textContent = "Kirjautuminen epäonnistui.";
             virheAlue.style.display = 'block';
         }
-    }
-
-    async function lahetaSalasananPalautus() {
-        const emailKentta = document.getElementById('pika-email');
-        const virheAlue = document.getElementById('pika-virhe');
-        const infoAlue = document.getElementById('pika-info');
-
-        virheAlue.style.display = 'none';
-        infoAlue.style.display = 'none';
-
-        let email = emailKentta.value.trim();
-        if (!email) {
-            email = prompt("Syötä sähköpostiosoitteesi salasanan palauttamiseksi:");
-            if (!email) return;
-            emailKentta.value = email;
-        }
-
-        try {
-            const res = await fetch(`${SUPABASE_URL}/auth/v1/recover`, {
-                method: 'POST',
-                headers: { 'apikey': ANON_KEY, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email })
-            });
-
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.msg || data.error_description || "Virhe pyynnössä");
-
-            infoAlue.textContent = "✓ Palautuslinkki lähetetty sähköpostiisi!";
-            infoAlue.style.display = 'block';
-        } catch (err) {
-            virheAlue.textContent = "Virhe: " + err.message;
-            virheAlue.style.display = 'block';
-        }
-    }
-
-    async function tallennaUusiSalasana() {
-        const uusiSalasana = document.getElementById('uusi-salasana-kentta').value;
-        const virheAlue = document.getElementById('salasana-nollaus-virhe');
-        const token = localStorage.getItem('supabase_token');
-
-        if (!uusiSalasana || uusiSalasana.length < 6) {
-            virheAlue.textContent = "Salasanan on oltava vähintään 6 merkkiä.";
-            virheAlue.style.display = 'block';
-            return;
-        }
-
-        try {
-            const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-                method: 'PUT',
-                headers: {
-                    'apikey': ANON_KEY,
-                    'Authorization': 'Bearer ' + token,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ password: uusiSalasana })
-            });
-
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.msg || data.error_description || "Tallennus epäonnistui");
-
-            document.getElementById('salasanan-vaihto-laatikko').style.display = 'none';
-            window.location.hash = '';
-            alert("✓ Uusi salasana tallennettu! Voit nyt kirjautua sisään.");
-            tarkistaIstunto();
-        } catch (err) {
-            virheAlue.textContent = "Virhe: " + err.message;
-            virheAlue.style.display = 'block';
-        }
-    }
-
-    async function tarkistaPalautusKoodi() {
-        const hash = window.location.hash;
-        const search = window.location.search;
-        let token = null;
-        let refreshToken = null;
-
-        if (hash && (hash.includes('type=recovery') || hash.includes('access_token='))) {
-            const params = new URLSearchParams(hash.replace('#', '?'));
-            token = params.get('access_token');
-            refreshToken = params.get('refresh_token');
-        } else if (search && search.includes('code=')) {
-            const params = new URLSearchParams(search);
-            const code = params.get('code');
-            try {
-                const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=pkce`, {
-                    method: 'POST',
-                    headers: { 'apikey': ANON_KEY, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ auth_code: code })
-                });
-                const data = await res.json();
-                if (res.ok && data.access_token) {
-                    token = data.access_token;
-                    refreshToken = data.refresh_token;
-                }
-            } catch (e) {
-                console.error("PKCE vaihto epäonnistui:", e);
-            }
-        }
-
-        if (token) {
-            localStorage.setItem('supabase_token', token);
-            if (refreshToken) localStorage.setItem('supabase_refresh_token', refreshToken);
-
-            const laatikko = document.getElementById('salasanan-vaihto-laatikko');
-            if (laatikko) {
-                laatikko.style.display = 'block';
-                laatikko.scrollIntoView({ behavior: 'smooth' });
-            }
-            return true;
-        }
-        return false;
     }
 
     function kirjauduUlos() {
@@ -863,19 +625,14 @@
         if (token) {
             document.getElementById('portaali-vieras').style.display = 'none';
             document.getElementById('kayttaja-tunnus').textContent = email ? email.split('@')[0] : 'Asiakas';
-            document.getElementById('portaali-kirjautunut').style.display = 'flex';
+            document.getElementById('portaali-kirjautunut').style.display = 'block';
         } else {
             document.getElementById('portaali-kirjautunut').style.display = 'none';
             document.getElementById('portaali-vieras').style.display = 'block';
         }
     }
 
-    window.addEventListener('load', async function() {
-        const onPalautus = await tarkistaPalautusKoodi();
-        if (!onPalautus) {
-            tarkistaIstunto();
-        }
-    });
+    window.addEventListener('load', tarkistaIstunto);
 </script>
 </body>
 </html>
