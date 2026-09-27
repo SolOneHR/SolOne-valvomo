@@ -1802,9 +1802,12 @@
 
         let htmlSisalto = '';
 
-        if (onHistoria) {
+       if (onHistoria) {
             if (onVirhe) {
                 htmlSisalto += '<div class="tilamerkinta hylatty-badge">❌ VIRHE JULKAISUSSA</div>';
+                if (julkaisu.virhe_viesti) {
+                    htmlSisalto += '<div style="background: #ffeeec; color: #b91c1c; padding: 10px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 12px; border: 1px solid #fecaca;"><strong>Syy:</strong> ' + julkaisu.virhe_viesti + '</div>';
+                }
             } else if (onHylatty) {
                 htmlSisalto += '<div class="tilamerkinta hylatty-badge">✕ HYLÄTTY</div>';
             } else {
@@ -1909,7 +1912,16 @@
         htmlSisalto += '<textarea id="teksti-' + julkaisu.id + '" class="teksti-alue" rows="7"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.julkaisuteksti || '') + '</textarea>';
 
         if (!onHistoria) {
-            const valmisAika = julkaisu.ajastettu_aika ? new Date(julkaisu.ajastettu_aika).toISOString().slice(0,16) : '';
+            let valmisAika = '';
+            if (julkaisu.ajastettu_aika) {
+                const d = new Date(julkaisu.ajastettu_aika);
+                const vuosi = d.getFullYear();
+                const kuukausi = String(d.getMonth() + 1).padStart(2, '0');
+                const paiva = String(d.getDate()).padStart(2, '0');
+                const tunnit = String(d.getHours()).padStart(2, '0');
+                const minuutit = String(d.getMinutes()).padStart(2, '0');
+                valmisAika = `${vuosi}-${kuukausi}-${paiva}T${tunnit}:${minuutit}`;
+            }
             
             htmlSisalto += '<div class="grid-valinnat">'; 
             
