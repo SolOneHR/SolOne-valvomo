@@ -8,7 +8,7 @@
     <link rel="apple-touch-icon" href="/icon-192.2.png">
     <!-- Android Chrome aloitusnäyttö -->
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.2.png">
-    <title>Palvelupaketit – SolOne</title>
+    <title>Yhteystiedot – SolOne HR & Business</title>
     <style>
         :root {
             --bg-main: #f8fafc;
@@ -251,8 +251,7 @@
 
         /* YLÄBANNERI */
         .page-header {
-            background: linear-gradient(to bottom, #0f172a 0%, #1e3a8a 100%);
-            border-top: 4px solid var(--primary);
+            background-color: #0f172a;
             color: white;
             padding: 45px 22px;
             border-radius: 16px;
@@ -286,101 +285,129 @@
             margin-bottom: 30px;
         }
 
-        .badge {
-            display: inline-block;
-            background-color: #e0f2fe;
-            color: #0369a1;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
+        /* Yhteydenottolomakkeen tyylit */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
         }
 
-        .palvelu-osio {
-            margin-bottom: 30px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid var(--border-color);
-            scroll-margin-top: 30px;
+        @media (min-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
-        .palvelu-osio:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
+        .form-ryhma {
+            display: flex;
+            flex-direction: column;
         }
 
-        .hinta-nosto {
-            display: inline-block;
-            background-color: #f1f5f9;
+        .form-ryhma.koko-leveys {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
             color: var(--text-main);
-            font-size: 13.5px;
-            font-weight: 700;
-            padding: 5px 12px;
-            border-radius: 6px;
-            margin: 6px 0 14px 0;
+            margin-bottom: 6px;
         }
 
-        .hinta-nosto span {
-            font-weight: normal;
-            color: var(--text-muted);
-            font-size: 12px;
-        }
-
-        .palvelu-lista {
-            margin: 10px 0 18px 0;
-            padding-left: 20px;
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
             font-size: 14px;
-            color: #475569;
-            line-height: 1.65;
+            font-family: inherit;
+            box-sizing: border-box;
+            background: #ffffff;
+            color: var(--text-main);
+            transition: border-color 0.2s;
         }
 
-        .palvelu-lista li {
-            margin-bottom: 8px;
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
         }
 
-        .btn-kysy {
-            display: inline-block;
+        .form-textarea {
+            resize: vertical;
+            min-height: 110px;
+        }
+
+        .valinta-laatikko {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checkbox-rivi {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13.5px;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .checkbox-rivi input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .btn-laheta {
             background-color: var(--primary);
             color: white;
-            padding: 9px 18px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 13.5px;
-            text-decoration: none;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
             transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .btn-kysy:hover {
+        .btn-laheta:hover {
             background-color: var(--primary-hover);
         }
 
-        /* ALABANNERI */
-        .bottom-banner {
-            position: relative;
-            border-radius: 14px;
-            padding: 30px 20px;
-            text-align: center;
-            overflow: hidden;
-            color: white;
-            margin-top: 20px;
+        .btn-laheta:disabled {
+            background-color: var(--text-muted);
+            cursor: not-allowed;
         }
 
-        .bottom-banner::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to bottom, #1e3a8a 0%, #0f172a 100%);
-            z-index: 1;
+        .lomake-status {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 15px;
+            display: none;
         }
 
-        .bottom-banner-sisalto {
-            position: relative;
-            z-index: 2;
+        .lomake-status.success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .lomake-status.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
         }
 
         /* FOOTER */
@@ -433,11 +460,11 @@
             <!-- Navigaatiovalikko -->
             <nav class="paanavigaatio" id="paanavigaatio">
                 <a href="index.html">Etusivu</a>
-                <a href="palvelupaketit.html" class="aktiivinen">Palvelupaketit</a>
+                <a href="palvelupaketit.html">Palvelupaketit</a>
                 <a href="index.html#tyokalut" onclick="suljeMobiilivalikko()">Työkalut</a>
                 <a href="index.html#uutiset" onclick="suljeMobiilivalikko()">Uutiset</a>
                 <a href="vastuullisuus.html">Vastuullisuus</a>
-                <a href="yhteystiedot.html">Yhteystiedot</a>
+                <a href="yhteystiedot.html" class="aktiivinen">Yhteystiedot</a>
                 <a href="tietosuoja.html">Tietosuojaseloste</a>
             </nav>
         </header>
@@ -463,97 +490,130 @@
             <button style="width: 100%; background: var(--success); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="tallennaUusiSalasana()">Tallenna uusi salasana</button>
         </div>
 
-        <!-- YLÄBANNERI -->
+        <!-- Sivun otsikko / Yläbanneri taustakuvalla -->
         <header class="page-header">
-            <h1>Palvelupaketit</h1>
-            <p>Autamme muuttamaan tekemisen <span style="color: #38bdf8; font-weight: 700;">näkyväksi</span>, jotta voit onnistua siinä, mikä sinulle on tärkeää!</p>
+            <h1>Yhteystiedot</h1>
+            <p>Ota yhteyttä – vastaamme mielellämme kysymyksiin ja kartoitamme tarpeesi.</p>
         </header>
 
-        <!-- PÄÄSISÄLTÖ: PAKETTIEN SYVENTÄVÄT ESITTELYT -->
+        <!-- Yhteystietokortti -->
         <div class="card">
-            
-            <!-- 1. SolOne Tekijä -->
-            <div class="palvelu-osio" id="tekija">
-                <span class="badge" style="background: #f1f5f9; color: #334155;">YKSINYRITTÄJÄLLE / AMMATINHARJOITTAJALLE</span>
-                <h2 style="margin: 4px 0 4px 0; font-size: 20px;">SolOne Tekijä</h2>
-                <div class="hinta-nosto">Alkaen n. 29 € / kk <span>(Alustava hinta-arvio, ALV 0 %)</span></div>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0;">
-                    <strong>Kenelle:</strong> Yksinyrittäjille, asentajille, remontoijille, kädentaitajille ja asiantuntijoille.
-                </p>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0;">
-                    <strong>Arjen haaste:</strong> Työpäivä kuluu asiakaskohteissa ja kentällä. Työpäivän päätteeksi ei riitä aikaa eikä energiaa istua tietokoneella miettimässä julkaisutekstejä, valitsemassa hashtageja tai kirjautumassa useaan eri kanavaan.
-                </p>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 6px 0;">
-                    <strong>Miten SolOne ratkaisee tämän:</strong>
-                </p>
-                <ul class="palvelu-lista">
-                    <li><strong>SolOne Pika</strong> kulkee aina mukana puhelimessa: ota kuva työkohteesta ja sanele tai kirjoita muutama sana kentältä sekunneissa.</li>
-                    <li>Tekoäly luonnostelee puolestasi sujuvan, laadukkaan tekstin ja valmiit hashtagit.</li>
-                    <li><strong>SolOne Valvomo</strong> kokoaa luonnokset selkeään näkymään: tarkistat ja hyväksyt julkaisun Meta-kanaviin (Facebook & Instagram) sekä LinkedIniin silloin, kun sinulle sopii.</li>
-                </ul>
-                <a href="yhteystiedot.html" class="btn-kysy">Kysy lisää Tekijä-paketista</a>
-            </div>
+            <h2 style="margin-top: 0; font-size: 20px; color: var(--text-main);">
+                <span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business
+            </h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+                SolOne Automaatioratkaisut<br>
+                Krouvikuja 3 C 10, 17200 Asikkala
+            </p>
 
-            <!-- 2. SolOne Palveluyritys -->
-            <div class="palvelu-osio" id="palveluyritys">
-                <span class="badge" style="background: #e0f2fe; color: #0369a1;">KIVIJALKA & PALVELUT</span>
-                <h2 style="margin: 4px 0 4px 0; font-size: 20px;">SolOne Palveluyritys</h2>
-                <div class="hinta-nosto">Alkaen n. 49 € / kk <span>(Alustava hinta-arvio, ALV 0 %)</span></div>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0;">
-                    <strong>Kenelle:</strong> Myymälöille, korjaamoille, paikallisille palveluyrityksille ja yrityksille, joilla on useampi toimipiste tai eri kohderyhmiä palvelevia brändejä.
-                </p>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0;">
-                    <strong>Arjen haaste:</strong> Useamman eri sivun ja some-tilin ylläpito samanaikaisesti aiheuttaa sekaannusta, jatkuvaa tilien vaihtoa ja vie turhaa työaikaa.
-                </p>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 6px 0;">
-                    <strong>Miten SolOne ratkaisee tämän:</strong>
-                </p>
-                <ul class="palvelu-lista">
-                    <li>Hallitse jopa 3 brändiä tai 6 eri sivua (Meta FB/IG + LinkedIn) yhdestä ja samasta näkymästä ilman jatkuvaa ulos- ja sisäänkirjautumista.</li>
-                    <li>3 käyttäjätiliä ja <strong>SolOne Pika</strong> -mobiilityökalu kuvien ja ajatusten taltioimiseksi suoraan arjen työn keskeltä.</li>
-                    <li>Tekoäly luonnostelee valmiin tekstin ja hashtagit valitsemasi julkaisuprofiilin (kuten B2B tai B2C) mukaan.</li>
-                    <li>Keskitetty ajastus ja tarkistus: hyväksyt ja ajastat usean eri sivun julkaisut helposti samasta paikasta.</li>
-                </ul>
-                <a href="yhteystiedot.html" class="btn-kysy">Kysy lisää Palveluyritys-paketista</a>
-            </div>
-
-            <!-- 3. SolOne Tiimi -->
-            <div class="palvelu-osio" id="tiimi">
-                <span class="badge" style="background: #f1f5f9; color: #334155;">YHTEISÖILLE & SEUROILLE</span>
-                <h2 style="margin: 4px 0 4px 0; font-size: 20px;">SolOne Tiimi</h2>
-                <div class="hinta-nosto">Alkaen n. 49 € / kk <span>(Alustava hinta-arvio, ALV 0 %)</span></div>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0;">
-                    <strong>Kenelle:</strong> Yhdistyksille, urheiluseuroille, yhteisöille ja useamman työntekijän tiimeille.
-                </p>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 10px 0;">
-                    <strong>Arjen haaste:</strong> Kuvat ja juttuaiheet tulevat eri henkilöiltä sekavasti eri viestikanavissa (WhatsApp, sähköposti, tekstiviestit), jolloin viestintä pirstaloituu ja vastuuhenkilön aika kuluu asioiden etsimiseen ja kokoamiseen.
-                </p>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 6px 0;">
-                    <strong>Miten SolOne ratkaisee tämän:</strong>
-                </p>
-                <ul class="palvelu-lista">
-                    <li><strong>SolOne Pika</strong> koko tiimille: jokainen kentällä tai tapahtumassa oleva voi lähettää kuvan ja lyhyen tervehdyksen suoraan puhelimestaan.</li>
-                    <li>Kaikki ehdotukset kertyvät yhteen ja samaan <strong>SolOne Valvomon</strong> jonoon selkeiksi luonnoksiksi.</li>
-                    <li>Tekoäly luonnostelee tekstit ja hashtagit valitun profiilin mukaan.</li>
-                    <li>2 pääkäyttäjää voi tarkistaa, hioa ja hyväksyä julkaisut Meta-kanaviin (Facebook & Instagram) sekä LinkedIniin silloin, kun se sopii yhteisön aikatauluun.</li>
-                </ul>
-                <a href="yhteystiedot.html" class="btn-kysy">Kysy lisää Tiimi-paketista</a>
-            </div>
-
-        </div>
-
-        <!-- ALABANNERI -->
-        <div class="bottom-banner">
-            <div class="bottom-banner-sisalto">
-                <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #ffffff;">Haluatko testata <span style="color: #38bdf8;">maksutta?</span></h3>
-                <p style="margin: 0 0 15px 0; color: #e2e8f0; font-size: 13px;">Ota yhteyttä ja kokeile, miten helppoa säännöllinen somenäkyvyys voi olla!</p>
-                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                    <a href="mailto:info@solone.fi" style="color: white; background: #0284c7; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">✉️ info@solone.fi</a>
-                    <a href="https://www.solone.fi" target="_blank" rel="noopener noreferrer" style="color: white; background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">🌐 www.solone.fi</a>
-                    <a href="https://www.facebook.com/Sol1One" target="_blank" rel="noopener noreferrer" style="color: white; background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> Facebook</a>
-                    <a href="https://www.instagram.com/solone.fi/" target="_blank" rel="noopener noreferrer" style="color: white; background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg> Instagram</a>
+            <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+                <div>
+                    <strong>Sähköposti:</strong> 
+                    <a href="mailto:info@solone.fi" style="color: var(--primary); text-decoration: none; margin-left: 5px;">info@solone.fi</a>
+                </div>
+                <div>
+                    <strong>Puhelinpalvelu:</strong> 
+                    <span style="margin-left: 5px; color: var(--text-muted);">Soitamme sinulle toivomanasi ajankohtana. Jätä soittopyyntö alla olevalla lomakkeella!</span>
+                </div>
+                <div>
+                    <strong>Verkkosivusto:</strong> 
+                    <a href="https://www.solone.fi" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: none; margin-left: 5px;">www.solone.fi</a>
+                </div>
+                <div>
+                    <strong>Y-tunnus:</strong> 
+                    <span style="margin-left: 5px;">1391767-8</span>
                 </div>
             </div>
+
+            <!-- Sosiaalinen media -->
+            <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                <strong style="font-size: 14px; display: block; margin-bottom: 10px;">Seuraa somessa:</strong>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <a href="https://www.facebook.com/Sol1One" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> Facebook
+                    </a>
+                    <a href="https://www.instagram.com/solone.fi/" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg> Instagram
+                    </a>
+                    <a href="https://www.linkedin.com/company/144572065" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg> LinkedIn
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- YHTEYDENOTTOLOMAKE -->
+        <div class="card">
+            <h2 style="margin-top: 0; font-size: 20px; color: var(--text-main);">Ota yhteyttä, pyydä esittely tai anna palautetta</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+                Jätä viesti tai kerro tarpeestasi. Vastaamme yleensä 24 tunnin kuluessa arkisin.
+            </p>
+
+            <form id="solone-yhteydenotto-form" onsubmit="lahetaYhteydenotto(event)">
+                <div class="form-grid">
+                    <div class="form-ryhma">
+                        <label class="form-label" for="lomake-nimi">Nimi *</label>
+                        <input type="text" id="lomake-nimi" class="form-input" placeholder="Matti Meikäläinen" required>
+                    </div>
+
+                    <div class="form-ryhma">
+                        <label class="form-label" for="lomake-yritys">Yritys / Organisaatio</label>
+                        <input type="text" id="lomake-yritys" class="form-input" placeholder="Esimerkki Oy">
+                    </div>
+
+                    <div class="form-ryhma">
+                        <label class="form-label" for="lomake-email">Sähköposti *</label>
+                        <input type="email" id="lomake-email" class="form-input" placeholder="matti@yritys.fi" required>
+                    </div>
+
+                    <div class="form-ryhma">
+                        <label class="form-label" for="lomake-puhelin">Puhelinnumero</label>
+                        <input type="tel" id="lomake-puhelin" class="form-input" placeholder="040 123 4567">
+                    </div>
+
+                    <div class="form-ryhma koko-leveys">
+                        <label class="form-label" for="lomake-aihe">Aihe / Yhteydenoton syy</label>
+                        <select id="lomake-aihe" class="form-select">
+                            <option value="SolOne Valvomo & Pika">SolOne Somevalvomo & Pika -automaatio</option>
+                            <option value="Yleinen yhteydenotto / muu kysymys">Yleinen yhteydenotto / muu kysymys</option>
+                            <option value="Palaute">Palaute</option>
+                        </select>
+                    </div>
+
+                    <!-- Toivottu yhteydenottotapa ja aika -->
+                    <div class="form-ryhma koko-leveys">
+                        <label class="form-label">Toivottu yhteydenottotapa ja ajankohta:</label>
+                        <div class="valinta-laatikko">
+                            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                                <label class="checkbox-rivi">
+                                    <input type="checkbox" id="toive-puhelin">
+                                    <span>Toivon yhteydenottoa puhelimitse</span>
+                                </label>
+                                <label class="checkbox-rivi">
+                                    <input type="checkbox" id="toive-email" checked>
+                                    <span>Toivon yhteydenottoa sähköpostilla</span>
+                                </label>
+                            </div>
+                            <div style="margin-top: 6px;">
+                                <input type="text" id="toive-aika" class="form-input" style="font-size: 13px;" placeholder="Toivottu yhteydenottoaika (esim. arkisin klo 12–15 tai iltapäivällä)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-ryhma koko-leveys">
+                        <label class="form-label" for="lomake-viesti">Viesti tai lisätiedot *</label>
+                        <textarea id="lomake-viesti" class="form-textarea" placeholder="Kirjoita viestisi, toiveesi tai palautteesi tähän..." required></textarea>
+                    </div>
+
+                    <div class="form-ryhma koko-leveys">
+                        <button type="submit" id="btn-lomake-laheta" class="btn-laheta">
+                            ✉️ Lähetä viesti
+                        </button>
+                    </div>
+                </div>
+
+                <div id="lomake-ilmoitus" class="lomake-status"></div>
+            </form>
         </div>
 
         <!-- FOOTER -->
@@ -574,6 +634,8 @@
     const SUPABASE_URL = 'https://oajnnrrnatqqymmvncxf.supabase.co';
     const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
 
+    const MAKE_YHTEYDENOTTO_WEBHOOK = 'https://hook.eu1.make.com/9av13g8cjmyl3lvtjn2ypgmt3k3cieik';
+
     function toggleMobiilivalikko() {
         const navi = document.getElementById('paanavigaatio');
         const nappi = document.getElementById('hampurilais-nappi');
@@ -587,6 +649,57 @@
         if (navi.classList.contains('auki')) {
             navi.classList.remove('auki');
             nappi.textContent = '☰';
+        }
+    }
+
+    async function lahetaYhteydenotto(event) {
+        event.preventDefault();
+
+        const nappi = document.getElementById('btn-lomake-laheta');
+        const statusBox = document.getElementById('lomake-ilmoitus');
+
+        const toivePuhelin = document.getElementById('toive-puhelin').checked;
+        const toiveEmail = document.getElementById('toive-email').checked;
+        let tapaLista = [];
+        if (toivePuhelin) tapaLista.push('Puhelin');
+        if (toiveEmail) tapaLista.push('Sähköposti');
+
+        const formData = new FormData();
+        formData.append('nimi', document.getElementById('lomake-nimi').value.trim());
+        formData.append('yritys', document.getElementById('lomake-yritys').value.trim());
+        formData.append('sahkoposti', document.getElementById('lomake-email').value.trim());
+        formData.append('puhelin', document.getElementById('lomake-puhelin').value.trim());
+        formData.append('aihe', document.getElementById('lomake-aihe').value);
+        formData.append('yhteydenottotapa', tapaLista.join(', ') || 'Ei eritelty');
+        formData.append('toivottu_aika', document.getElementById('toive-aika').value.trim());
+        formData.append('viesti', document.getElementById('lomake-viesti').value.trim());
+        formData.append('aikaleima', new Date().toISOString());
+
+        nappi.disabled = true;
+        nappi.textContent = '⏳ Lähetetään viestiä...';
+        statusBox.style.display = 'none';
+
+        try {
+            await fetch(MAKE_YHTEYDENOTTO_WEBHOOK, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: formData
+            });
+
+            statusBox.textContent = '✓ Kiitos yhteydenotostasi! Viestisi on vastaanotettu ja palaamme asiaan pian.';
+            statusBox.className = 'lomake-status success';
+            statusBox.style.display = 'block';
+
+            document.getElementById('solone-yhteydenotto-form').reset();
+            document.getElementById('toive-email').checked = true;
+        } catch (error) {
+            console.error("Lomakevirhe:", error);
+            statusBox.textContent = '⚠️ Viestin lähetys epäonnistui. Voit laittaa viestin myös suoraan osoitteeseen info@solone.fi.';
+            statusBox.className = 'lomake-status error';
+            statusBox.style.display = 'block';
+        } finally {
+            nappi.disabled = false;
+            nappi.textContent = '✉️ Lähetä viesti';
         }
     }
 

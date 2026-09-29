@@ -19,8 +19,8 @@
         :root {
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
-            --primary: #0284c7;
-            --primary-hover: #0369a1;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
             --success: #10b981;
             --success-hover: #059669;
             --danger: #ef4444;
@@ -30,137 +30,33 @@
             --border-color: #e2e8f0;
         }
 
-        * {
-            box-sizing: border-box;
-        }
-
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             background-color: var(--bg-color); 
             color: var(--text-main); 
             margin: 0; 
-            padding: 0; 
-            line-height: 1.6;
+            padding: 15px 10px; 
+            line-height: 1.5;
+        }
+
+        @media (min-width: 600px) {
+            body { 
+                padding: 30px 20px; 
+            }
         }
 
         .container { 
-            max-width: 960px; 
+            max-width: 850px; 
             margin: 0 auto; 
-            padding: 20px 16px 40px 16px;
-        }
-
-        /* YLÄPALKKI JA NAVIGAATIO (PÄÄSIVUSTON MUKAINEN) */
-        .asiakasportaalipalkki {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0 16px 0;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 25px;
-            position: relative;
-            flex-wrap: wrap;
-        }
-
-        .ylapalkki-vasen {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .logo-palkki {
-            font-size: 21px;
-            font-weight: 600;
-            letter-spacing: -0.3px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-        }
-        .logo-palkki .sol { color: #1e3a8a; }
-        .logo-palkki .one { color: #0284c7; }
-
-        .paanavigaatio {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .paanavigaatio a {
-            color: #334155;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 13.5px;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .paanavigaatio a:hover {
-            color: var(--primary);
-            background-color: #f1f5f9;
-        }
-
-        .paanavigaatio a.aktiivinen {
-            color: var(--primary);
-            font-weight: 700;
-            background-color: #e0f2fe;
-        }
-
-        .hampurilainen-btn {
-            display: none;
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 6px 10px;
-            cursor: pointer;
-            color: #0f172a;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            line-height: 1;
-        }
-
-        @media (max-width: 920px) {
-            .hampurilainen-btn {
-                display: inline-flex;
-            }
-
-            .paanavigaatio {
-                display: none;
-                flex-direction: column;
-                width: 100%;
-                background: #ffffff;
-                border: 1px solid var(--border-color);
-                border-radius: 10px;
-                padding: 12px;
-                margin-top: 15px;
-                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
-                order: 3;
-            }
-
-            .paanavigaatio.auki {
-                display: flex !important;
-            }
-
-            .paanavigaatio a {
-                width: 100%;
-                padding: 11px 14px;
-                font-size: 15px;
-                border-bottom: 1px solid #f1f5f9;
-            }
-
-            .paanavigaatio a:last-child {
-                border-bottom: none;
-            }
         }
 
         /* Yläbanneri taustakuvalla */
         .header-banner {
-            background: linear-gradient(to bottom, #0f172a 0%, #1e3a8a 100%);
+            background: linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.65)), url('soloneverkkosivu.jpg') center/cover no-repeat;
             color: #ffffff;
-            padding: 30px 24px;
-            border-radius: 16px;
-            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
@@ -176,17 +72,16 @@
         }
 
         .header-banner h1 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin: 0 0 6px 0;
             color: #ffffff;
             border: none;
             padding: 0;
-            font-weight: 800;
         }
 
         @media (min-width: 600px) {
             .header-banner h1 { 
-                font-size: 1.7rem; 
+                font-size: 1.6rem; 
             }
         }
 
@@ -220,7 +115,7 @@
         }
 
         .guide-link-btn {
-            background-color: var(--primary);
+            background-color: #2563eb;
             color: #ffffff;
             text-decoration: none;
             padding: 8px 16px;
@@ -231,7 +126,7 @@
         }
 
         .guide-link-btn:hover {
-            background-color: var(--primary-hover);
+            background-color: #1d4ed8;
         }
 
         .guide-feedback-btn {
@@ -304,7 +199,7 @@
             flex: 1;
             min-width: 200px;
             padding: 10px;
-            border: 1px solid #cbd5e1;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             font-size: 14px;
             box-sizing: border-box;
@@ -616,47 +511,12 @@
             border-radius: 8px;
             margin-bottom: 18px;
         }
-
-        .footer {
-            text-align: center;
-            padding: 30px 0;
-            color: var(--text-muted);
-            font-size: 14px;
-            border-top: 1px solid var(--border-color);
-            margin-top: 40px;
-        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    
-    <!-- PÄÄSIVUSTON YLÄPALKKI -->
-    <header class="asiakasportaalipalkki">
-        <div class="ylapalkki-vasen">
-            <a href="index.html" class="logo-palkki">
-                <span class="sol">Sol</span><span class="one">One</span>
-            </a>
-        </div>
-
-        <!-- Hampurilaispainike mobiilille -->
-        <button class="hampurilainen-btn" id="hampurilais-nappi" onclick="toggleMobiilivalikko()" aria-label="Valikko">
-            ☰
-        </button>
-
-        <!-- Navigaatiovalikko -->
-        <nav class="paanavigaatio" id="paanavigaatio">
-            <a href="index.html">Etusivu</a>
-            <a href="palvelupaketit.html">Palvelupaketit</a>
-            <a href="index.html#tyokalut" onclick="suljeMobiilivalikko()">Työkalut</a>
-            <a href="index.html#uutiset" onclick="suljeMobiilivalikko()">Uutiset</a>
-            <a href="vastuullisuus.html">Vastuullisuus</a>
-            <a href="yhteystiedot.html">Yhteystiedot</a>
-            <a href="tietosuoja.html">Tietosuojaseloste</a>
-        </nav>
-    </header>
-
-    <!-- YLÄBANNERI PÄÄSIVUN LAIVASTONSINISELLÄ VALOKUVALLA -->
+    <!-- YLÄBANNERI -->
     <div class="header-banner">
         <div>
             <h1><span class="logo-valvomo-sol">Sol</span><span class="logo-valvomo-one">One</span> Valvomo (DEMO)</h1>
@@ -763,19 +623,6 @@
         </div>
         <div id="historia-lista"></div>
     </div>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business</strong></p>
-        <p style="margin: 5px 0;">SolOne Automaatioratkaisut</p>
-        <p style="margin: 5px 0; font-size: 13px; color: var(--text-muted);">Y-tunnus: 1391767-8</p>
-        <p style="margin: 10px 0; font-size: 13px;">
-            <a href="vastuullisuus.html" style="color: var(--text-muted); text-decoration: none;">Vastuullisuus</a>
-            <span style="color: var(--border-color); margin: 0 8px;">|</span>
-            <a href="tietosuoja.html" style="color: var(--text-muted); text-decoration: none;">Tietosuojaseloste</a>
-        </p>
-        <p style="font-size: 12px; color: #94a3b8; margin-top: 15px;">&copy; SolOne. Kaikki oikeudet pidätetään.</p>
-    </footer>
 </div>
 
 <script>
@@ -789,22 +636,6 @@
 
     let nykyinenAsiakastunnus = localStorage.getItem('demo_kirjautunut_tunnus') || null;
     let automaattiPaivitysAjastin = null;
-
-    function toggleMobiilivalikko() {
-        const navi = document.getElementById('paanavigaatio');
-        const nappi = document.getElementById('hampurilais-nappi');
-        navi.classList.toggle('auki');
-        nappi.textContent = navi.classList.contains('auki') ? '✕' : '☰';
-    }
-
-    function suljeMobiilivalikko() {
-        const navi = document.getElementById('paanavigaatio');
-        const nappi = document.getElementById('hampurilais-nappi');
-        if (navi.classList.contains('auki')) {
-            navi.classList.remove('auki');
-            nappi.textContent = '☰';
-        }
-    }
 
     function naytaIlmoitus(viesti, tyyppi = 'success') {
         const alue = document.getElementById('ilmoitus-alue');
