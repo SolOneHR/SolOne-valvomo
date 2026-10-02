@@ -227,6 +227,39 @@
             display: flex;
             justify-content: space-between;
         }
+
+        .tilamerkinta {
+            display: inline-block;
+            background-color: var(--success);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .tilamerkinta.kasittelyssa-badge {
+            background-color: #f59e0b;
+        }
+
+        .tilaus-kortti {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #ffffff;
+        }
+
+        .tilaus-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
     </style>
 </head>
 <body>
@@ -261,6 +294,7 @@
         <div class="tab-nav">
             <button class="tab-btn active" id="tab-btn-syotto" onclick="vaihdaTab('syotto')">⚡ Pikasyöttö</button>
             <button class="tab-btn" id="tab-btn-odottavat" onclick="vaihdaTab('odottavat')">📋 Odottavat <span id="odottavat-badge"></span></button>
+            <button class="tab-btn" id="tab-btn-tilaus" onclick="vaihdaTab('tilaus')">📦 Tilaus</button>
         </div>
 
         <!-- NÄKYMÄ 1: PIKASYÖTTÖ -->
@@ -321,6 +355,15 @@
         <!-- NÄKYMÄ 2: ODOTTAVAT JA HYVÄKSYNTÄ -->
         <div id="nakyma-odottavat" style="display:none;">
             <div id="odottavat-lista">Ladataan odottavia...</div>
+        </div>
+
+        <!-- NÄKYMÄ 3: TILAUS -->
+        <div id="nakyma-tilaus" style="display:none;">
+            <div class="card">
+                <h3 style="margin-top:0; font-size:1.1rem; color:var(--text-main);">📦 Omat tilaukset</h3>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">Voimassa olevat tilaukset ja jaksot.</p>
+                <div id="pwa-tilaus-lista">Ladataan tilauksia...</div>
+            </div>
         </div>
     </div>
 </div>
@@ -517,20 +560,101 @@
     function vaihdaTab(tab) {
         const syottoNakyma = document.getElementById('nakyma-syotto');
         const odottavatNakyma = document.getElementById('nakyma-odottavat');
+        const tilausNakyma = document.getElementById('nakyma-tilaus');
+
         const btnSyotto = document.getElementById('tab-btn-syotto');
         const btnOdottavat = document.getElementById('tab-btn-odottavat');
+        const btnTilaus = document.getElementById('tab-btn-tilaus');
+
+        syottoNakyma.style.display = 'none';
+        odottavatNakyma.style.display = 'none';
+        if (tilausNakyma) tilausNakyma.style.display = 'none';
+
+        btnSyotto.classList.remove('active');
+        btnOdottavat.classList.remove('active');
+        if (btnTilaus) btnTilaus.classList.remove('active');
 
         if (tab === 'syotto') {
             syottoNakyma.style.display = 'block';
-            odottavatNakyma.style.display = 'none';
             btnSyotto.classList.add('active');
-            btnOdottavat.classList.remove('active');
-        } else {
-            syottoNakyma.style.display = 'none';
+        } else if (tab === 'odottavat') {
             odottavatNakyma.style.display = 'block';
             btnOdottavat.classList.add('active');
-            btnSyotto.classList.remove('active');
             lataaOdottavatJulkaisut();
+        } else if (tab === 'tilaus') {
+            if (tilausNakyma) tilausNakyma.style.display = 'block';
+            if (btnTilaus) btnTilaus.classList.add('active');
+            lataaPwaTilaustiedot();
+        }
+    }
+
+    async function lataaPwaTilaustiedot() {
+        const tilauksetLista = document.getElementById('pwa-tilaus-lista');
+        const email = localStorage.getItem('user_email');
+        const token = localStorage.getItem('supabase_token');
+
+        if (!tilauksetLista) return;
+        if (!email || !token) {
+            tilauksetLista.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem;">Ei kirjautumistietoja.</div>';
+            return;
+        }
+
+        tilauksetLista.innerHTML = 'Ladataan tilauksia...';
+
+        try {
+            const headers = {
+                'apikey': ANON_KEY,
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            };
+
+            const resAsiakas = await fetch(SUPABASE_URL + '/rest/v1/asiakkaat?sahkoposti=eq.' + encodeURIComponent(email) + '&select=id', {
+                method: 'GET',
+                headers: headers
+            });
+            const asiakasData = await resAsiakas.json();
+
+            if (!asiakasData || asiakasData.length === 0) {
+                tilauksetLista.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem;">Ei löytynyt asiakastietoja tälle sähköpostille.</div>';
+                return;
+            }
+
+            const asiakasId = asiakasData[0].id;
+
+            const resTilaukset = await fetch(SUPABASE_URL + '/rest/v1/tilaukset?asiakas_id=eq.' + asiakasId + '&select=id,status,tilaustyyppi,alku_pvm,loppu_pvm,palvelut(nimi)&order=luotu_aika.desc', {
+                method: 'GET',
+                headers: headers
+            });
+            const tilauksetData = await resTilaukset.json();
+
+            if (!tilauksetData || tilauksetData.length === 0) {
+                tilauksetLista.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem;">Sinulla ei ole vielä tilauksia.</div>';
+                return;
+            }
+
+            let html = '';
+            tilauksetData.forEach(function(tilaus) {
+                const palvelunNimi = (tilaus.palvelut && tilaus.palvelut.nimi) ? tilaus.palvelut.nimi : 'Palvelu';
+                const alkuPvm = tilaus.alku_pvm ? new Date(tilaus.alku_pvm).toLocaleDateString('fi-FI') : 'Ei vielä alkanut';
+                const loppuPvm = tilaus.loppu_pvm ? new Date(tilaus.loppu_pvm).toLocaleDateString('fi-FI') : 'Toistaiseksi voimassa / Ikuinen';
+                const statusBadgeClass = tilaus.status === 'aktiivinen' ? 'tilamerkinta' : 'tilamerkinta kasittelyssa-badge';
+
+                html += '<div class="tilaus-kortti">';
+                html += '  <div class="' + statusBadgeClass + '">Status: ' + (tilaus.status || 'ei määritelty') + '</div>';
+                html += '  <div class="tilaus-meta">';
+                html += '    <span><strong>Palvelu:</strong> ' + palvelunNimi + '</span>';
+                html += '    <span><strong>Tilaustyyppi:</strong> ' + (tilaus.tilaustyyppi || '-') + '</span>';
+                html += '    <span><strong>Alkupäivä:</strong> ' + alkuPvm + '</span>';
+                html += '    <span><strong>Loppupäivä:</strong> ' + loppuPvm + '</span>';
+                html += '  </div>';
+                html += '</div>';
+            });
+
+            tilauksetLista.innerHTML = html;
+
+        } catch (error) {
+            console.error("Virhe tilauksien latauksessa:", error);
+            tilauksetLista.innerHTML = '<div style="color:var(--danger); font-size:0.85rem;">Virhe ladattaessa tilauksia.</div>';
         }
     }
 
