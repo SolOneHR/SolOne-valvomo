@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <title>SolOne – Brand Voice -tyylinluoja</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 30px;
+      display: flex;
+      justify-content: center;
+    }
+    .card {
+      background: #ffffff;
+      max-width: 760px;
+      width: 100%;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.05);
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 22px;
+      color: #1e293b;
+    }
+    .desc {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .field {
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #334155;
+    }
+    .label-hint {
+      font-weight: normal;
+      color: #64748b;
+      font-size: 12px;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+    .row {
+      display: flex;
+      gap: 16px;
+    }
+    .row .field {
+      flex: 1;
+    }
+    button {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #1d4ed8;
+    }
+    button:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+    #status {
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 6px;
+      display: none;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .status-loading {
+      background: #e0f2fe;
+      color: #0369a1;
+      display: block !important;
+    }
+    .status-success {
+      background: #f0fdf4;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+      display: block !important;
+    }
+    .status-error {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      display: block !important;
+    }
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background: #ffffff;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      font-size: 13px;
+      margin-top: 10px;
+      color: #0f172a;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h1>SolOne – Määritä "Oma profiili"</h1>
+  <p class="desc">Syötä alle 1–3 mallijulkaisua. Lomake yhdistää tekstit ja tekoäly tiivistää niistä automaattisesti yhtenäisen äänensävyn (Brand Voice), joka tallentuu suoraan tilitietoihin.</p>
+
+  <div class="row">
+    <div class="field">
+      <label for="sometiliId">Sometili ID (UUID)</label>
+      <input type="text" id="sometiliId" placeholder="esim. 123e4567-e89b-12d3-a456-426614174000" required>
+    </div>
+    <div class="field">
+      <label for="userEmail">Käyttäjän sähköposti</label>
+      <input type="text" id="userEmail" placeholder="esim. info@solone.fi">
+    </div>
+  </div>
+
+  <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;">
+
+  <div class="field">
+    <label for="sample1">Malliteksti 1 <span class="label-hint">(esim. arkinen työpäivä tai kenttäkuulumiset)</span></label>
+    <textarea id="sample1" placeholder="Liitä tähän arkinen tai ajankohtainen somejulkaisu..."></textarea>
+  </div>
+
+  <div class="field">
+    <label for="sample2">Malliteksti 2 <span class="label-hint">(esim. asiantuntijavinkki tai ratkaisukeskeinen julkaisu)</span></label>
+    <textarea id="sample2" placeholder="Liitä tähän asiantuntijuutta korostava julkaisu..."></textarea>
+  </div>
+
+  <div class="field">
+    <label for="sample3">Malliteksti 3 <span class="label-hint">(esim. suora toimintakehote, asiakaskokemus tai palvelun esittely)</span></label>
+    <textarea id="sample3" placeholder="Liitä tähän myynnillisempi tai asiakaslähtöinen julkaisu..."></textarea>
+  </div>
+
+  <button id="submitBtn" onclick="sendData()">Analysoi ja tallenna tyyli</button>
+
+  <div id="status"></div>
+</div>
+
+<script>
+  // Kiinteä Make.com Webhook -osoite
+  const WEBHOOK_URL = "https://hook.eu1.make.com/6ltdq3xoe0bnliboccn7qw929g1m224y";
+
+  // Palautetaan aiemmin käytetyt tilitiedot selaimen muistista
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedId = localStorage.getItem('solone_bv_sometili_id');
+    const savedEmail = localStorage.getItem('solone_bv_email');
+
+    if (savedId) document.getElementById('sometiliId').value = savedId;
+    if (savedEmail) document.getElementById('userEmail').value = savedEmail;
+  });
+
+  async function sendData() {
+    const sometiliId = document.getElementById('sometiliId').value.trim();
+    const userEmail = document.getElementById('userEmail').value.trim();
+    
+    const sample1 = document.getElementById('sample1').value.trim();
+    const sample2 = document.getElementById('sample2').value.trim();
+    const sample3 = document.getElementById('sample3').value.trim();
+
+    const statusDiv = document.getElementById('status');
+    const submitBtn = document.getElementById('submitBtn');
+
+    if (!sometiliId) {
+      alert("Täytä Sometili ID!");
+      return;
+    }
+
+    // Yhdistetään täytetyt esimerkit siististi selitteillä
+    const samplesArray = [];
+    if (sample1) samplesArray.push("MALLIJULKAISU 1 (Arki/työpäivä):\n" + sample1);
+    if (sample2) samplesArray.push("MALLIJULKAISU 2 (Asiantuntija/vinkki):\n" + sample2);
+    if (sample3) samplesArray.push("MALLIJULKAISU 3 (Palvelu/asiakas):\n" + sample3);
+
+    if (samplesArray.length === 0) {
+      alert("Liitä vähintään yksi mallijulkaisu johonkin laatikoista!");
+      return;
+    }
+
+    const combinedSamples = samplesArray.join("\n\n---\n\n");
+
+    // Tallennetaan Sometili ID ja sähköposti selaimeen tulevia kertoja varten
+    localStorage.setItem('solone_bv_sometili_id', sometiliId);
+    localStorage.setItem('solone_bv_email', userEmail);
+
+    // Lähetys
+    submitBtn.disabled = true;
+    statusDiv.className = 'status-loading';
+    statusDiv.innerHTML = 'Analysoidaan tyyliä ja päivitetään Supabasea... Odota hetki.';
+
+    try {
+      const response = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          sometili_id: sometiliId,
+          user_email: userEmail,
+          samples: combinedSamples
+        })
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        statusDiv.className = 'status-success';
+        statusDiv.innerHTML = `
+          <strong>Onnistui! Oma profiili on analysoitu ja tallennettu kantaan.</strong>
+          <p>Tekoälyn luoma tiivistetty ohje (Brand Voice):</p>
+          <pre>${result.brand_prompt}</pre>
+        `;
+      } else {
+        throw new Error(result.message || "Tuntematon virhe vastauksessa");
+      }
+    } catch (err) {
+      statusDiv.className = 'status-error';
+      statusDiv.innerHTML = `<strong>Virhe lähetyksessä:</strong> ${err.message}`;
+    } finally {
+      submitBtn.disabled = false;
+    }
+  }
+</script>
+
+</body>
+</html>
