@@ -582,8 +582,9 @@
             <div class="grid-valinnat">
                 <div>
                     <label class="field-label">Julkaisuprofiili:</label>
-                    <select id="uusi-profiili" class="valinta-kentta">
+                    <select id="uusi-profiili" class="valinta-kentta" onchange="tarkistaOmaTyyliValinta(this, 'uusi-sometili-valinta')">
                         <option value="Yleinen">Yleinen</option>
+                        <option value="Oma tyyli">🎯 Oma tyyli (Brändiprofiili)</option>
                         <option value="Säilytä teksti (vain emojit & tagit)">✨ Säilytä teksti (vain emojit & tagit)</option>
                         <option value="Yritys & B2B">Yritys & B2B</option>
                         <option value="Yritys & B2C">Yritys & B2C</option>
@@ -1074,6 +1075,26 @@
             kayttajanSometilit = Array.from(tilitKartta.values());
         } catch (e) {
             console.error("Virhe ladattaessa sometilejä:", e);
+        }
+    }
+
+    function tarkistaOmaTyyliValinta(selectElem, tiliSelectId) {
+        if (!selectElem || selectElem.value !== 'Oma tyyli') return;
+
+        let tiliId = null;
+        const tiliSelect = document.getElementById(tiliSelectId);
+        if (tiliSelect && tiliSelect.value) {
+            tiliId = tiliSelect.value;
+        } else if (kayttajanSometilit && kayttajanSometilit.length > 0) {
+            const oletus = kayttajanSometilit.find(t => t.ensisijainen) || kayttajanSometilit[0];
+            tiliId = oletus.id;
+        }
+
+        const valittuTili = kayttajanSometilit.find(t => t.id === tiliId);
+
+        if (!valittuTili || !valittuTili.custom_brand_prompt) {
+            alert("Et ole vielä määrittänyt omaa tyyliä tälle sivulle.\nVoit määrittää sen asetuksista.");
+            selectElem.value = 'Yleinen';
         }
     }
 
@@ -1902,6 +1923,7 @@
             const prof = julkaisu.julkaisuprofiili || 'Yleinen';
             htmlSisalto += '<select id="profiili-' + julkaisu.id + '" class="valinta-kentta" onchange="paivitaProfiiliKantaan(\'' + julkaisu.id + '\', this.value)">';
             htmlSisalto += '  <option value="Yleinen"' + (prof === 'Yleinen' ? ' selected' : '') + '>Yleinen</option>';
+            htmlSisalto += '  <option value="Oma tyyli"' + (prof === 'Oma tyyli' ? ' selected' : '') + '>🎯 Oma tyyli (Brändiprofiili)</option>';
             htmlSisalto += '  <option value="Säilytä teksti (vain emojit & tagit)"' + (prof === 'Säilytä teksti (vain emojit & tagit)' ? ' selected' : '') + '>✨ Säilytä teksti (vain emojit & tagit)</option>';
             htmlSisalto += '  <option value="Yritys & B2B"' + (prof === 'Yritys & B2B' ? ' selected' : '') + '>Yritys & B2B</option>';
             htmlSisalto += '  <option value="Yritys & B2C"' + (prof === 'Yritys & B2C' ? ' selected' : '') + '>Yritys & B2C</option>';
@@ -2307,6 +2329,25 @@
     }
 
     async function paivitaProfiiliKantaan(id, uusiProfiili) {
+        if (uusiProfiili === 'Oma tyyli') {
+            const sometiliSelect = document.getElementById('sometili-' + id);
+            let tiliId = sometiliSelect ? sometiliSelect.value : null;
+
+            if (!tiliId && kayttajanSometilit && kayttajanSometilit.length > 0) {
+                const oletus = kayttajanSometilit.find(t => t.ensisijainen) || kayttajanSometilit[0];
+                tiliId = oletus.id;
+            }
+
+            const valittuTili = kayttajanSometilit.find(t => t.id === tiliId);
+
+            if (!valittuTili || !valittuTili.custom_brand_prompt) {
+                alert("Et ole vielä määrittänyt omaa tyyliä tälle sivulle.\nVoit määrittää sen asetuksista.");
+                const profSelect = document.getElementById('profiili-' + id);
+                if (profSelect) profSelect.value = 'Yleinen';
+                uusiProfiili = 'Yleinen';
+            }
+        }
+
         const db = haeSupabaseAsiakas();
         try {
             await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {

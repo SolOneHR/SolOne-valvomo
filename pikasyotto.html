@@ -283,7 +283,7 @@
         <h3 style="margin-top:0; font-size:1.1rem;">Kirjaudu pikasyöttöön</h3>
         <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Kirjaudu kerran samoilla Somevalvomon tunnuksillasi.</p>
         <label>Sähköposti:</label>
-        <input type="email" id="pwa-login-email" class="input-field" placeholder="esim. pasi@solone.fi">
+        <input type="email" id="pwa-login-email" class="input-field" placeholder="sähköpostiosoite">
         <label>Salasana:</label>
         <input type="password" id="pwa-login-password" class="input-field" placeholder="Salasana">
         <button class="btn-action btn-save" onclick="suoritaPwaKirjautuminen()">Kirjaudu sisään</button>
@@ -318,7 +318,7 @@
                     <option value="">Haetaan tilejä...</option>
                 </select>
 
-                <label>✏️ Mitä teet?</label>
+                <label>✏️ Kirjoita tai sanele julkaisun aihe</label>
                 <textarea id="kentta-teksti" rows="3" placeholder="Sanele tai kirjoita lyhyesti..."></textarea>
 
                 <div class="grid-2">
@@ -386,7 +386,6 @@
         setTimeout(() => { p.style.display = 'none'; }, 5000);
     }
 
-    // TURVALLINEN TARKISTUS: Tarkistaa tilauksen vain lähetyshetkellä
     async function tarkistaTilauksenAktiivisuusEnnenTallennusta() {
         const email = localStorage.getItem('user_email');
         const token = localStorage.getItem('supabase_token');
@@ -410,9 +409,9 @@
         }
     }
 
-    async function lataaKayttajanSometilit() {
+    async function lataaKayttajanSometilit(uudelleenYritetty = false) {
         const email = localStorage.getItem('user_email');
-        const token = localStorage.getItem('supabase_token');
+        let token = localStorage.getItem('supabase_token');
         const select = document.getElementById('kentta-sometili');
         if (!email || !token) {
             select.innerHTML = '<option value="">Ei kirjautunut</option>';
@@ -423,11 +422,23 @@
             const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${token}` };
             
             const res = await fetch(`${SUPABASE_URL}/rest/v1/asiakkaan_sometilit?asiakastunnus=eq.${encodeURIComponent(email)}&order=ensisijainen.desc`, { headers });
+            
+            if (res.status === 401 && !uudelleenYritetty) {
+                const virkistysOk = await varmistaPwaTokenTaustalla();
+                if (virkistysOk) {
+                    return lataaKayttajanSometilit(true);
+                }
+            }
+
+            if (!res.ok) throw new Error("HTTP " + res.status);
+
             let tilit = await res.json() || [];
 
             if (tilit.length === 0) {
                 const resJaetut = await fetch(`${SUPABASE_URL}/rest/v1/v_kayttajaoikeudet?user_email=eq.${encodeURIComponent(email)}`, { headers });
-                tilit = await resJaetut.json() || [];
+                if (resJaetut.ok) {
+                    tilit = await resJaetut.json() || [];
+                }
             }
 
             kayttajanKaikkiTilit = tilit;
@@ -449,6 +460,12 @@
             paivitaKanavatValitulleTilille();
         } catch (e) {
             console.log("Tilitietojen haku:", e);
+            if (!uudelleenYritetty) {
+                const virkistysOk = await varmistaPwaTokenTaustalla();
+                if (virkistysOk) {
+                    return lataaKayttajanSometilit(true);
+                }
+            }
             select.innerHTML = '<option value="">Virhe ladattaessa tilejä</option>';
         }
     }
@@ -524,7 +541,7 @@
             localStorage.setItem('user_email', data.user.email);
 
             naytaIlmoitus("✓ Kirjauduttu sisään!");
-            tarkistaPwaIstunto();
+            await tarkistaPwaIstunto();
         } catch (e) {
             naytaIlmoitus("Virhe: " + e.message, "banner-error");
         }
@@ -539,7 +556,7 @@
 
     async function varmistaPwaTokenTaustalla() {
         const refreshToken = localStorage.getItem('supabase_refresh_token');
-        if (!refreshToken) return;
+        if (!refreshToken) return false;
 
         try {
             const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
@@ -550,10 +567,22 @@
             const data = await res.json();
             if (res.ok && data.access_token) {
                 localStorage.setItem('supabase_token', data.access_token);
-                localStorage.setItem('supabase_refresh_token', data.refresh_token);
+                if (data.refresh_token) {
+                    localStorage.setItem('supabase_refresh_token', data.refresh_token);
+                }
+                return true;
+            } else if (res.status === 400 || res.status === 401) {
+                // Refresh token on vanhentunut, poistetaan vanhentuneet tiedot ja näytetään kirjautumisruutu
+                localStorage.removeItem('supabase_token');
+                localStorage.removeItem('supabase_refresh_token');
+                localStorage.removeItem('user_email');
+                tarkistaPwaIstunto();
+                return false;
             }
+            return false;
         } catch (e) {
             console.log("Token-päivitys odottaa yhteyttä.");
+            return false;
         }
     }
 
@@ -700,7 +729,6 @@
     }
 
     async function lahetaKenttaSyotto() {
-        // TARKISTETAAN ETTÄ TILAUS ON AKTIIVINEN ENNEN TALLENNUSTA
         const tilaOk = await tarkistaTilauksenAktiivisuusEnnenTallennusta();
         if (!tilaOk) {
             naytaIlmoitus("⚠️ Tallennus vaatii aktiivisen tilauksen.", "banner-error");
@@ -860,7 +888,6 @@
     }
 
     async function pikaJulkaise(id) {
-        // TARKISTETAAN TILAUS MYÖS PIKAJULKAISUSSA
         const tilaOk = await tarkistaTilauksenAktiivisuusEnnenTallennusta();
         if (!tilaOk) {
             naytaIlmoitus("⚠️ Julkaiseminen vaatii aktiivisen tilauksen.", "banner-error");
