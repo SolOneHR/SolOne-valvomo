@@ -864,12 +864,31 @@
             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 22px; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 14px;">
                 <div>
                     <span class="badge" style="background-color: #f1f5f9; color: #334155;">AJANKOHTAISTA & KEHITYS</span>
-                    <h2 style="margin: 4px 0 0 0; font-size: 21px; color: var(--text-main);">SolOne News 📢</h2>
+                    <h2 style="margin: 4px 0 0 0; font-size: 21px; color: var(--text-main);">SolOne Uutiset 📢</h2>
                 </div>
-                <span style="font-size: 13px; color: var(--text-muted);">Viimeisimmät päivitykset, tietosuoja ja ratkaisut</span>
+                <span style="font-size: 13px; color: var(--text-muted);">Viimeisimmät päivitykset, ominaisuudet ja ratkaisut</span>
             </div>
 
+            <!-- KAKSI VIIMEISINTÄ UUTISTA AINA NÄKYVILLÄ -->
             <div id="uutiset-sailio" class="grid">
+                <!-- Uusin uutinen: Oma brändiääni -->
+                <div class="uutis-kortti">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 12px; font-weight: bold; color: #8b5cf6;">Tekoäly & Brändi</span>
+                            <span style="font-size: 12px; color: var(--text-muted);">12.10.2026</span>
+                        </div>
+                        <h3 style="font-size: 16px; margin: 0 0 8px 0; color: var(--text-main);">Oma brändiääni -toiminto esittelyssä</h3>
+                        <p style="font-size: 13.5px; color: var(--text-muted); margin: 0; line-height: 1.55;">
+                            SolOnen tekoäly oppii yrityksesi ja brändisi oman äänensävyn, sanaston ja kohderyhmän. Luonnokset kuulostavat aina aidosti sinulta – ei geneeriseltä tekoälytekstiltä.
+                        </p>
+                    </div>
+                    <div class="uutis-kanavat" style="display: flex; gap: 6px; margin-top: 14px; padding-top: 10px; border-top: 1px solid #e2e8f0; font-size: 11.5px; color: var(--text-muted);">
+                        <span>✨ Älykkäät profiilit</span> • <span>💻 Valvomo</span>
+                    </div>
+                </div>
+
+                <!-- Toiseksi uusin uutinen: Pika -->
                 <div class="uutis-kortti">
                     <div>
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -885,7 +904,11 @@
                         <span>🌐 Web</span> • <span>📱 PWA</span>
                     </div>
                 </div>
+            </div>
 
+            <!-- AIKAISEMMAT UUTISET (PIILOTETTU OLETUKSENA) -->
+            <div id="aiemmat-uutiset" class="grid" style="display: none; margin-top: 20px;">
+                <!-- GDPR & Konesalit -->
                 <div class="uutis-kortti">
                     <div>
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -901,6 +924,14 @@
                         <span>🌐 Web</span> • <span>💼 LinkedIn</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- AVAA / SULJE -PAINIKE -->
+            <div style="text-align: center; margin-top: 24px;">
+                <button id="btn-toggle-uutiset" onclick="toggleAiemmatUutiset()" style="background: transparent; border: 1px solid var(--border-color); color: #334155; padding: 9px 18px; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
+                    <span>Näytä aikaisemmat uutiset</span>
+                    <span id="uutiset-nuoli" style="transition: transform 0.2s;">↓</span>
+                </button>
             </div>
         </div>
 
@@ -1119,6 +1150,22 @@
             tarkistaIstunto();
         }
     });
+    
+    function toggleAiemmatUutiset() {
+        const lohko = document.getElementById('aiemmat-uutiset');
+        const nappi = document.getElementById('btn-toggle-uutiset');
+        const nuoli = document.getElementById('uutiset-nuoli');
+
+        if (lohko.style.display === 'none' || lohko.style.display === '') {
+            lohko.style.display = 'grid';
+            nappi.querySelector('span').textContent = 'Piilota aikaisemmat uutiset';
+            nuoli.textContent = '↑';
+        } else {
+            lohko.style.display = 'none';
+            nappi.querySelector('span').textContent = 'Näytä aikaisemmat uutiset';
+            nuoli.textContent = '↓';
+        }
+    }
 </script>
 </body>
 </html>
