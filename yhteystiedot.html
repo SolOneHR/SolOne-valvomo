@@ -45,47 +45,54 @@
             padding: 20px 16px 40px 16px;
         }
 
-        /* YLÄPALKKI */
+        /* YLÄPALKKI & NAVIGAATIO */
         .asiakasportaalipalkki {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0 16px 0;
+            padding: 14px 0 20px 0;
             border-bottom: 1px solid var(--border-color);
-            margin-bottom: 25px;
+            margin-bottom: 35px;
             position: relative;
-            flex-wrap: wrap;
         }
 
-        .ylapalkki-vasen {
+        .logo-nav-group {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 24px;
         }
 
         .logo-palkki {
-            font-size: 21px;
-            font-weight: 600;
-            letter-spacing: -0.3px;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.1px;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
+            white-space: nowrap;
         }
-        .logo-palkki .sol { color: #1e3a8a; }
-        .logo-palkki .one { color: #0284c7; }
+        .logo-palkki .sol { color: #1e3a8a; font-weight: 700; }
+        .logo-palkki .one { color: #0284c7; font-weight: 700; }
+
+        /* Virallinen optinen O-kirjaimen korjaus */
+        .optinen-o {
+            font-size: 1.08em;
+            display: inline-block;
+            vertical-align: -0.01em;
+        }
 
         /* TYYLIT TYÖPÖYDÄLLÄ */
         .paanavigaatio {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .paanavigaatio a {
             color: #334155;
             text-decoration: none;
             font-weight: 500;
-            font-size: 13.5px;
+            font-size: 14px;
             padding: 6px 10px;
             border-radius: 6px;
             transition: all 0.2s ease;
@@ -106,25 +113,41 @@
         .portaali-toiminnot {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .hampurilainen-btn {
             display: none;
-            background: #ffffff;
+            background: transparent;
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 6px 10px;
+            padding: 7px 10px;
             cursor: pointer;
-            color: #0f172a;
+            color: var(--text-main);
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            line-height: 1;
         }
 
-        /* MOBIILIMUUTOKSET KUN NÄYTTÖ ON ALLE 920px */
-        @media (max-width: 920px) {
+        .hampurilainen-btn svg {
+            width: 22px;
+            height: 22px;
+            display: block;
+        }
+
+        /* MOBIILIMUUTOKSET KUN NÄYTTÖ ON ALLE 768px */
+        @media (max-width: 768px) {
+            .asiakasportaalipalkki {
+                flex-wrap: wrap;
+                gap: 12px;
+                padding-bottom: 15px;
+                margin-bottom: 25px;
+            }
+
+            .logo-nav-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+
             .hampurilainen-btn {
                 display: inline-flex;
             }
@@ -137,29 +160,24 @@
                 border: 1px solid var(--border-color);
                 border-radius: 10px;
                 padding: 12px;
-                margin-top: 15px;
-                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
-                order: 3;
+                margin-top: 10px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
             }
 
             .paanavigaatio.auki {
-                display: flex !important;
+                display: flex;
             }
 
             .paanavigaatio a {
                 width: 100%;
-                padding: 11px 14px;
-                font-size: 15px;
-                border-bottom: 1px solid #f1f5f9;
-            }
-
-            .paanavigaatio a:last-child {
-                border-bottom: none;
+                padding: 10px 12px;
+                font-size: 14.5px;
             }
 
             .portaali-toiminnot {
-                margin-left: auto;
-                margin-right: 10px;
+                width: 100%;
+                justify-content: flex-start;
+                margin-top: 4px;
             }
         }
 
@@ -168,14 +186,20 @@
             text-decoration: none;
             font-weight: 600;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 13.5px;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 10px;
+            padding: 6px 12px;
             border-radius: 6px;
             background-color: #ffffff;
             border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        .portal-linkki:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+            background-color: #f8fafc;
         }
 
         .portal-linkki svg {
@@ -187,40 +211,46 @@
         #portaali-kirjautunut {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
         .btn-valvomo-linkki {
             background-color: var(--primary);
             color: white;
-            padding: 6px 10px;
+            padding: 6px 12px;
             border-radius: 6px;
             text-decoration: none;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 12.5px;
+            transition: background-color 0.2s;
+            white-space: nowrap;
         }
+        .btn-valvomo-linkki:hover { background-color: var(--primary-hover); }
 
         .btn-pika-linkki {
             background-color: #0f172a;
             color: #38bdf8;
             border: 1px solid #334155;
-            padding: 6px 10px;
+            padding: 6px 12px;
             border-radius: 6px;
             text-decoration: none;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 12.5px;
+            white-space: nowrap;
         }
 
         .btn-ulos-pieni {
             background: transparent;
             border: 1px solid var(--text-muted);
             color: var(--text-muted);
-            padding: 5px 8px;
+            padding: 5px 9px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 12px;
+            white-space: nowrap;
         }
+        .btn-ulos-pieni:hover { color: var(--danger); border-color: var(--danger); }
 
         /* LOMAKKEET */
         #portaali-lomake {
@@ -428,10 +458,30 @@
         
         <!-- YLÄPALKKI -->
         <header class="asiakasportaalipalkki">
-            <div class="ylapalkki-vasen">
+            <div class="logo-nav-group">
                 <a href="index.html" class="logo-palkki">
-                    <span class="sol">Sol</span><span class="one">One</span>
+                    <span class="sol">Sol</span><span class="one"><span class="optinen-o">O</span>ne</span>
                 </a>
+                
+                <!-- Mobiilin hampurilaispainike -->
+                <button class="hampurilainen-btn" onclick="toggleMobiilivalikko()" aria-label="Avaa valikko">
+                    <svg id="hampurilainen-ikoni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+
+                <!-- Navigaatiovalikko -->
+                <nav class="paanavigaatio" id="paanavigaatio">
+                    <a href="index.html">Etusivu</a>
+                    <a href="palvelupaketit.html">Palvelupaketit</a>
+                    <a href="index.html#tyokalut">Työkalut</a>
+                    <a href="index.html#uutiset">Uutiset</a>
+                    <a href="vastuullisuus.html">Vastuullisuus</a>
+                    <a href="yhteystiedot.html" class="aktiivinen">Yhteystiedot</a>
+                    <a href="tietosuoja.html">Tietosuojaseloste</a>
+                </nav>
             </div>
 
             <!-- Asiakasportaalin toiminnot -->
@@ -446,28 +496,12 @@
                     </span>
                 </div>
                 <div id="portaali-kirjautunut" style="display: none;">
-                    <span style="color: var(--text-muted); font-size: 12px; font-weight: 500;" id="kayttaja-tunnus"></span>
+                    <span style="color: var(--text-muted); font-size: 13px; font-weight: 500;" id="kayttaja-tunnus"></span>
                     <a href="pikasyotto.html" class="btn-pika-linkki">⚡ Pika</a>
-                    <a href="somevalvomo.html" class="btn-valvomo-linkki">💻 Valvomo</a>
+                    <a href="somevalvomo.html" class="btn-valvomo-linkki">💻 Avaa Somevalvomo</a>
                     <button class="btn-ulos-pieni" onclick="kirjauduUlos()">Ulos</button>
                 </div>
             </div>
-
-            <!-- Hampurilaispainike mobiilille -->
-            <button class="hampurilainen-btn" id="hampurilais-nappi" onclick="toggleMobiilivalikko()" aria-label="Valikko">
-                ☰
-            </button>
-
-            <!-- Navigaatiovalikko -->
-            <nav class="paanavigaatio" id="paanavigaatio">
-                <a href="index.html">Etusivu</a>
-                <a href="palvelupaketit.html">Palvelupaketit</a>
-                <a href="index.html#tyokalut" onclick="suljeMobiilivalikko()">Työkalut</a>
-                <a href="index.html#uutiset" onclick="suljeMobiilivalikko()">Uutiset</a>
-                <a href="vastuullisuus.html">Vastuullisuus</a>
-                <a href="yhteystiedot.html" class="aktiivinen">Yhteystiedot</a>
-                <a href="tietosuoja.html">Tietosuojaseloste</a>
-            </nav>
         </header>
 
         <!-- KIRJAUTUMISLOMAKE -->
@@ -500,7 +534,7 @@
         <!-- Yhteystietokortti -->
         <div class="card">
             <h2 style="margin-top: 0; font-size: 20px; color: var(--text-main);">
-                <span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business
+                <a href="index.html" class="logo-palkki" style="font-size: 20px;"><span class="sol" style="color: #0f172a;">Sol</span><span class="one" style="color: #0284c7;"><span class="optinen-o">O</span>ne</span><span style="color: #0f172a; margin-left: 5px; font-weight: 700;">HR & Business</span></a>
             </h2>
             <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
                 SolOne Automaatioratkaisut<br>
@@ -538,8 +572,8 @@
                     </a>
                     <a href="https://www.linkedin.com/company/144572065" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg> LinkedIn
-                  </a>
-                  <a href="https://www.youtube.com/@SolOne-info" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
+                    </a>
+                    <a href="https://www.youtube.com/@SolOne-info" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg> YouTube
                     </a>
                 </div>
@@ -622,7 +656,7 @@
 
         <!-- FOOTER -->
         <footer class="footer">
-            <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business</strong></p>
+            <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 700;"><span class="optinen-o">O</span>ne</span> HR & Business</strong></p>
             <p style="margin: 5px 0;">SolOne Automaatioratkaisut</p>
             <p style="margin: 5px 0; font-size: 13px; color: var(--text-muted);">Y-tunnus: 1391767-8</p>
             <p style="margin: 10px 0; font-size: 13px;">
@@ -642,18 +676,12 @@
 
     function toggleMobiilivalikko() {
         const navi = document.getElementById('paanavigaatio');
-        const nappi = document.getElementById('hampurilais-nappi');
         navi.classList.toggle('auki');
-        nappi.textContent = navi.classList.contains('auki') ? '✕' : '☰';
     }
 
-    function suljeMobiilivalikko() {
-        const navi = document.getElementById('paanavigaatio');
-        const nappi = document.getElementById('hampurilais-nappi');
-        if (navi.classList.contains('auki')) {
-            navi.classList.remove('auki');
-            nappi.textContent = '☰';
-        }
+    function vaihdaLomakeNakyvyys() {
+        const lomake = document.getElementById('portaali-lomake');
+        lomake.style.display = lomake.style.display === 'block' ? 'none' : 'block';
     }
 
     async function lahetaYhteydenotto(event) {
@@ -705,11 +733,6 @@
             nappi.disabled = false;
             nappi.textContent = '✉️ Lähetä viesti';
         }
-    }
-
-    function vaihdaLomakeNakyvyys() {
-        const lomake = document.getElementById('portaali-lomake');
-        lomake.style.display = lomake.style.display === 'block' ? 'none' : 'block';
     }
 
     async function suoritaKirjautuminen() {
