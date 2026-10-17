@@ -68,27 +68,26 @@
         }
 
         .logo-palkki {
-            font-size: 21px;
-            font-weight: 600;
-            letter-spacing: -0.3px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-        }
-        .logo-palkki .sol { color: #1e3a8a; }
-        .logo-palkki .one { color: #0284c7; }
+    font-size: 24px;
+    letter-spacing: -0.3px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+.logo-palkki .sol { color: #1e3a8a; font-weight: 700; }
+.logo-palkki .one { color: #0284c7; font-weight: 700; }
 
         .paanavigaatio {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .paanavigaatio a {
             color: #334155;
             text-decoration: none;
             font-weight: 500;
-            font-size: 13.5px;
+            font-size: 14px;
             padding: 6px 10px;
             border-radius: 6px;
             transition: all 0.2s ease;
@@ -197,8 +196,15 @@
 
         .logo-valvomo-one {
             color: #38bdf8;
-            font-weight: 600;
+            font-weight: 700;
         }
+
+        /* Virallinen optinen O-kirjaimen korjaus */
+        .optinen-o {
+        font-size: 1.08em;
+        display: inline-block;
+        vertical-align: -0.01em;
+}
 
         .header-banner p {
             margin: 0;
@@ -635,8 +641,8 @@
     <header class="asiakasportaalipalkki">
         <div class="ylapalkki-vasen">
             <a href="index.html" class="logo-palkki">
-                <span class="sol">Sol</span><span class="one">One</span>
-            </a>
+    <span class="sol">Sol</span><span class="one">One</span>
+</a>
         </div>
 
         <!-- Hampurilaispainike mobiilille -->
@@ -659,7 +665,7 @@
     <!-- YLÄBANNERI PÄÄSIVUN LAIVASTONSINISELLÄ VALOKUVALLA -->
     <div class="header-banner">
         <div>
-            <h1><span class="logo-valvomo-sol">Sol</span><span class="logo-valvomo-one">One</span> Valvomo (DEMO)</h1>
+            <h1><span class="logo-valvomo-sol">Sol</span><span class="logo-valvomo-one"><span class="optinen-o">O</span>ne</span>&nbsp;Valvomo (DEMO)</h1>
             <p>Testaa, muokkaa ja simuloi odottavat somejulkaisut.</p>
         </div>
         <div id="kayttaja-kortti" class="user-info" style="display:none;">
