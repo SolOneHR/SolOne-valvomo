@@ -64,15 +64,21 @@
 
         .logo-palkki {
             font-size: 24px;
-            font-weight: 600;
-            letter-spacing: -0.4px;
+            letter-spacing: -0.1px;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
+            white-space: nowrap;
         }
-        .logo-palkki .sol { color: #0f172a; }
-        .logo-palkki .one { color: #0284c7; }
+        .logo-palkki .sol { color: #1e3a8a; font-weight: 700; }
+        .logo-palkki .one { color: #0284c7; font-weight: 700; }
 
+        /* Virallinen optinen O-kirjaimen korjaus */
+        .optinen-o {
+            font-size: 1.05em;
+            display: inline-block;
+            vertical-align: -0.01em;
+        }
 
         .paanavigaatio {
             display: flex;
@@ -240,8 +246,9 @@
         .hero h1 {
             margin: 0 0 10px 0;
             font-size: 34px;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.1px;
             font-weight: 800;
+            white-space: nowrap;
         }
 
         .hero-tagline {
@@ -252,8 +259,8 @@
             letter-spacing: -0.2px;
         }
 
-        .logo-hero-sol { color: #ffffff; }
-        .logo-hero-one { color: #38bdf8; }
+        .logo-hero-sol { color: #ffffff; font-weight: 700; }
+        .logo-hero-one { color: #38bdf8; font-weight: 700; }
 
         .hero-lead {
             font-size: 17px;
@@ -552,7 +559,7 @@
         <header class="asiakasportaalipalkki">
             <div class="logo-nav-group">
                 <a href="index.html" class="logo-palkki">
-                    <span class="sol">Sol</span><span class="one">One</span>
+                    <span class="sol">Sol</span><span class="one"><span class="optinen-o">O</span>ne</span>
                 </a>
                 
                 <!-- Mobiilin hampurilaispainike -->
@@ -620,7 +627,7 @@
 
         <!-- HERO-BANNERI -->
         <header class="hero">
-            <h1><span class="logo-hero-sol">Sol</span><span class="logo-hero-one">One</span></h1>
+            <h1><span class="logo-hero-sol">Sol</span><span class="logo-hero-one"><span class="optinen-o">O</span>ne</span></h1>
             <p class="hero-tagline">Hyvä työ ansaitsee tulla näkyväksi.</p>
             
             <p class="hero-sub">Ota kuva siellä, missä tapahtuu. SolOne luonnostelee siitä julkaisut somekanaviisi - sinä päätät, mitä julkaistaan.</p>
@@ -631,22 +638,21 @@
         </header>
 
         <!-- MIKSI SOLONE -OSIO -->
-<div class="card" style="border-top: 4px solid var(--primary);">
+        <div class="card" style="border-top: 4px solid var(--primary);">
             <span class="badge">MIKSI SOLONE?</span>
             <h2 style="margin: 0 0 12px 0; font-size: 22px; color: var(--text-main);">Hyvä työ ansaitsee tulla nähdyksi</h2>
             <p style="font-size: 15.5px; color: #334155; line-height: 1.7; margin-bottom: 14px;">
                 Kun teet osaamisesi ja työsi näkyväksi, asiakkaat löytävät sinut helpommin, oppivat tuntemaan sinut ja saavat syyn luottaa sinuun. Näin syntyy mahdollisuuksia uusiin asiakassuhteisiin ja kasvuun.
             </p>
             <p style="font-size: 15px; color: var(--text-muted); line-height: 1.6; margin-bottom: 18px;">
-                Sinun ei enää tarvitse valita hyvän työn tekemisen ja sen markkinoinnin välillä. SolOne auttaa pitämään yrityksesi näkyvillä,<strong> jotta voit onnistua siinä, mikä on sinulle tärkeää!</strong></p>
+                Sinun ei enää tarvitse valita hyvän työn tekemisen ja sen markkinoinnin välillä. SolOne auttaa pitämään yrityksesi näkyvillä,<strong> jotta voit onnistua siinä, mikä on sinulle tärkeää!</strong>
             </p>
             <div style="background-color: #f0f9ff; border: 1px solid #bae6fd; border-left: 4px solid #0284c7; border-radius: 8px; padding: 12px 14px; font-size: 14px; line-height: 1.5; color: #0f172a; margin-bottom: 22px;">
-            <strong style="white-space: nowrap; display: inline-block;">Sinä teet hyvää työtä.</strong> 
-            <span style="color: #0284c7; font-weight: 700; white-space: nowrap; display: inline-block;">SolOne auttaa tekemään sen näkyväksi.</span>
-        </div>
+                <strong style="white-space: nowrap; display: inline-block;">Sinä teet hyvää työtä.</strong> 
+                <span style="color: #0284c7; font-weight: 700; white-space: nowrap; display: inline-block;">SolOne auttaa tekemään sen näkyväksi.</span>
+            </div>
            
-             
-                <!-- ESITTELYVIDEO -->
+            <!-- ESITTELYVIDEO -->
             <div style="position: relative; width: 100%; padding-bottom: 56.25%; height: 0; margin: 20px 0 24px 0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); border: 1px solid var(--border-color);">
                 <iframe 
                     src="https://www.youtube-nocookie.com/embed/zTITAB-SXLE?rel=0"
@@ -658,9 +664,9 @@
             </div>  
 
             <div class="hero-nappiryhma" style="justify-content: flex-start; margin-top: 15px;">
-    <a href="#tyokalut" class="btn-cta-primary" style="font-size: 14px;">Tutustu Pika- ja Valvomo-työkaluihin ↓</a>
-    <a href="somevalvomo_demo.html" class="btn-cta-secondary" style="font-size: 14px; border: 2px solid #cbd5e1;">Kokeile demoa</a>
-</div>
+                <a href="#tyokalut" class="btn-cta-primary" style="font-size: 14px;">Tutustu Pika- ja Valvomo-työkaluihin ↓</a>
+                <a href="somevalvomo_demo.html" class="btn-cta-secondary" style="font-size: 14px; border: 2px solid #cbd5e1;">Kokeile demoa</a>
+            </div>
         </div>
 
         <!-- TYÖKALUT: KAKSI TYÖKALUA, YKSI SUJUVA KOKONAISUUS -->
@@ -822,7 +828,6 @@
                             <li>3 käyttäjätiliä</li>
                             <li>Tekoälyn tekstinmuotoilu & <strong>älykkäät julkaisuprofiilit</strong></li>
                             <li>Keskitetty monisivunäkymä</li>
-                            
                             <li>Ajastukset ja pikajulkaisu</li>
                         </ul>
                     </div>
@@ -850,7 +855,6 @@
                             <li>Yhteinen hyväksyntäjono Valvomossa</li>
                             <li>2 pääkäyttäjää hallintaan ja hyväksyntään</li>
                             <li>Tekoälyn tekstinmuotoilu & <strong>älykkäät julkaisuprofiilit</strong></li>
-                           
                             <li>Ajastukset ja pikajulkaisu</li>
                         </ul>
                     </div>
@@ -952,7 +956,7 @@
 
         <!-- FOOTER -->
         <footer class="footer">
-            <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business</strong></p>
+            <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 700;"><span class="optinen-o">O</span>ne</span> HR & Business</strong></p>
             <p style="margin: 5px 0;">SolOne Automaatioratkaisut</p>
             <p style="margin: 5px 0; font-size: 13px; color: var(--text-muted);">Y-tunnus: 1391767-8</p>
             <p style="margin: 10px 0; font-size: 13px;">
@@ -970,7 +974,7 @@
 
 <script>
     const SUPABASE_URL = 'https://oajnnrrnatqqymmvncxf.supabase.co';
-    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIxlucm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
 
     function toggleMobiilivalikko() {
         const navi = document.getElementById('paanavigaatio');
