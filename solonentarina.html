@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="icon" href="/solone-favicon.ico" type="image/x-icon">
+    <!-- iPhone / iPad aloitusnäyttö -->
+    <link rel="apple-touch-icon" href="/icon-192.2.png">
+    <!-- Android Chrome aloitusnäyttö -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.2.png">
+    <title>SolOnen tarina – visiosta todellisuudeksi | SolOne</title>
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --header-bg: #0f172a;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --success: #10b981;
+            --info-bg: #eff6ff;
+            --info-border: #bfdbfe;
+            --info-text: #1e40af;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 24px 20px 40px 20px;
+        }
+
+        /* YLÄPALKKI & NAVIGAATIO */
+        .asiakasportaalipalkki {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 35px;
+            position: relative;
+        }
+
+        .logo-nav-group {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .logo-palkki {
+            font-size: 24px;
+            letter-spacing: -0.1px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+        .logo-palkki .sol { color: #1e3a8a; font-weight: 700; }
+        .logo-palkki .one { color: #0284c7; font-weight: 700; }
+
+        /* Virallinen optinen O-kirjaimen korjaus */
+        .optinen-o {
+            font-size: 1.08em;
+            display: inline-block;
+            vertical-align: -0.01em;
+        }
+
+        .paanavigaatio {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .paanavigaatio a {
+            color: #334155;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .paanavigaatio a:hover {
+            color: var(--primary);
+            background-color: #f1f5f9;
+        }
+
+        .paanavigaatio a.aktiivinen {
+            color: var(--primary);
+            font-weight: 700;
+            background-color: #e0f2fe;
+        }
+
+        /* Hampurilaispainike mobiilissa */
+        .hampurilainen-btn {
+            display: none;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 7px 10px;
+            cursor: pointer;
+            color: var(--text-main);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hampurilainen-btn svg {
+            width: 22px;
+            height: 22px;
+            display: block;
+        }
+
+        .portaali-toiminnot {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #portaali-kirjautunut {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .portal-linkki {
+            color: #1e293b;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        .portal-linkki:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+            background-color: #f8fafc;
+        }
+
+        .portal-linkki svg {
+            width: 15px;
+            height: 15px;
+            color: var(--primary);
+        }
+
+        .btn-valvomo-linkki {
+            background-color: var(--primary);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 12.5px;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        .btn-valvomo-linkki:hover { background-color: var(--primary-hover); }
+
+        .btn-pika-linkki {
+            background-color: #0f172a;
+            color: #38bdf8;
+            border: 1px solid #334155;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 12.5px;
+            white-space: nowrap;
+        }
+
+        .btn-ulos-pieni {
+            background: transparent;
+            border: 1px solid var(--text-muted);
+            color: var(--text-muted);
+            padding: 5px 9px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .btn-ulos-pieni:hover { color: var(--danger); border-color: var(--danger); }
+
+        /* KIRJAUTUMISPOKSI */
+        #portaali-lomake {
+            display: none;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08);
+            max-width: 320px;
+            margin-left: auto;
+        }
+
+        .lomake-kentta {
+            width: 100%;
+            padding: 9px 12px;
+            margin-bottom: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 13.5px;
+        }
+
+        .ilmoitus-pieni { color: var(--danger); font-size: 12px; margin-bottom: 10px; display: none; font-weight: bold; }
+        .ilmoitus-onni { color: var(--success); font-size: 12px; margin-bottom: 10px; display: none; font-weight: bold; }
+
+        /* HERO-ALUE */
+        .hero {
+            background: linear-gradient(to bottom, #0f172a 0%, #1e3a8a 100%);
+            border-top: 4px solid var(--primary);
+            color: white;
+            padding: 45px 30px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+            margin-bottom: 35px;
+        }
+
+        .hero h1 {
+            margin: 0 0 10px 0;
+            font-size: 32px;
+            letter-spacing: -0.5px;
+            font-weight: 800;
+        }
+
+        .hero-tagline {
+            font-size: 20px;
+            font-weight: 700;
+            color: #38bdf8;
+            margin: 0 0 10px 0;
+        }
+
+        .logo-hero-sol { color: #ffffff; font-weight: 700; }
+        .logo-hero-one { color: #38bdf8; font-weight: 700; }
+
+        /* SISÄLTÖKORTIT */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 32px 28px;
+            margin-bottom: 35px;
+            box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: #e0f2fe;
+            color: #0369a1;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ARVOT-KORTIT (Tasainen 2-sarakkeinen ruudukko) */
+        .arvot-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .arvot-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .arvo-box {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid var(--primary);
+            height: 100%;
+        }
+
+        .arvo-box h4 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            color: var(--text-main);
+        }
+
+        .arvo-box p {
+            margin: 0;
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        .bottom-banner {
+            position: relative;
+            border-radius: 14px;
+            padding: 35px 24px;
+            text-align: center;
+            overflow: hidden;
+            box-shadow: 0 8px 20px -3px rgba(15, 23, 42, 0.15);
+            color: white;
+            margin-top: 20px;
+        }
+
+        .bottom-banner::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, #1e3a8a 0%, #0f172a 100%);
+            z-index: 1;
+        }
+
+        .bottom-banner-sisalto {
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 35px 0;
+            color: var(--text-muted);
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 45px;
+        }
+
+        @media (max-width: 768px) {
+            .asiakasportaalipalkki {
+                flex-wrap: wrap;
+                gap: 12px;
+                padding-bottom: 15px;
+                margin-bottom: 25px;
+            }
+
+            .logo-nav-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .hampurilainen-btn {
+                display: inline-flex;
+            }
+
+            .paanavigaatio {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: #ffffff;
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                padding: 12px;
+                margin-top: 10px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            }
+
+            .paanavigaatio.auki {
+                display: flex;
+            }
+
+            .paanavigaatio a {
+                width: 100%;
+                padding: 10px 12px;
+                font-size: 14.5px;
+            }
+
+            .portaali-toiminnot {
+                width: 100%;
+                justify-content: flex-start;
+                margin-top: 4px;
+            }
+
+            .hero {
+                padding: 35px 18px;
+            }
+
+            .hero h1 {
+                font-size: 26px;
+            }
+
+            .hero-tagline {
+                font-size: 18px;
+            }
+
+            .card {
+                padding: 22px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- YLÄPALKKI -->
+        <header class="asiakasportaalipalkki">
+            <div class="logo-nav-group">
+                <a href="index.html" class="logo-palkki">
+                    <span class="sol">Sol</span><span class="one"><span class="optinen-o">O</span>ne</span>
+                </a>
+                
+                <!-- Mobiilin hampurilaispainike -->
+                <button class="hampurilainen-btn" onclick="toggleMobiilivalikko()" aria-label="Avaa valikko">
+                    <svg id="hampurilainen-ikoni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+
+                <!-- Navigaatiovalikko -->
+                <nav class="paanavigaatio" id="paanavigaatio">
+                    <a href="index.html">Etusivu</a>
+                    <a href="palvelupaketit.html">Palvelupaketit</a>
+                    <a href="meista.html" class="aktiivinen">SolOnen tarina</a>
+                    <a href="vastuullisuus.html">Vastuullisuus</a>
+                    <a href="yhteystiedot.html">Yhteystiedot</a>
+                    <a href="tietosuoja.html">Tietosuojaseloste</a>
+                </nav>
+            </div>
+
+            <!-- Asiakasportaalin toiminnot -->
+            <div class="portaali-toiminnot">
+                <div id="portaali-vieras">
+                    <span class="portal-linkki" onclick="vaihdaLomakeNakyvyys()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        Asiakasportaali / Kirjaudu
+                    </span>
+                </div>
+                <div id="portaali-kirjautunut" style="display: none;">
+                    <span style="color: var(--text-muted); font-size: 13px; font-weight: 500;" id="kayttaja-tunnus"></span>
+                    <a href="pikasyotto.html" class="btn-pika-linkki">⚡ Pika</a>
+                    <a href="somevalvomo.html" class="btn-valvomo-linkki">💻 Avaa Somevalvomo</a>
+                    <button class="btn-ulos-pieni" onclick="kirjauduUlos()">Ulos</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- KIRJAUTUMISLOMAKE -->
+        <div id="portaali-lomake">
+            <div id="pika-virhe" class="ilmoitus-pieni"></div>
+            <div id="pika-info" class="ilmoitus-onni"></div>
+            <input type="email" id="pika-email" class="lomake-kentta" placeholder="Sähköposti">
+            <input type="password" id="pika-password" class="lomake-kentta" placeholder="Salasana">
+            <button style="width: 100%; background: var(--primary); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 10px;" onclick="suoritaKirjautuminen()">Kirjaudu</button>
+            <div style="text-align: center;">
+                <a href="javascript:void(0)" onclick="lahetaSalasananPalautus()" style="font-size: 12px; color: var(--primary); text-decoration: none;">Unohditko salasanasi?</a>
+            </div>
+        </div>
+
+        <!-- HERO-BANNERI -->
+        <header class="hero">
+            <h1><span class="logo-hero-sol">Sol</span><span class="logo-hero-one"><span class="optinen-o">O</span>ne</span></h1>
+            <p class="hero-tagline">SolOnen tarina – visiosta todellisuudeksi</p>
+        </header>
+
+        <!-- KUVA JA TARINA -OSIO -->
+        <div class="card" style="border-top: 4px solid var(--primary);">
+            <span class="badge">TARINAMME</span>
+            <h2 style="margin: 0 0 20px 0; font-size: 24px; color: var(--text-main);">Kaikki alkoi ajatuksesta, joka tuntui tärkeältä</h2>
+
+            <!-- KUVA ESITYS -->
+            <div style="float: right; width: 300px; max-width: 100%; margin: 0 0 20px 24px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+                <img src="pasisahaa2.jpeg" alt="Pasi Solonen työssä" style="width: 100%; height: auto; display: block;">
+                <div style="background: #f1f5f9; padding: 10px; font-size: 12.5px; color: var(--text-muted); text-align: center;">
+                    Pasi Solonen – SolOne HR & Business
+                </div>
+            </div>
+
+            <p style="font-size: 15.5px; color: #334155; line-height: 1.7; margin-bottom: 16px;">
+                SolOnen idea syntyi seurakunnassa käydyssä keskustelussa. Pohdimme, miten puutarhan eri vaiheet ja tavallinen arjen tekeminen saataisiin näkyväksi myös muille. Keskustelu herätti ajatuksen, joka alkoi laajentua koskemaan paljon muutakin kuin puutarhanhoitoa.
+            </p>
+            <p style="font-size: 15.5px; color: #334155; line-height: 1.7; margin-bottom: 16px;">
+                Minulla oli aiempaa kokemusta yhdistyksen viestinnästä ja sosiaalisen median tekemisestä. Tiesin, kuinka paljon aikaa julkaisujen suunnittelu, kirjoittaminen ja julkaiseminen voivat viedä. Samalla näin, että monilla ihmisillä ja pienillä yrityksillä on paljon hyvää tekemistä ja hyviä ideoita, mutta ei aikaa tai mahdollisuuksia kertoa niistä muille.
+            </p>
+            <p style="font-size: 15.5px; color: #334155; line-height: 1.7; margin-bottom: 16px;">
+                Miksi oman työn pitäisi keskeytyä tai sen rinnalle pitäisi rakentaa kokonainen sosiaalisen median rumba, jotta hyvä työ tulisi näkyväksi? Tästä kysymyksestä alkoi vähitellen kehittyä ajatus tekoälyavusteisesta somejulkaisujen hallinta- ja julkaisusovelluksesta.
+            </p>
+            <div style="clear: both;"></div>
+        </div>
+
+        <!-- TEKNOLOGIA IHMISTÄ VARTEN -->
+        <div class="card" style="border-top: 4px solid var(--primary);">
+            <span class="badge">TEKNOLOGIA IHMISTÄ VARTEN</span>
+            <h2 style="margin: 0 0 16px 0; font-size: 22px; color: var(--text-main);">Helpotusta arkeen ja viestintään</h2>
+            
+            <p style="font-size: 15px; color: #334155; line-height: 1.7; margin-bottom: 16px;">
+                SolOnen tavoitteena on helpottaa yrittäjien ja yhteisöjen viestintää. Ajatuksena on, että työn lomassa voi ottaa kuvan ja sanella tai kirjoittaa lyhyen viestin. Tekoäly auttaa muotoilemaan siitä julkaisuluonnoksen, jota käyttäjä voi tarkistaa, muokata ja täydentää ennen hyväksymistä ja julkaisemista.
+            </p>
+            <p style="font-size: 15px; color: #334155; line-height: 1.7; margin-bottom: 16px;">
+                Kaikille kirjoittaminen ei ole helppoa, eikä suomenkielisen tekstin tuottaminen ole aina yksinkertaista. SolOne voi auttaa esimerkiksi maahanmuuttajataustaisia yrittäjiä, joille suomenkielinen viestintä on haastavaa, sekä henkilöitä, joilla on lukivaikeuksia tai nepsy-piirteitä, jotka voivat tehdä kirjoittamisesta kuormittavaa.
+            </p>
+            <p style="font-size: 15px; color: #334155; line-height: 1.7; margin-bottom: 16px;">
+                SolOneen voi sanella viestin omalla kielellään, ja tekoäly muotoilee siitä julkaisuluonnoksen halutulla kielellä. Käyttäjä voi tarkistaa ja muokata tekstiä ennen sen julkaisemista. Näin oman työn ja osaamisen esiin tuominen ei ole yhtä riippuvaista siitä, kuinka sujuvasti osaa kirjoittaa suomeksi tai tuottaa valmista tekstiä.
+            </p>
+            <p style="font-size: 15px; color: #334155; line-height: 1.7; margin-bottom: 8px;">
+                Tavoitteena ei ole lisätä yrittäjän tehtäviä uudella työkalulla, vaan helpottaa arkea ja vapauttaa aikaa varsinaiseen työhön, asiakkaille ja muuhun tärkeään. <strong style="color: var(--primary);">Teknologia palvelee ihmistä, ei toisin päin.</strong>
+            </p>
+        </div>
+
+        <!-- ARVOT OHJAAVAT TEKEMISTÄ -->
+        <div class="card" style="border-top: 4px solid var(--primary);">
+            <span class="badge">ARVOT</span>
+            <h2 style="margin: 0 0 10px 0; font-size: 22px; color: var(--text-main);">Arvot ohjaavat tekemistä</h2>
+            <p style="font-size: 15px; color: var(--text-muted); line-height: 1.6; margin-bottom: 22px;">
+                SolOnen lähtökohtana on ajatus siitä, että teknologian pitää olla ihmistä varten. Sen tulee helpottaa arkea, olla ymmärrettävää ja palvella todellisia tarpeita.
+            </p>
+
+            <!-- Tasapainoinen 2x2 ruudukko -->
+            <div class="arvot-grid">
+                <div class="arvo-box">
+                    <h4>🤝 Ihmislähtöisyys ja helppuus</h4>
+                    <p>Työkalujen pitää tuntua luontevilta käyttää, eikä niiden käyttö saa vaatia tarpeetonta teknistä osaamista.</p>
+                </div>
+                <div class="arvo-box">
+                    <h4>⏱️ Ajan säästäminen ja työn arvostaminen</h4>
+                    <p>Yrittäjän tärkein työ tapahtuu usein siellä, missä asiakkaat ja varsinainen tekeminen ovat. Viestinnän pitäisi tukea tätä työtä, ei viedä siltä kohtuuttomasti aikaa.</p>
+                </div>
+                <div class="arvo-box">
+                    <h4>💡 Saavutettavuus ja kohtuuhintaisuus</h4>
+                    <p>Hyödyllisten digitaalisten työkalujen pitäisi olla myös pienten yritysten ja yhteisöjen ulottuvilla.</p>
+                </div>
+                <div class="arvo-box">
+                    <h4>🌱 Yhteisöllisyys ja toisten auttaminen</h4>
+                    <p>Hyvän työn, osaamisen ja hyvien ideoiden esiin tuominen voi hyödyttää sekä tekijää että muita ihmisiä.</p>
+                </div>
+            </div>
+
+            <!-- Viides arvo täydellä leveydellä -->
+            <div class="arvo-box" style="margin-bottom: 16px;">
+                <h4>🛡️ Rehellisyys, luotettavuus ja vastuullisuus</h4>
+                <p>Teknologian mahdollisuuksista ja rajoituksista on tärkeää kertoa avoimesti, ja käyttäjän tulee voida itse vaikuttaa siihen, mitä julkaistaan.</p>
+            </div>
+
+            <p style="font-size: 14.5px; color: #334155; font-style: italic; margin-top: 16px;">
+                Nämä arvot eivät ole vain sanoja verkkosivuilla. Niiden tulisi näkyä siinä, miten palvelua kehitetään, millaisia ratkaisuja tehdään ja miten käyttäjien tarpeet otetaan huomioon.
+            </p>
+        </div>
+
+        <!-- VISIOSTA TODELLISUUDEKSI -->
+        <div class="card" style="border-top: 4px solid var(--primary);">
+            <span class="badge">TULEVAISUUS</span>
+            <h2 style="margin: 0 0 16px 0; font-size: 22px; color: var(--text-main);">Visiosta todellisuudeksi – askel kerrallaan</h2>
+            
+            <p style="font-size: 15px; color: #334155; line-height: 1.7; margin-bottom: 16px;">
+                SolOnea kehitetään vaiheittain, käyttäjien tarpeita kuunnellen. Palvelun toimintoja ja käyttöönottoa yksinkertaistetaan, jotta sen käyttö olisi mahdollisimman sujuvaa myös niille, joille digitaalisten työkalujen käyttö tai tekstin tuottaminen ei ole ennestään helppoa.
+            </p>
+            <p style="font-size: 15px; color: #334155; line-height: 1.7; margin-bottom: 16px;">
+                Tavoitteena on rakentaa ratkaisu, joka auttaa pieniä yrityksiä, yksinyrittäjiä ja yhteisöjä tekemään työnsä näkyväksi ilman, että viestinnästä tulee uusi, aikaa vievä työtehtävä.
+            </p>
+            <p style="font-size: 15px; color: #334155; line-height: 1.7; margin-bottom: 16px;">
+                SolOne-nimi yhdistää sukunimeni Solonen, sanan <em>solution</em> eli ratkaisu ja sanan <em>one</em>. Nimen taustalla on ajatus selkeästä ja helposti lähestyttävästä ratkaisusta, joka kokoaa tarvittavan yhdeksi kokonaisuudeksi.
+            </p>
+            <p style="font-size: 15px; color: #334155; line-height: 1.7; margin-bottom: 22px;">
+                Matka visiosta toimivaksi palveluksi jatkuu askel kerrallaan.
+            </p>
+
+            <div style="background-color: #f0f9ff; border: 1px solid #bae6fd; border-left: 4px solid #0284c7; border-radius: 8px; padding: 16px; font-size: 15px; color: #0f172a; line-height: 1.6;">
+                <strong>SolOne</strong> – auttaa tekemämään hyvän työn näkyväksi, jotta aikaa jää sille, mikä on tärkeää.
+                <div style="margin-top: 10px; font-weight: 600; color: #0284c7;">
+                    – Pasi Solonen<br>
+                    <span style="font-size: 13px; color: var(--text-muted); font-weight: normal;">SolOne HR & Business</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALABANNERI -->
+        <div class="bottom-banner">
+            <div class="bottom-banner-sisalto">
+                <h3 style="margin: 0 0 8px 0; font-size: 19px; color: #ffffff;">Haluatko kuulla <span style="color: #38bdf8;">lisää?</span></h3>
+                <p style="margin: 0 0 18px 0; color: #e2e8f0; font-size: 13.5px;">Ota yhteyttä tai tutustu ratkaisuihin!</p>
+                <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                    <a href="mailto:info@solone.fi" style="color: white; background: #0284c7; padding: 7px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">✉️ info@solone.fi</a>
+                    <a href="palvelupaketit.html" style="color: white; background: #0f172a; border: 1px solid #38bdf8; padding: 7px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">🚀 Tutustu palvelupaketteihin</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business</strong></p>
+            <p style="margin: 5px 0;">SolOne Automaatioratkaisut</p>
+            <p style="margin: 5px 0; font-size: 13px; color: var(--text-muted);">Y-tunnus: 1391767-8</p>
+            <p style="margin: 10px 0; font-size: 13px;">
+                <a href="meista.html" style="color: var(--text-muted); text-decoration: none;">SolOnen tarina</a>
+                <span style="color: var(--border-color); margin: 0 8px;">|</span>
+                <a href="vastuullisuus.html" style="color: var(--text-muted); text-decoration: none;">Vastuullisuus</a>
+                <span style="color: var(--border-color); margin: 0 8px;">|</span>
+                <a href="tietosuoja.html" style="color: var(--text-muted); text-decoration: none;">Tietosuojaseloste</a>
+                <span style="color: var(--border-color); margin: 0 8px;">|</span>
+                <a href="yhteystiedot.html" style="color: var(--text-muted); text-decoration: none;">Yhteystiedot</a>
+            </p>
+            <p style="font-size: 12px; color: #94a3b8; margin-top: 15px;">&copy; SolOne. Kaikki oikeudet pidätetään.</p>
+        </footer>
+    </div>
+
+<script>
+    const SUPABASE_URL = 'https://oajnnrrnatqqymmvncxf.supabase.co';
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
+
+    function toggleMobiilivalikko() {
+        const navi = document.getElementById('paanavigaatio');
+        navi.classList.toggle('auki');
+    }
+
+    function vaihdaLomakeNakyvyys() {
+        const lomake = document.getElementById('portaali-lomake');
+        lomake.style.display = lomake.style.display === 'block' ? 'none' : 'block';
+    }
+
+    async function suoritaKirjautuminen() {
+        const email = document.getElementById('pika-email').value;
+        const password = document.getElementById('pika-password').value;
+        const virheAlue = document.getElementById('pika-virhe');
+        const infoAlue = document.getElementById('pika-info');
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+                method: 'POST',
+                headers: { 'apikey': ANON_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error_description || data.msg || "Kirjautuminen epäonnistui");
+
+            localStorage.setItem('supabase_token', data.access_token);
+            localStorage.setItem('supabase_refresh_token', data.refresh_token);
+            localStorage.setItem('user_email', data.user.email);
+
+            virheAlue.style.display = 'none';
+            if (infoAlue) infoAlue.style.display = 'none';
+            document.getElementById('portaali-lomake').style.display = 'none';
+            tarkistaIstunto();
+        } catch (err) {
+            virheAlue.textContent = "Kirjautuminen epäonnistui.";
+            virheAlue.style.display = 'block';
+        }
+    }
+
+    async function lahetaSalasananPalautus() {
+        const emailKentta = document.getElementById('pika-email');
+        const virheAlue = document.getElementById('pika-virhe');
+        const infoAlue = document.getElementById('pika-info');
+
+        virheAlue.style.display = 'none';
+        infoAlue.style.display = 'none';
+
+        let email = emailKentta.value.trim();
+        if (!email) {
+            email = prompt("Syötä sähköpostiosoitteesi salasanan palauttamiseksi:");
+            if (!email) return;
+            emailKentta.value = email;
+        }
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/auth/v1/recover`, {
+                method: 'POST',
+                headers: { 'apikey': ANON_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.msg || data.error_description || "Virhe pyynnössä");
+
+            infoAlue.textContent = "✓ Palautuslinkki lähetetty sähköpostiisi!";
+            infoAlue.style.display = 'block';
+        } catch (err) {
+            virheAlue.textContent = "Virhe: " + err.message;
+            virheAlue.style.display = 'block';
+        }
+    }
+
+    function kirjauduUlos() {
+        localStorage.removeItem('supabase_token');
+        localStorage.removeItem('supabase_refresh_token');
+        localStorage.removeItem('user_email');
+        tarkistaIstunto();
+    }
+
+    function tarkistaIstunto() {
+        const token = localStorage.getItem('supabase_token');
+        const email = localStorage.getItem('user_email');
+
+        if (token) {
+            document.getElementById('portaali-vieras').style.display = 'none';
+            document.getElementById('kayttaja-tunnus').textContent = email ? email.split('@')[0] : 'Asiakas';
+            document.getElementById('portaali-kirjautunut').style.display = 'flex';
+        } else {
+            document.getElementById('portaali-kirjautunut').style.display = 'none';
+            document.getElementById('portaali-vieras').style.display = 'block';
+        }
+    }
+
+    window.addEventListener('load', function() {
+        tarkistaIstunto();
+    });
+</script>
+</body>
+</html>
