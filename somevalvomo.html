@@ -2507,24 +2507,57 @@
                             for (const sivu of pagesResponse.data) {
                                 const fbId = sivu.id;
                                 const sivuNimi = sivu.name;
+                                const pageAccessToken = sivu.access_token; // Poimitaan Metan palauttama Page Access Token
                                 const igId = sivu.instagram_business_account ? sivu.instagram_business_account.id : null;
 
-                                await fetch(db.url + '/rest/v1/asiakkaan_sometilit', {
-                                    method: 'POST',
+                                // Tarkistetaan ensin, onko tili jo tallennettu kyseiselle käyttäjälle
+                                const checkRes = await fetch(db.url + '/rest/v1/asiakkaan_sometilit?asiakastunnus=eq.' + encodeURIComponent(nykyinenAsiakastunnus) + '&fb_page_id=eq.' + encodeURIComponent(fbId), {
+                                    method: 'GET',
                                     headers: {
                                         'apikey': db.key,
                                         'Authorization': 'Bearer ' + token,
                                         'Content-Type': 'application/json'
-                                    },
-                                    body: JSON.stringify([{
-                                        asiakastunnus: nykyinenAsiakastunnus,
-                                        sivun_nimi: sivuNimi,
-                                        fb_page_id: fbId,
-                                        ig_account_id: igId,
-                                        ensisijainen: (kayttajanSometilit.length === 0),
-                                        aktiivinen: true
-                                    }])
+                                    }
                                 });
+                                const loytyneet = await checkRes.json();
+
+                                if (loytyneet && loytyneet.length > 0) {
+                                    // Päivitetään olemassa olevalle riville tuore token ja tiedot
+                                    await fetch(db.url + '/rest/v1/asiakkaan_sometilit?id=eq.' + loytyneet[0].id, {
+                                        method: 'PATCH',
+                                        headers: {
+                                            'apikey': db.key,
+                                            'Authorization': 'Bearer ' + token,
+                                            'Content-Type': 'application/json',
+                                            'Prefer': 'return=minimal'
+                                        },
+                                        body: JSON.stringify({
+                                            sivun_nimi: sivuNimi,
+                                            page_access_token: pageAccessToken,
+                                            ig_account_id: igId,
+                                            aktiivinen: true
+                                        })
+                                    });
+                                } else {
+                                    // Lisätään kokonaan uusi sivu
+                                    await fetch(db.url + '/rest/v1/asiakkaan_sometilit', {
+                                        method: 'POST',
+                                        headers: {
+                                            'apikey': db.key,
+                                            'Authorization': 'Bearer ' + token,
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify([{
+                                            asiakastunnus: nykyinenAsiakastunnus,
+                                            sivun_nimi: sivuNimi,
+                                            fb_page_id: fbId,
+                                            ig_account_id: igId,
+                                            page_access_token: pageAccessToken,
+                                            ensisijainen: (kayttajanSometilit.length === 0),
+                                            aktiivinen: true
+                                        }])
+                                    });
+                                }
                             }
 
                             statusDiv.style.color = '#10b981';
@@ -2545,7 +2578,8 @@
                 statusDiv.textContent = 'Valtuutus peruutettiin tai ikkuna suljettiin.';
             }
         }, {
-            scope: 'pages_show_list,pages_manage_posts,pages_read_engagement,instagram_basic,instagram_content_publish,business_management'
+            scope: 'pages_show_list,pages_manage_posts,pages_read_engagement,instagram_basic,instagram_content_publish,business_management',
+            auth_type: 'rerequest'
         });
     }
 </script>
