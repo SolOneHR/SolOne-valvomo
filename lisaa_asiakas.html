@@ -28,7 +28,7 @@
     <main class="max-w-3xl w-full mx-auto p-6 my-8">
         <div class="bg-slate-800 border border-slate-700 rounded-xl shadow-xl p-8">
             <h2 class="text-2xl font-semibold mb-2 text-white">Lisää uusi asiakas</h2>
-            <p class="text-slate-400 text-sm mb-6">Tämä lomake lähettää tiedot suoraan Make.comin webhookille ja luo asiakkaan sekä tilauksen järjestelmään.</p>
+            <p class="text-slate-400 text-sm mb-6">Tämä lomake lähettää tiedot turvatun reitittimen kautta ja luo asiakkaan sekä tilauksen järjestelmään.</p>
 
             <form id="customerForm" class="space-y-5">
                 <div>
@@ -51,7 +51,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-300 mb-1">Puhelinnumero *</label>
-<input type="text" id="puhelinnumero" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition">
+                        <input type="text" id="puhelinnumero" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition">
                     </div>
                 </div>
 
@@ -129,8 +129,6 @@
 
     <!-- Logiikka -->
     <script>
-        const WEBHOOK_URL = 'https://hook.eu1.make.com/xxprtnhyfgewwr9ngxkobuzs8ayybu9o';
-
         function paivitaAsiakastyyppi() {
             const tyyppi = document.getElementById('asiakastyyppi').value;
             const ytunnusWrapper = document.getElementById('ytunnus-wrapper');
@@ -147,7 +145,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            paivitaAsiakastyyppi(); // Asetetaan alkutilanne
+            paivitaAsiakastyyppi();
             const token = localStorage.getItem('supabase_token');
             const userEmail = localStorage.getItem('user_email');
 
@@ -158,10 +156,13 @@
             }
 
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/palvelut?select=id,nimi`, {
+                // Haetaan yhteystiedot suoraan auth.js:n tarjoamasta funktiosta tai globaalista muuttujasta
+                const db = typeof haeSupabaseAsiakas === 'function' ? haeSupabaseAsiakas() : { url: SUPABASE_URL, key: ANON_KEY };
+
+                const response = await fetch(`${db.url}/rest/v1/palvelut?select=id,nimi`, {
                     method: 'GET',
                     headers: {
-                        'apikey': ANON_KEY,
+                        'apikey': db.key,
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }
@@ -231,12 +232,20 @@
             };
 
             try {
-                const response = await fetch(WEBHOOK_URL, {
+                const token = localStorage.getItem('supabase_token');
+                const db = typeof haeSupabaseAsiakas === 'function' ? haeSupabaseAsiakas() : { url: SUPABASE_URL, key: ANON_KEY };
+
+                const response = await fetch(db.url + '/functions/v1/make-proxy', {
                     method: 'POST',
                     headers: {
+                        'apikey': db.key,
+                        'Authorization': token ? `Bearer ${token}` : `Bearer ${db.key}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify({
+                        action: 'add-customer',
+                        ...formData
+                    })
                 });
 
                 if (response.ok) {

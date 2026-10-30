@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/solone-favicon.ico" type="image/x-icon">
+    <!-- iPhone / iPad aloitusnäyttö -->
+    <link rel="apple-touch-icon" href="/icon-192.2.png">
+    <!-- Android Chrome aloitusnäyttö -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.2.png">
     <title>SolOne - Somevalvomo</title>
         
     <style>
@@ -791,11 +796,17 @@
     }
 
     function kaynnistaMakeSkenaario(id) {
-        const webhookUrl = 'https://hook.eu1.make.com/mfnymohrw7nvttcw5qp29fd0dirc83or';
-        fetch(webhookUrl, {
+        const db = haeSupabaseAsiakas();
+        const token = localStorage.getItem('supabase_token');
+        
+        fetch(db.url + '/functions/v1/make-proxy', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: id })
+            headers: { 
+                'apikey': db.key,
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json' 
+            },
+            body: JSON.stringify({ action: 'publish', id: id })
         })
         .then(function() {
             naytaIlmoitus('🚀 Julkaisu hyväksytty ja lähetetty julkaisujärjestelmään!');
@@ -1624,16 +1635,21 @@
                 naytaIlmoitus('🚀 Uusi julkaisu luotu, tekoäly käsittelee tekstiä...');
                 haeValvomonTiedot();
 
-                fetch('https://hook.eu1.make.com/jg69q1vhru9ykoxansfsfp0gopteighi', {
+                fetch(db.url + '/functions/v1/make-proxy', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'apikey': db.key,
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json' 
+                    },
                     body: JSON.stringify({
+                        action: 'new-draft',
                         id: uusiRivi.id,
                         tyyli: profiili,
                         rawTeksti: rawTeksti,
                         kuvaUrl: lopullinenKuvaUrl
                     })
-                });
+                }).catch(err => console.error("Virhe reitittimen kutsussa:", err));
             }
 
         } catch (err) {
@@ -2029,6 +2045,7 @@
         const profiili = profiiliSelect ? profiiliSelect.value : 'Yleinen';
         const reformatNappi = document.getElementById('btn-reformat-' + id);
         const db = haeSupabaseAsiakas();
+        const token = localStorage.getItem('supabase_token'); // <-- Määritellään token täällä
 
         if (!rawTeksti && document.getElementById('raw-teksti-' + id)) {
             naytaIlmoitus('⚠️ Alkuperäinen teksti ei voi olla tyhjä!', 'error');
@@ -2041,34 +2058,36 @@
         }
 
         try {
+            // 1. Päivitetään tiedot Supabaseen (korjattu kuva_url)
             await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
                 method: 'PATCH',
                 headers: {
                     'apikey': db.key,
-                    'Authorization': 'Bearer ' + localStorage.getItem('supabase_token'),
+                    'Authorization': 'Bearer ' + token,
                     'Content-Type': 'application/json',
                     'Prefer': 'return=minimal'
                 },
                 body: JSON.stringify({
                     profile_id: profiili,
                     raw_text: rawTeksti,
-                    kuvaUrl: document.querySelector('#card-' + id + ' .kuva-esikatselu')?.src || null
+                    kuva_url: document.querySelector('#card-' + id + ' .kuva-esikatselu')?.src || null
                 })
             });
-        } catch (e) {
-            console.log("Esitallennus epäonnistui, jatketaan Make-pyyntöön.");
-        }
 
-        const webhookUrl = 'https://hook.eu1.make.com/gy1aohydxbsuzftgrxekchsjh5v6nqma';
-        const cardElem = document.getElementById('card-' + id) || document.querySelector('.julkaisu-card:not(.historia)');
-        const kuvaElem = cardElem ? cardElem.querySelector('.kuva-esikatselu') : null;
-        const kuvaUrlValmis = kuvaElem ? kuvaElem.src : null;
+            // 2. Kutsutaan Edge Function -reititintä
+            const cardElem = document.getElementById('card-' + id) || document.querySelector('.julkaisu-card:not(.historia)');
+            const kuvaElem = cardElem ? cardElem.querySelector('.kuva-esikatselu') : null;
+            const kuvaUrlValmis = kuvaElem ? kuvaElem.src : null;
 
-        try {
-            const response = await fetch(webhookUrl, {
+            const response = await fetch(db.url + '/functions/v1/make-proxy', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'apikey': db.key,
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json' 
+                },
                 body: JSON.stringify({
+                    action: 'ai-format',
                     id: id,
                     tyyli: profiili,
                     rawTeksti: rawTeksti,
@@ -2094,7 +2113,7 @@
                 reformatNappi.textContent = '🔄 Muotoile AI:lla';
             }
         }
-    }
+  }
 
     function paivitaHistoriaSuodatinValikko() {
         const valikko = document.getElementById('historia-suodatin-tili');
@@ -2487,7 +2506,7 @@
         });
     };
 
-    // Suoritetaan Facebook Login for Business ja haetaan sivut kantaan
+   // Suoritetaan Facebook Login for Business ja vaihdetaan tunnisteet taustapalvelussa
     function kaynnistaMetaOAuth() {
         const statusDiv = document.getElementById('meta-oauth-status');
         statusDiv.style.display = 'block';
@@ -2495,84 +2514,49 @@
         statusDiv.textContent = 'Avataan Meta-valtuutus...';
 
         FB.login(function(response) {
-            if (response.authResponse) {
-                statusDiv.textContent = 'Valtuutus hyväksytty! Haetaan Facebook-sivuja ja Instagram-tilejä...';
+            if (response.authResponse && response.authResponse.accessToken) {
+                statusDiv.textContent = 'Valtuutus saatu! Päivitetään tilit ja pitkäkestoiset tunnisteet...';
 
-                FB.api('/me/accounts', { fields: 'id,name,access_token,instagram_business_account{id,username}' }, async function(pagesResponse) {
-                    if (pagesResponse && pagesResponse.data && pagesResponse.data.length > 0) {
-                        const db = haeSupabaseAsiakas();
-                        const token = localStorage.getItem('supabase_token');
+                const db = haeSupabaseAsiakas();
+                const shortLivedToken = response.authResponse.accessToken;
 
-                        try {
-                            for (const sivu of pagesResponse.data) {
-                                const fbId = sivu.id;
-                                const sivuNimi = sivu.name;
-                                const pageAccessToken = sivu.access_token; // Poimitaan Metan palauttama Page Access Token
-                                const igId = sivu.instagram_business_account ? sivu.instagram_business_account.id : null;
-
-                                // Tarkistetaan ensin, onko tili jo tallennettu kyseiselle käyttäjälle
-                                const checkRes = await fetch(db.url + '/rest/v1/asiakkaan_sometilit?asiakastunnus=eq.' + encodeURIComponent(nykyinenAsiakastunnus) + '&fb_page_id=eq.' + encodeURIComponent(fbId), {
-                                    method: 'GET',
-                                    headers: {
-                                        'apikey': db.key,
-                                        'Authorization': 'Bearer ' + token,
-                                        'Content-Type': 'application/json'
-                                    }
-                                });
-                                const loytyneet = await checkRes.json();
-
-                                if (loytyneet && loytyneet.length > 0) {
-                                    // Päivitetään olemassa olevalle riville tuore token ja tiedot
-                                    await fetch(db.url + '/rest/v1/asiakkaan_sometilit?id=eq.' + loytyneet[0].id, {
-                                        method: 'PATCH',
-                                        headers: {
-                                            'apikey': db.key,
-                                            'Authorization': 'Bearer ' + token,
-                                            'Content-Type': 'application/json',
-                                            'Prefer': 'return=minimal'
-                                        },
-                                        body: JSON.stringify({
-                                            sivun_nimi: sivuNimi,
-                                            page_access_token: pageAccessToken,
-                                            ig_account_id: igId,
-                                            aktiivinen: true
-                                        })
-                                    });
-                                } else {
-                                    // Lisätään kokonaan uusi sivu
-                                    await fetch(db.url + '/rest/v1/asiakkaan_sometilit', {
-                                        method: 'POST',
-                                        headers: {
-                                            'apikey': db.key,
-                                            'Authorization': 'Bearer ' + token,
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify([{
-                                            asiakastunnus: nykyinenAsiakastunnus,
-                                            sivun_nimi: sivuNimi,
-                                            fb_page_id: fbId,
-                                            ig_account_id: igId,
-                                            page_access_token: pageAccessToken,
-                                            ensisijainen: (kayttajanSometilit.length === 0),
-                                            aktiivinen: true
-                                        }])
-                                    });
-                                }
-                            }
-
-                            statusDiv.style.color = '#10b981';
-                            statusDiv.textContent = '✓ Sivut ja tilit yhdistetty onnistuneesti!';
-                            await lataaKayttajanSometilit();
-                            paivitaAsetuksetListaHtml();
-                        } catch (err) {
-                            statusDiv.style.color = '#ef4444';
-                            statusDiv.textContent = 'Virhe tallennettaessa kantaan: ' + err.message;
-                        }
-                    } else {
-                        statusDiv.style.color = '#f59e0b';
-                        statusDiv.textContent = 'Yhtään hallinnoitua Facebook-sivua ei löytynyt tai lupia ei myönnetty.';
+                // Kutsutaan Supabasen meta-auth Edge Functionia
+                fetch(db.url + '/functions/v1/meta-auth', {
+                    method: 'POST',
+                    headers: {
+                        'apikey': db.key,
+                        'Authorization': 'Bearer ' + db.key,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        shortLivedToken: shortLivedToken,
+                        asiakastunnus: nykyinenAsiakastunnus
+                    })
+                })
+                .then(async (res) => {
+                    const data = await res.json();
+                    if (!res.ok) {
+                        throw new Error(data.error || 'Palvelinvirhe tokenin vaihdossa');
                     }
+                    return data;
+                })
+                .then(async (result) => {
+                    statusDiv.style.color = '#10b981';
+                    statusDiv.textContent = '✓ Sivut ja tilit yhdistetty onnistuneesti! (' + (result.count || 0) + ' kpl)';
+                    
+                    // Päivitetään Somevalvomon näkymä
+                    if (typeof lataaKayttajanSometilit === 'function') {
+                        await lataaKayttajanSometilit();
+                    }
+                    if (typeof paivitaAsetuksetListaHtml === 'function') {
+                        paivitaAsetuksetListaHtml();
+                    }
+                })
+                .catch((err) => {
+                    statusDiv.style.color = '#ef4444';
+                    statusDiv.textContent = 'Virhe tallennuksessa: ' + err.message;
                 });
+
             } else {
                 statusDiv.style.color = '#ef4444';
                 statusDiv.textContent = 'Valtuutus peruutettiin tai ikkuna suljettiin.';

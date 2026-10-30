@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SolOne – Tilaa palvelu</title>
+    <title>SolOne – Tilaa palvelu (Testi)</title>
     <style>
         :root {
             --bg-main: #f8fafc;
@@ -99,8 +99,8 @@
 
         .badge {
             display: inline-block;
-            background-color: #dbeafe;
-            color: #1e40af;
+            background-color: #fef3c7;
+            color: #d97706;
             font-size: 11px;
             font-weight: bold;
             padding: 4px 8px;
@@ -169,20 +169,21 @@
                 <nav class="paanavigaatio">
                     <a href="index.html">Etusivu</a>
                     <a href="palvelupaketit.html">Palvelupaketit</a>
-                    <a href="tilaus.html" style="color: var(--primary); font-weight: 700; background-color: #eff6ff;">Tilaa palvelu</a>
+                    <a href="tilaus.html" style="color: var(--primary); font-weight: 700; background-color: #eff6ff;">Tilaa (Testi)</a>
                     <a href="yhteystiedot.html">Yhteystiedot</a>
                 </nav>
             </div>
-            <div class="portaali-toiminnot">
+            <div class="portaali-toiminnot" style="display: flex; align-items: center; gap: 10px;">
                 <span id="userEmail" style="font-size: 12px; color: var(--text-muted);"></span>
+                <button id="logoutBtn" style="font-size: 11px; background: #e2e8f0; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Kirjaudu ulos</button>
             </div>
         </div>
 
         <div class="card">
-            <span class="badge">TILAUS JA REKISTERÖINTI</span>
-            <h2 style="font-size: 22px; margin-top: 5px; margin-bottom: 10px;">Tilaa SolOne-palvelu</h2>
+            <span class="badge">TESTITILA - VAIN YLLÄPITÄJÄ</span>
+            <h2 style="font-size: 22px; margin-top: 5px; margin-bottom: 10px;">Tilaa SolOne-palvelu (Testi)</h2>
             <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
-                Valitse haluamasi palvelupaketti suoraan hinnastostamme. Järjestelmä laskee hinnan automaattisesti ja lähettää tilauksen käsittelyyn.
+                Tämä sivu on vain ylläpitäjän sisäisessä testikäytössä.
             </p>
 
             <div id="tilaus-virhe" class="ilmoitus-pieni"></div>
@@ -210,7 +211,7 @@
                     </div>
                     <div>
                         <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Puhelinnumero *</label>
-<input type="text" id="t-puhelin" class="lomake-kentta" required placeholder="040 1234567">
+                        <input type="text" id="t-puhelin" class="lomake-kentta" required placeholder="040 1234567">
                     </div>
                 </div>
 
@@ -242,16 +243,13 @@
                             <option value="PT">Portugali (PT)</option>
                             <option value="FR">Ranska (FR)</option>
                             <option value="RO">Romania (RO)</option>
-                            <option value="SE">Ruotsi (SE)</option>
                             <option value="SK">Slovakia (SK)</option>
                             <option value="SI">Slovenia (SI)</option>
                             <option value="CZ">Tšekki (CZ)</option>
                             <option value="HU">Unkari (UN / HU)</option>
                         </select>
                     </div>
-                    <div>
-                        <!-- Tyhjä tila tasapainottamaan gridiä -->
-                    </div>
+                    <div></div>
                 </div>
 
                 <label style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Katuosoite *</label>
@@ -302,22 +300,20 @@
                 <div style="margin: 15px 0 10px 0; font-size: 13px;">
                     <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; color: var(--text-main);">
                         <input type="checkbox" id="t-ehdot" required style="margin-top: 3px;">
-                        <span>Hyväksyn SolOnen <a href="tilausehdot.html" target="_blank" style="color: var(--primary); text-decoration: underline;">tilausehdot</a> ja vahvistan antamani tiedot. *</span>
+                        <span>Hyväksyn SolOnen tilausehdot ja vahvistan antamani tiedot. *</span>
                     </label>
                 </div>
-                <button type="submit" class="btn-cta" id="laheta-btn" style="margin-top: 10px;">Lähetä tilaus</button>
+                <button type="submit" id="btn-cta" class="btn-cta" style="margin-top: 10px;">Lähetä testi-tilaus</button>
             </form>
         </div>
 
         <footer class="footer">
             <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business</strong></p>
             <p style="margin: 5px 0; font-size: 13px; color: var(--text-muted);">Y-tunnus: 1391767-8</p>
-            <p style="font-size: 12px; color: #94a3b8; margin-top: 15px;">&copy; SolOne. Kaikki oikeudet pidätetään.</p>
         </footer>
     </div>
 
 <script>
-    const WEBHOOK_URL = 'https://hook.eu1.make.com/l84equn6syc9jc69ah8p1xesb4txp2ws';
     let palvelutData = [];
 
     function paivitaAsiakastyyppi() {
@@ -331,20 +327,31 @@
         } else {
             ytunnusWrapper.style.display = 'none';
             ytunnusInput.removeAttribute('required');
-            ytunnusInput.value = ''; // Tyhjennetään jos vaihdetaan takaisin yksityishenkilöksi
+            ytunnusInput.value = '';
         }
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
-        paivitaAsiakastyyppi(); // Asetetaan alkutilanne
+        // Vain admin (pasi@solone.fi) pääsee sivulle
         const token = localStorage.getItem('supabase_token');
+        const userEmail = localStorage.getItem('user_email');
+
+        if (!token || userEmail !== 'pasi@solone.fi') {
+            alert('Ei käyttöoikeutta tälle sivulle.');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        paivitaAsiakastyyppi();
         
         try {
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/palvelut?select=id,nimi,yksikkohinta,alv_prosentti`, {
+            const db = typeof haeSupabaseAsiakas === 'function' ? haeSupabaseAsiakas() : { url: 'https://oajnnrrnatqqymmvncxf.supabase.co', key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA' };
+
+            const response = await fetch(`${db.url}/rest/v1/palvelut?select=id,nimi,yksikkohinta,alv_prosentti`, {
                 method: 'GET',
                 headers: {
-                    'apikey': ANON_KEY,
-                    'Authorization': token ? `Bearer ${token}` : `Bearer ${ANON_KEY}`,
+                    'apikey': db.key,
+                    'Authorization': `Bearer ${db.key}`,
                     'Content-Type': 'application/json'
                 }
             });
@@ -371,6 +378,16 @@
         }
     });
 
+    document.getElementById('logoutBtn')?.addEventListener('click', () => {
+        if (typeof kirjauduUlos === 'function') {
+            kirjauduUlos();
+        } else {
+            localStorage.removeItem('supabase_token');
+            localStorage.removeItem('user_email');
+            window.location.href = 'login.html';
+        }
+    });
+
     document.getElementById('t-palvelu').addEventListener('change', function() {
         const valittuId = this.value;
         const hintaBox = document.getElementById('hintaNaytto');
@@ -394,7 +411,7 @@
         
         const virheAlue = document.getElementById('tilaus-virhe');
         const onniAlue = document.getElementById('tilaus-onni');
-        const nappi = document.getElementById('laheta-btn');
+        const nappi = document.getElementById('btn-cta');
         const selectPalvelu = document.getElementById('t-palvelu');
 
         virheAlue.style.display = 'none';
@@ -422,7 +439,7 @@
             nimi: document.getElementById('t-nimi').value,
             sahkoposti: document.getElementById('t-sahkoposti').value,
             puhelinnumero: document.getElementById('t-puhelin').value,
-            ytunnus: document.getElementById('t-ytunnus').value || '', // Voi olla tyhjä yksityishenkilöllä
+            ytunnus: document.getElementById('t-ytunnus').value || '',
             katuosoite: document.getElementById('t-katuosoite').value,
             postinumero: document.getElementById('t-postinumero').value,
             kaupunki: document.getElementById('t-kaupunki').value,
@@ -437,25 +454,35 @@
         };
 
         try {
-            const response = await fetch(WEBHOOK_URL, {
+            const token = localStorage.getItem('supabase_token');
+            const db = typeof haeSupabaseAsiakas === 'function' ? haeSupabaseAsiakas() : { url: 'https://oajnnrrnatqqymmvncxf.supabase.co', key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA' };
+
+            const response = await fetch(db.url + '/functions/v1/make-proxy', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(tilausData)
+                headers: { 
+                    'apikey': db.key,
+                    'Authorization': token ? 'Bearer ' + token : 'Bearer ' + db.key,
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify({
+                    action: 'new-order',
+                    ...tilausData
+                })
             });
 
             if (!response.ok) throw new Error("Lähetys epäonnistui");
 
-            onniAlue.textContent = "✓ Tilaus vastaanotettu onnistuneesti! Tarkista sähköpostisi vahvistusta varten.";
+            onniAlue.textContent = "✓ Testitilaus vastaanotettu onnistuneesti!";
             onniAlue.style.display = 'block';
             document.getElementById('tilaus-lomake').reset();
             paivitaAsiakastyyppi();
             document.getElementById('hintaNaytto').textContent = 'Valitse palvelu';
         } catch (err) {
-            virheAlue.textContent = "Virhe tilauksen lähetyksessä. Yritä uudelleen tai ota yhteyttä info@solone.fi";
+            virheAlue.textContent = "Virhe tilauksen lähetyksessä. Yritä uudelleen.";
             virheAlue.style.display = 'block';
         } finally {
             nappi.disabled = false;
-            nappi.textContent = 'Lähetä tilaus';
+            nappi.textContent = 'Lähetä testi-tilaus';
         }
     }
 </script>

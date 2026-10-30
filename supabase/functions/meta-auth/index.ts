@@ -1,9 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.8";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 serve(async (req) => {
@@ -12,11 +13,13 @@ serve(async (req) => {
   }
 
   try {
-    const { shortLivedToken, asiakastunnus } = await req.json();
+    const body = await req.json();
+const shortLivedToken = body.shortLivedToken;
+const userEmail = body.userEmail || body.asiakastunnus;
 
-    if (!shortLivedToken || !asiakastunnus) {
+    if (!shortLivedToken || !userEmail) {
       return new Response(
-        JSON.stringify({ error: "shortLivedToken ja asiakastunnus vaaditaan." }),
+        JSON.stringify({ error: "shortLivedToken ja userEmail ovat pakollisia." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -28,96 +31,104 @@ serve(async (req) => {
 
     if (!appId || !appSecret || !supabaseUrl || !supabaseServiceKey) {
       return new Response(
-        JSON.stringify({ error: "Palvelinympäristön muuttujia puuttuu (META_APP_ID / SECRET / SUPABASE)." }),
+        JSON.stringify({ error: "Palvelimen ympäristömuuttujat puuttuvat." }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // 1. Vaihdetaan lyhytkestoinen token pitkäkestoiseksi käyttäjätunnisteeksi
-    const tokenExchangeUrl = `https://graph.facebook.com/v20.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${appId}&client_secret=${appSecret}&fb_exchange_token=${shortLivedToken}`;
-    const tokenRes = await fetch(tokenExchangeUrl);
-    const tokenData = await tokenRes.json();
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-    if (tokenData.error) {
+    // 1. Vaihdetaan lyhytikäinen käyttäjätunnus pitkäikäiseen käyttäjätunnukseen
+    const exchangeUrl = `https://graph.facebook.com/v19.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${appId}&client_secret=${appSecret}&fb_exchange_token=${shortLivedToken}`;
+    const exchangeRes = await fetch(exchangeUrl);
+    const exchangeData = await exchangeRes.json();
+
+    if (exchangeData.error) {
+      console.error("Meta token exchange error:", exchangeData.error);
       return new Response(
-        JSON.stringify({ error: "Virhe Metan token-vaihdossa", details: tokenData.error }),
+        JSON.stringify({ error: exchangeData.error.message }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const longLivedUserToken = tokenData.access_token;
+    const longLivedUserToken = exchangeData.access_token;
 
-    // 2. Haetaan sivut ja niihin liitetyt Instagram-yritystilit
-    const pagesUrl = `https://graph.facebook.com/v20.0/me/accounts?fields=id,name,access_token,instagram_business_account{id}&access_token=${longLivedUserToken}`;
+    // 2. Haetaan kaikki sivut, joihin käyttäjällä on oikeus
+    const pagesUrl = `https://graph.facebook.com/v19.0/me/accounts?access_token=${longLivedUserToken}`;
     const pagesRes = await fetch(pagesUrl);
     const pagesData = await pagesRes.json();
 
     if (pagesData.error) {
+      console.error("Meta pages fetch error:", pagesData.error);
       return new Response(
-        JSON.stringify({ error: "Virhe sivujen haussa", details: pagesData.error }),
+        JSON.stringify({ error: pagesData.error.message }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // 3. Tallennetaan sivut asiakkaan_sometilit -tauluun
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
-    const savedRows = [];
+    const pages = pagesData.data || [];
+    if (pages.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "Käyttäjällä ei ole hallinnoitavia Facebook-sivuja." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
-    if (pagesData.data && Array.isArray(pagesData.data)) {
-      for (const page of pagesData.data) {
-        const igId = page.instagram_business_account?.id || null;
-
-        // Tarkistetaan löytyykö jo sivu tällä fb_page_id:llä tälle asiakkaalle
-        const { data: existing } = await supabaseAdmin
-          .from("asiakkaan_sometilit")
-          .select("id")
-          .eq("asiakastunnus", asiakastunnus)
-          .eq("fb_page_id", page.id)
-          .maybeSingle();
-
-        const rowData = {
-          asiakastunnus: asiakastunnus,
-          fb_page_id: page.id,
-          sivun_nimi: page.name,
-          page_access_token: page.access_token,
-          ig_account_id: igId,
-          aktiivinen: true,
-          ensisijainen: true
-        };
-
-        let result;
-        if (existing?.id) {
-          result = await supabaseAdmin
-            .from("asiakkaan_sometilit")
-            .update(rowData)
-            .eq("id", existing.id)
-            .select();
-        } else {
-          result = await supabaseAdmin
-            .from("asiakkaan_sometilit")
-            .insert(rowData)
-            .select();
+    // 3. Tallennetaan tai päivitetään sivut tietokantaan
+    for (const page of pages) {
+      let igAccountId: string | null = null;
+      try {
+        const igRes = await fetch(
+          `https://graph.facebook.com/v19.0/${page.id}?fields=instagram_business_account&access_token=${page.access_token}`
+        );
+        const igData = await igRes.json();
+        if (igData.instagram_business_account && igData.instagram_business_account.id) {
+          igAccountId = igData.instagram_business_account.id;
         }
+      } catch (igErr) {
+        console.error(`Virhe haettaessa IG-tiliä sivulle ${page.name}:`, igErr);
+      }
 
-        if (result.data) {
-          savedRows.push(...result.data);
-        }
+      // Tarkistetaan onko käyttäjällä jo olemassa jokin ensisijainen tili
+      const { data: primaryRow } = await supabaseAdmin
+        .from("asiakkaan_sometilit")
+        .select("id")
+        .eq("asiakastunnus", userEmail)
+        .eq("ensisijainen", true)
+        .maybeSingle();
+
+      const shouldBePrimary = !primaryRow;
+
+      // Upsert: päivittää olemassa olevan rivin tokenin tai lisää uuden (ei duplikaatteja)
+      const { error: upsertErr } = await supabaseAdmin
+        .from("asiakkaan_sometilit")
+        .upsert(
+          {
+            asiakastunnus: userEmail,
+            fb_page_id: page.id,
+            sivun_nimi: page.name,
+            page_access_token: page.access_token,
+            ig_account_id: igAccountId || null,
+            ensisijainen: shouldBePrimary,
+          },
+          {
+            onConflict: "asiakastunnus,fb_page_id",
+          }
+        );
+
+      if (upsertErr) {
+        console.error(`Virhe tallennettaessa sivua ${page.name}:`, upsertErr);
       }
     }
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        message: "Meta-tilit kytketty onnistuneesti",
-        count: savedRows.length,
-        rows: savedRows
-      }),
+      JSON.stringify({ success: true, count: pages.length }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-
   } catch (err: any) {
+    console.error("meta-auth odottamaton virhe:", err);
     return new Response(
-      JSON.stringify({ error: err.message || "Tuntematon palvelinvirhe" }),
+      JSON.stringify({ error: err.message || "Sisäinen palvelinvirhe." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
