@@ -1995,6 +1995,9 @@
         const db = haeSupabaseAsiakas();
         const token = localStorage.getItem('supabase_token');
 
+        const aktiivinenKieli = localStorage.getItem('solone_kieli') || 'fi';
+        const sanasto = tekstit[aktiivinenKieli] || tekstit.fi;
+
         if (!muokattuTarkastus) {
             naytaIlmoitus('⚠️ Tarkastusteksti ei voi olla tyhjä!', 'error');
             return;
@@ -2002,11 +2005,10 @@
 
         if (nappiElem) {
             nappiElem.disabled = true;
-            nappiElem.textContent = '⏳ Päivitetään julkaisutekstiä...';
+            nappiElem.textContent = sanasto.btnPäivitetään;
         }
 
         try {
-            // Tallenna muokattu tarkastusteksti kantaan varmuuden vuoksi
             await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
                 method: 'PATCH',
                 headers: {
@@ -2018,7 +2020,6 @@
                 body: JSON.stringify({ tarkastusteksti: muokattuTarkastus })
             });
 
-            // Kutsutaan Make.com proxyä päivittämään varsinainen suomenkielinen teksti
             const response = await fetch(db.url + '/functions/v1/make-proxy', {
                 method: 'POST',
                 headers: { 
@@ -2041,10 +2042,10 @@
             }
         } catch (err) {
             console.error('Virhe:', err);
-            naytaIlmoitus('❌ Virhe päivitettäessä tekstiä.', 'error');
+            naytaIlmoitus(sanasto.virhePäivitys, 'error');
             if (nappiElem) {
                 nappiElem.disabled = false;
-                nappiElem.textContent = '🔄 Päivitä suomenkielinen julkaisu korjausten perusteella';
+                nappiElem.textContent = sanasto.btnPaivitaTarkastus;
             }
         }
     }
@@ -2364,10 +2365,10 @@
         // --- TARKASTUSTEKSTILAATIKKO (NÄKYY VAIN JOS SISÄLTÖÄ ON) ---
         if (julkaisu.tarkastusteksti) {
             htmlSisalto += '<div style="background: #fff7ed; border: 1px solid #fdba74; padding: 12px; border-radius: 8px; margin-bottom: 18px;">';
-            htmlSisalto += '<label class="field-label" style="color: #c2410c;">🔍 Varmista sisältö (Tarkastusteksti):</label>';
+            htmlSisalto += '<label class="field-label" style="color: #c2410c;">' + sanasto.tarkistusOtsikko + '</label>';
             htmlSisalto += '<textarea id="tarkastus-' + julkaisu.id + '" class="teksti-alue" style="border-color: #fdba74; min-height: 60px;"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.tarkastusteksti || '') + '</textarea>';
             if (!onHistoria) {
-                htmlSisalto += '<button type="button" class="btn-testi" style="background-color: #f97316; width: 100%; border: none;" onclick="paivitaTarkastuksenPohjalta(\'' + julkaisu.id + '\', this)">🔄 Päivitä suomenkielinen julkaisu korjausten perusteella</button>';
+                htmlSisalto += '<button type="button" class="btn-testi" style="background-color: #f97316; width: 100%; border: none;" onclick="paivitaTarkastuksenPohjalta(\'' + julkaisu.id + '\', this)">' + sanasto.btnPaivitaTarkastus + '</button>';
             }
             htmlSisalto += '</div>';
         }

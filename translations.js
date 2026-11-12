@@ -128,6 +128,12 @@ const tekstit = {
         eiTileja: "Ei käytettävissä olevia tilejä. Lisää ensimmäinen alla.",
         eiOdottavia: "Ei odottavia somejulkaisuja. Kaikki valmiina!",
         
+        // Tarkastustekstilaatikon uudet käännökset (Suomi)
+        tarkistusOtsikko: "🔍 Tarkista julkaisutekstin sisältö / Käännös",
+        btnPaivitaTarkastus: "🔄 Päivitä julkaisuteksti muokkausten perusteella",
+        btnPäivitetään: "⏳ Päivitetään julkaisutekstiä...",
+        virhePäivitys: "❌ Virhe päivitettäessä tekstiä.",
+        
         // Historialuettelon sivutus ja säätimet (Suomi)
         historiaUudemmat: "⬅️ Uudemmat 10",
         historiaVanhemmat: "Vanhemmat 10 ➡️",
@@ -318,6 +324,12 @@ const tekstit = {
         eiTileja: "No available accounts. Add the first one below.",
         eiOdottavia: "No pending social media posts. All ready!",
         
+        // Tarkastustekstilaatikon uudet käännökset (Englanti)
+        tarkistusOtsikko: "🔍 Check post content / Translation",
+        btnPaivitaTarkastus: "🔄 Update post text based on edits",
+        btnPäivitetään: "⏳ Updating post text...",
+        virhePäivitys: "❌ Error updating post text.",
+        
         // Historialuettelon sivutus ja säätimet (Englanti)
         historiaUudemmat: "⬅️ Newer 10",
         historiaVanhemmat: "Older 10 ➡️",
@@ -507,6 +519,12 @@ const tekstit = {
         lukittuTilaus: "(Låst - abonnemanget är inte aktivt)",
         eiTileja: "Inga tillgängliga konton. Lägg till det första nedan.",
         eiOdottavia: "Inga väntande inlägg på sociala medier. Allt klart!",
+        
+        // Tarkastustekstilaatikon uudet käännökset (Ruotsi)
+        tarkistusOtsikko: "🔍 Kontrollera inlägets innehåll / Översättning",
+        btnPaivitaTarkastus: "🔄 Uppdatera inläggstexten baserat på redigeringar",
+        btnPäivitetään: "⏳ Uppdaterar inläggstexten...",
+        virhePäivitys: "❌ Fel vid uppdatering av texten.",
         
         // Historialuettelon sivutus ja säätimet (Ruotsi)
         historiaUudemmat: "⬅️ Nyare 10",
