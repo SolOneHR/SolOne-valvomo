@@ -40,7 +40,9 @@
         .top-bar {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
             background: #0f172a;
             color: white;
             padding: 12px 16px;
@@ -52,6 +54,13 @@
             font-size: 1.1rem;
             margin: 0;
             font-weight: 700;
+        }
+
+        .top-bar-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
         }
 
         .top-bar a.valvomo-link {
@@ -78,6 +87,22 @@
             text-decoration: none;
             cursor: pointer;
             margin-left: 8px;
+        }
+
+        /* Oma siisti kielivalikko */
+        .kieli-valikko select {
+            background-color: #1e293b;
+            color: white;
+            border: 1px solid #334155;
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+        }
+        .kieli-valikko select:hover {
+            border-color: #38bdf8;
         }
 
         .card {
@@ -185,31 +210,42 @@
         <div>
             <h1>⚡ SolOne Pika (DEMO)</h1>
             <div class="user-status">
-                <span id="kayttaja-status-teksti">Ei kirjautunut</span>
-                <a href="javascript:void(0)" id="linkki-kirjaudu-ulos" class="logout-link" style="display:none;" onclick="kirjauduUlosDemo()">Poistu</a>
+                <span id="kayttaja-status-teksti" data-i18n="eiKirjautunut">Ei kirjautunut</span>
+                <a href="javascript:void(0)" id="linkki-kirjaudu-ulos" class="logout-link" style="display:none;" onclick="kirjauduUlosDemo()" data-i18n="poistu">Poistu</a>
             </div>
         </div>
-        <a href="somevalvomo_demo.html" class="valvomo-link">🖥️ Demo-valvomo ↗</a>
+        <div class="top-bar-right">
+            <a href="somevalvomo_demo.html" class="valvomo-link" data-i18n="demoValvomo">🖥️ Demo-valvomo ↗</a>
+            
+            <!-- Kielivalikko -->
+            <div class="kieli-valikko">
+                <select id="oma-kieli-valikko" onchange="vaihdaKieli(this.value)">
+                    <option value="fi">Suomi</option>
+                    <option value="en">English</option>
+                    <option value="sv">Svenska</option>
+                </select>
+            </div>
+        </div>
     </div>
 
     <div id="viestipalkki" class="banner-msg"></div>
 
     <!-- KIRJAUTUMISRUUTU -->
     <div id="nakyma-kirjautuminen" class="card" style="display:none;">
-        <h3 style="margin-top:0; font-size:1.1rem;">⚡ Kirjaudu Demo-Pikaan</h3>
-        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Syötä sama demo-tunnuksesi kuin Valvomossa (esim. DEMO-12345).</p>
-        <label>Demo-tunnus:</label>
+        <h3 style="margin-top:0; font-size:1.1rem;" data-i18n="kirjauduOtsikko">⚡ Kirjaudu Demo-Pikaan</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;" data-i18n="kirjauduTeksti">Syötä sama demo-tunnuksesi kuin Valvomossa (esim. DEMO-12345).</p>
+        <label data-i18n="demoTunnusLabel">Demo-tunnus:</label>
         <input type="text" id="demo-login-tunnus" class="input-field" placeholder="DEMO-XXXXX">
-        <button class="btn-action btn-save" onclick="suoritaDemoKirjautuminen()">Kirjaudu sisään</button>
+        <button class="btn-action btn-save" onclick="suoritaDemoKirjautuminen()" data-i18n="kirjauduNappi">Kirjaudu sisään</button>
     </div>
 
     <!-- PÄÄLOMAKE -->
     <div id="pwa-paasisalto" style="display:none;">
         <div class="card">
-            <label>📷 Liitä kuva:</label>
+            <label data-i18n="lisaaKuva">📷 Liitä kuva:</label>
             <div class="kuva-valinta-napit">
-                <button type="button" class="btn-kuva" onclick="document.getElementById('kamera-suora').click()">📸 Ota kuva</button>
-                <button type="button" class="btn-kuva" onclick="document.getElementById('galleria-valinta').click()">🖼️ Galleriasta</button>
+                <button type="button" class="btn-kuva" onclick="document.getElementById('kamera-suora').click()" data-i18n="otaKuva">📸 Ota kuva</button>
+                <button type="button" class="btn-kuva" onclick="document.getElementById('galleria-valinta').click()" data-i18n="galleriasta">🖼️ Galleriasta</button>
             </div>
 
             <input type="file" id="kamera-suora" accept="image/*" capture="environment" style="display:none;" onchange="esikatseleKuva(this)">
@@ -217,38 +253,140 @@
 
             <img id="kuva-preview" class="file-preview" alt="Kuvaesikatselu">
 
-            <label>✏️ Mitä teet?</label>
-            <textarea id="kentta-teksti" rows="3" placeholder="Sanele tai kirjoita lyhyesti..."></textarea>
+            <label data-i18n="mitaTeet">✏️ Mitä teet?</label>
+            <textarea id="kentta-teksti" rows="3" data-i18n-placeholder="sanelePlaceholder" placeholder="Sanele tai kirjoita lyhyesti..."></textarea>
 
             <div class="grid-2">
                 <div>
-                    <label>Kohdekanava:</label>
+                    <label data-i18n="kohdekanava">Kohdekanava:</label>
                     <select id="kentta-kanava" class="input-field">
-                        <option value="FB_IG" selected>Meta (FB & IG)</option>
+                        <option value="FB_IG">Meta (FB & IG)</option>
                         <option value="FB">Vain FB</option>
                         <option value="IG">Vain IG</option>
                     </select>
                 </div>
                 <div>
-                    <label>Profiili:</label>
+                    <label data-i18n="profiili">Profiili:</label>
                     <select id="kentta-profiili" class="input-field">
-                        <option value="Somesisällöntuottaja" selected>Sisällöntuotto</option>
+                        <option value="Somesisällöntuottaja" data-i18n="profSisalto">Sisällöntuotto</option>
                         <option value="Yritys & B2B">Yritys & B2B</option>
                         <option value="Yritys & B2C">Yritys & B2C</option>
-                        <option value="Yleinen">Yleinen</option>
+                        <option value="Yleinen" data-i18n="profYleinen">Yleinen</option>
                     </select>
                 </div>
             </div>
 
-            <button class="btn-action btn-save" id="btn-tallenna-kentta" onclick="lahetaDemoSyotto()">
+            <button class="btn-action btn-save" id="btn-tallenna-kentta" onclick="lahetaDemoSyotto()" data-i18n="tallennaNappi">
                 🚀 Tallenna kentältä
             </button>
         </div>
     </div>
 </div>
 
+<!-- SUPABASE JA KÄÄNNÖSLOGIIKKA -->
 <script>
-    // DEMO-YMPÄRISTÖN ASETUKSET
+    const tekstit = {
+        fi: {
+            eiKirjautunut: "Ei kirjautunut",
+            poistu: "Poistu",
+            demoValvomo: "🖥️ Demo-valvomo ↗",
+            kirjauduOtsikko: "⚡ Kirjaudu Demo-Pikaan",
+            kirjauduTeksti: "Syötä sama demo-tunnuksesi kuin Valvomossa (esim. DEMO-12345).",
+            demoTunnusLabel: "Demo-tunnus:",
+            kirjauduNappi: "Kirjaudu sisään",
+            lisaaKuva: "📷 Liitä kuva:",
+            otaKuva: "📸 Ota kuva",
+            galleriasta: "🖼️ Galleriasta",
+            mitaTeet: "✏️ Mitä teet?",
+            sanelePlaceholder: "Sanele tai kirjoita lyhyesti...",
+            kohdekanava: "Kohdekanava:",
+            profiili: "Profiili:",
+            profSisalto: "Sisällöntuotto",
+            profYleinen: "Yleinen",
+            tallennaNappi: "🚀 Tallenna kentältä",
+            kirjauduttuOk: "✓ Kirjauduttu sisään!",
+            syotaTunnus: "Syötä demo-tunnus!",
+            virheTunnus: "Virheellinen tai vanhentunut demo-tunnus!",
+            syotaTekstiTaiKuva: "Syötä vähintään teksti tai kuva!",
+            tallennetaan: "⏳ Tallennetaan...",
+            tallennettuOk: "⚡ Demo tallennettu! AI käsittelee luonnoksen."
+        },
+        en: {
+            eiKirjautunut: "Not logged in",
+            poistu: "Log out",
+            demoValvomo: "🖥️ Demo Control ↗",
+            kirjauduOtsikko: "⚡ Log in to Demo Quick",
+            kirjauduTeksti: "Enter your demo ID from the Control Panel (e.g., DEMO-12345).",
+            demoTunnusLabel: "Demo ID:",
+            kirjauduNappi: "Sign In",
+            lisaaKuva: "📷 Attach image:",
+            otaKuva: "📸 Take photo",
+            galleriasta: "🖼️ From gallery",
+            mitaTeet: "✏️ What are you doing?",
+            sanelePlaceholder: "Dictate or write briefly...",
+            kohdekanava: "Target channel:",
+            profiili: "Profile:",
+            profSisalto: "Content creation",
+            profYleinen: "General",
+            tallennaNappi: "🚀 Save from field",
+            kirjauduttuOk: "✓ Signed in!",
+            syotaTunnus: "Enter demo ID!",
+            virheTunnus: "Invalid or expired demo ID!",
+            syotaTekstiTaiKuva: "Enter at least text or image!",
+            tallennetaan: "⏳ Saving...",
+            tallennettuOk: "⚡ Demo saved! AI is processing the draft."
+        },
+        sv: {
+            eiKirjautunut: "Ej inloggad",
+            poistu: "Logga ut",
+            demoValvomo: "🖥️ Demo-kontroll ↗",
+            kirjauduOtsikko: "⚡ Logga in på Demo Snabb",
+            kirjauduTeksti: "Ange ditt demo-ID från kontrollpanelen (t.ex. DEMO-12345).",
+            demoTunnusLabel: "Demo-ID:",
+            kirjauduNappi: "Logga in",
+            lisaaKuva: "📷 Bifoga bild:",
+            otaKuva: "📸 Ta foto",
+            galleriasta: "🖼️ Från galleri",
+            mitaTeet: "✏️ Vad gör du?",
+            sanelePlaceholder: "Diktera eller skriv kort...",
+            kohdekanava: "Målkanal:",
+            profiili: "Profil:",
+            profSisalto: "Innehållsskapande",
+            profYleinen: "Allmän",
+            tallennaNappi: "🚀 Spara från fältet",
+            kirjauduttuOk: "✓ Inloggad!",
+            syotaTunnus: "Ange demo-ID!",
+            virheTunnus: "Ogiltigt eller utånget demo-ID!",
+            syotaTekstiTaiKuva: "Ange minst text eller bild!",
+            tallennetaan: "⏳ Sparar...",
+            tallennettuOk: "⚡ Demo sparad! AI bearbetar utkastet."
+        }
+    };
+
+    function vaihdaKieli(kieli) {
+        localStorage.setItem('solone_kieli', kieli);
+        paivitaKielet(kieli);
+        tarkistaIstunto();
+    }
+
+    function paivitaKielet(kieli) {
+        const sanasto = tekstit[kieli] || tekstit.fi;
+        
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const avain = el.getAttribute('data-i18n');
+            if (sanasto[avain]) {
+                el.textContent = sanasto[avain];
+            }
+        });
+
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const avain = el.getAttribute('data-i18n-placeholder');
+            if (sanasto[avain]) {
+                el.placeholder = sanasto[avain];
+            }
+        });
+    }
+
     const SUPABASE_URL = 'https://urdyprqepkkxdohrzkpv.supabase.co';
     const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZHlwcnFlcGtreGRvaHJ6a3B2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDY2NTIsImV4cCI6MjA5Mjc4MjY1Mn0.jlryhbO8t0tZaJnuV9FzEok3p3DBdGPSfygibKKDD5A';
     const MAKE_WEBHOOK_AI = 'https://hook.eu1.make.com/jp8bcuqtpbagjvoa3zotgi27fgwyau9p';
@@ -270,24 +408,29 @@
         const paaSisalto = document.getElementById('pwa-paasisalto');
         const statusTeksti = document.getElementById('kayttaja-status-teksti');
         const linkkiUlos = document.getElementById('linkki-kirjaudu-ulos');
+        const aktiivinenKieli = localStorage.getItem('solone_kieli') || 'fi';
+        const sanasto = tekstit[aktiivinenKieli];
 
         if (!nykyinenDemoTunnus) {
             loginRuutu.style.display = 'block';
             paaSisalto.style.display = 'none';
-            statusTeksti.textContent = 'Kirjaudu demoon';
+            statusTeksti.textContent = sanasto.eiKirjautunut;
             linkkiUlos.style.display = 'none';
         } else {
             loginRuutu.style.display = 'none';
             paaSisalto.style.display = 'block';
-            statusTeksti.textContent = nykyinenDemoTunnus;
+            statusTeksti.textContent = nykyinenDemoTunnus; // Säilyttää aktiivisen tunnuksen oikein
             linkkiUlos.style.display = 'inline';
         }
     }
 
     async function suoritaDemoKirjautuminen() {
+        const aktiivinenKieli = localStorage.getItem('solone_kieli') || 'fi';
+        const sanasto = tekstit[aktiivinenKieli];
         const tunnus = document.getElementById('demo-login-tunnus').value.trim();
+        
         if (!tunnus) {
-            naytaIlmoitus("Syötä demo-tunnus!", "banner-error");
+            naytaIlmoitus(sanasto.syotaTunnus, "banner-error");
             return;
         }
 
@@ -299,10 +442,10 @@
 
             if (data && data.length > 0) {
                 localStorage.setItem('demo_kirjautunut_tunnus', tunnus);
-                naytaIlmoitus("✓ Kirjauduttu sisään!");
+                naytaIlmoitus(sanasto.kirjauduttuOk);
                 tarkistaIstunto();
             } else {
-                naytaIlmoitus("Virheellinen tai vanhentunut demo-tunnus!", "banner-error");
+                naytaIlmoitus(sanasto.virheTunnus, "banner-error");
             }
         } catch (e) {
             naytaIlmoitus("Yhteysvirhe: " + e.message, "banner-error");
@@ -328,18 +471,20 @@
     }
 
     async function lahetaDemoSyotto() {
+        const aktiivinenKieli = localStorage.getItem('solone_kieli') || 'fi';
+        const sanasto = tekstit[aktiivinenKieli];
         const teksti = document.getElementById('kentta-teksti').value.trim();
         const profiili = document.getElementById('kentta-profiili').value;
         const kanava = document.getElementById('kentta-kanava').value;
         const nappi = document.getElementById('btn-tallenna-kentta');
 
         if (!teksti && !valittuKuvaTiedosto) {
-            naytaIlmoitus("Syötä vähintään teksti tai kuva!", "banner-error");
+            naytaIlmoitus(sanasto.syotaTekstiTaiKuva, "banner-error");
             return;
         }
 
         nappi.disabled = true;
-        nappi.textContent = "⏳ Tallennetaan...";
+        nappi.textContent = sanasto.tallennetaan;
 
         try {
             let kuvaUrl = null;
@@ -356,7 +501,7 @@
                 });
 
                 if (uploadRes.ok) {
-                    kuvaUrl = `${SUPABASE_URL}/storage/v1/object/public/somekuvat/${tiedostoNimi}`;
+                    kuvaUrl = `${SUPABASE_URL}/storage/v1/object/public/somekuvat/${tiedestoNimi}`;
                 }
             }
 
@@ -400,17 +545,24 @@
             document.getElementById('kuva-preview').style.display = 'none';
             valittuKuvaTiedosto = null;
 
-            naytaIlmoitus("⚡ Demo tallennettu! AI käsittelee luonnoksen.");
+            naytaIlmoitus(sanasto.tallennettuOk);
         } catch (e) {
             naytaIlmoitus("Virhe: " + e.message, "banner-error");
         } finally {
             nappi.disabled = false;
-            nappi.textContent = "🚀 Tallenna kentältä";
+            nappi.textContent = sanasto.tallennaNappi;
         }
     }
 
     window.addEventListener('load', () => {
+        const tallennettuKieli = localStorage.getItem('solone_kieli') || 'fi';
+        const selectEl = document.getElementById('oma-kieli-valikko');
+        if (selectEl) {
+            selectEl.value = tallennettuKieli;
+        }
+        paivitaKielet(tallennettuKieli);
         tarkistaIstunto();
+
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw_demo.js').catch(console.error);
         }

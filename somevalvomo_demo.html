@@ -59,28 +59,31 @@
             margin-bottom: 25px;
             position: relative;
             flex-wrap: wrap;
+            gap: 12px;
         }
 
-        .ylapalkki-vasen {
+        .logo-nav-group {
             display: flex;
             align-items: center;
             gap: 20px;
+            flex-wrap: wrap;
         }
 
         .logo-palkki {
-    font-size: 24px;
-    letter-spacing: -0.3px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-}
-.logo-palkki .sol { color: #1e3a8a; font-weight: 700; }
-.logo-palkki .one { color: #0284c7; font-weight: 700; }
+            font-size: 24px;
+            letter-spacing: -0.3px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+        .logo-palkki .sol { color: #1e3a8a; font-weight: 700; }
+        .logo-palkki .one { color: #0284c7; font-weight: 700; }
 
         .paanavigaatio {
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .paanavigaatio a {
@@ -117,40 +120,6 @@
             justify-content: center;
             font-size: 20px;
             line-height: 1;
-        }
-
-        @media (max-width: 920px) {
-            .hampurilainen-btn {
-                display: inline-flex;
-            }
-
-            .paanavigaatio {
-                display: none;
-                flex-direction: column;
-                width: 100%;
-                background: #ffffff;
-                border: 1px solid var(--border-color);
-                border-radius: 10px;
-                padding: 12px;
-                margin-top: 15px;
-                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
-                order: 3;
-            }
-
-            .paanavigaatio.auki {
-                display: flex !important;
-            }
-
-            .paanavigaatio a {
-                width: 100%;
-                padding: 11px 14px;
-                font-size: 15px;
-                border-bottom: 1px solid #f1f5f9;
-            }
-
-            .paanavigaatio a:last-child {
-                border-bottom: none;
-            }
         }
 
         /* Yläbanneri taustakuvalla */
@@ -201,10 +170,10 @@
 
         /* Virallinen optinen O-kirjaimen korjaus */
         .optinen-o {
-        font-size: 1.08em;
-        display: inline-block;
-        vertical-align: -0.01em;
-}
+            font-size: 1.08em;
+            display: inline-block;
+            vertical-align: -0.01em;
+        }
 
         .header-banner p {
             margin: 0;
@@ -631,41 +600,70 @@
             border-top: 1px solid var(--border-color);
             margin-top: 40px;
         }
+
+        /* Lisätään responsiivisuus yläpalkin navigaatiolle pikkuruuduilla */
+        @media (max-width: 920px) {
+            .asiakasportaalipalkki {
+                flex-wrap: wrap;
+                gap: 12px;
+                padding-bottom: 15px;
+                margin-bottom: 25px;
+            }
+
+            .logo-nav-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .hampurilainen-btn {
+                display: inline-flex;
+            }
+
+            .paanavigaatio {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: #ffffff;
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                padding: 12px;
+                margin-top: 10px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            }
+
+            .paanavigaatio.auki {
+                display: flex !important;
+            }
+
+            .paanavigaatio a {
+                width: 100%;
+                padding: 10px 12px;
+                font-size: 14.5px;
+                border-bottom: 1px solid #f1f5f9;
+            }
+            .paanavigaatio a:last-child {
+                border-bottom: none;
+            }
+
+            .portaali-toiminnot {
+                width: 100%;
+                justify-content: flex-start;
+                margin-top: 4px;
+            }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     
-    <!-- PÄÄSIVUSTON YLÄPALKKI -->
-    <header class="asiakasportaalipalkki">
-        <div class="ylapalkki-vasen">
-            <a href="index.html" class="logo-palkki">
-    <span class="sol">Sol</span><span class="one">One</span>
-</a>
-        </div>
-
-        <!-- Hampurilaispainike mobiilille -->
-        <button class="hampurilainen-btn" id="hampurilais-nappi" onclick="toggleMobiilivalikko()" aria-label="Valikko">
-            ☰
-        </button>
-
-        <!-- Navigaatiovalikko -->
-        <nav class="paanavigaatio" id="paanavigaatio">
-            <a href="index.html">Etusivu</a>
-            <a href="palvelupaketit.html">Palvelupaketit</a>
-            <a href="index.html#tyokalut" onclick="suljeMobiilivalikko()">Työkalut</a>
-            <a href="index.html#uutiset" onclick="suljeMobiilivalikko()">Uutiset</a>
-            <a href="vastuullisuus.html">Vastuullisuus</a>
-            <a href="yhteystiedot.html">Yhteystiedot</a>
-            <a href="tietosuoja.html">Tietosuojaseloste</a>
-        </nav>
-    </header>
+    <!-- Dynaaminen yläpalkki latautuu tähän header.js kautta -->
+    <div id="yla-navigointi-kontti"></div>
 
     <!-- YLÄBANNERI PÄÄSIVUN LAIVASTONSINISELLÄ VALOKUVALLA -->
     <div class="header-banner">
         <div>
-            <h1><span class="logo-valvomo-sol">Sol</span><span class="logo-valvomo-one"><span class="optinen-o">O</span>ne</span>&nbsp;Valvomo (DEMO)</h1>
+           <h1><span class="notranslate" translate="no"><span class="logo-valvomo-sol">Sol</span><span class="logo-valvomo-one"><span class="optinen-o">O</span>ne</span></span>&nbsp;Valvomo (DEMO)</h1>
             <p>Testaa, muokkaa ja simuloi odottavat somejulkaisut.</p>
         </div>
         <div id="kayttaja-kortti" class="user-info" style="display:none;">
@@ -691,7 +689,7 @@
     <div class="demo-info" id="kirjautumis-ikkuna">
         <div id="tunnus-status-osio">
             <strong>ℹ️ Tervetuloa kokeilemaan järjestelmää livenä!</strong><br>
-            Syötä demo-tunnuksesi nähdäksesi valvomossa olevat luonnokset ja testataksesi julkaisua.
+            Syötä demo-tunnuksesi nähdäksesi valvomossa olevat luonnokset ja testataksesi julkaisua tai pyydä itsellesi henkilökohtainen demo-tunnus.<br>
             
             <div class="login-box" id="kirjautumis-kentat">
                 <input type="text" id="syotetty-tunnus" placeholder="Syötä demo-tunnus (esim. DEMO-12345)">
@@ -772,7 +770,7 @@
 
     <!-- FOOTER -->
     <footer class="footer">
-        <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business</strong></p>
+        <p class="notranslate"><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 700;"><span class="optinen-o">O</span>ne</span> HR & Business</strong></p>
         <p style="margin: 5px 0;">SolOne Automaatioratkaisut</p>
         <p style="margin: 5px 0; font-size: 13px; color: var(--text-muted);">Y-tunnus: 1391767-8</p>
         <p style="margin: 10px 0; font-size: 13px;">
@@ -799,16 +797,16 @@
     function toggleMobiilivalikko() {
         const navi = document.getElementById('paanavigaatio');
         const nappi = document.getElementById('hampurilais-nappi');
-        navi.classList.toggle('auki');
-        nappi.textContent = navi.classList.contains('auki') ? '✕' : '☰';
+        if(navi) navi.classList.toggle('auki');
+        if(nappi) nappi.textContent = navi.classList.contains('auki') ? '✕' : '☰';
     }
 
     function suljeMobiilivalikko() {
         const navi = document.getElementById('paanavigaatio');
         const nappi = document.getElementById('hampurilais-nappi');
-        if (navi.classList.contains('auki')) {
+        if (navi && navi.classList.contains('auki')) {
             navi.classList.remove('auki');
-            nappi.textContent = '☰';
+            if(nappi) nappi.textContent = '☰';
         }
     }
 
@@ -1410,6 +1408,28 @@
         }
     });
 </script>
-
+<script>
+    // Ohitetaan yläpalkin portaalipainike tällä sivulla, jotta se vierittää demolaatikkoon
+    window.addEventListener('DOMContentLoaded', () => {
+        const observer = new MutationObserver((mutations, obs) => {
+            const portaaliNappi = document.querySelector('.portal-linkki');
+            if (portaaliNappi) {
+                portaaliNappi.innerHTML = '⚡ Kirjaudu / Pyydä demo-tunnus';
+                // Poistetaan vanha onclick-tapahtuma ja lisätään uusi
+                portaaliNappi.removeAttribute('onclick');
+                portaaliNappi.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.getElementById('kirjautumis-ikkuna').scrollIntoView({ behavior: 'smooth' });
+                });
+                obs.disconnect(); // Lopetetaan tarkkailu kun nappi on muutettu
+            }
+        });
+        
+        // Tarkkaillaan bodyn muutoksia, jotta saadaan kiinni header.js:n tuoma nappi
+        observer.observe(document.body, { childList: true, subtree: true });
+    });
+</script>
+<!-- Tuodaan keskitetty yläpalkki ja kielitoiminnot mukaan (Ei riko demon omia skriptejä) -->
+<script src="/header.js"></script>
 </body>
 </html>

@@ -45,7 +45,7 @@
             padding: 20px 16px 40px 16px;
         }
 
-        /* YLÄPALKKI & NAVIGAATIO */
+        /* YLÄPALKKI & NAVIGAATIO (Hallitaan header.js kautta) */
         .asiakasportaalipalkki {
             display: flex;
             justify-content: space-between;
@@ -428,53 +428,8 @@
 
     <div class="container">
         
-        <!-- YLÄPALKKI -->
-        <header class="asiakasportaalipalkki">
-            <div class="logo-nav-group">
-                <a href="index.html" class="logo-palkki">
-                    <span class="sol">Sol</span><span class="one"><span class="optinen-o">O</span>ne</span>
-                </a>
-                
-                <!-- Mobiilin hampurilaispainike -->
-                <button class="hampurilainen-btn" onclick="toggleMobiilivalikko()" aria-label="Avaa valikko">
-                    <svg id="hampurilainen-ikoni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <line x1="3" y1="18" x2="21" y2="18"></line>
-                    </svg>
-                </button>
-
-                <!-- Navigaatiovalikko -->
-                <nav class="paanavigaatio" id="paanavigaatio">
-                    <a href="index.html">Etusivu</a>
-                    <a href="palvelupaketit.html" class="aktiivinen">Palvelupaketit</a>
-                    <a href="index.html#tyokalut">Työkalut</a>
-                    <a href="index.html#uutiset">Uutiset</a>
-                    <a href="vastuullisuus.html">Vastuullisuus</a>
-                    <a href="yhteystiedot.html">Yhteystiedot</a>
-                    <a href="tietosuoja.html">Tietosuojaseloste</a>
-                </nav>
-            </div>
-
-            <!-- Asiakasportaalin toiminnot -->
-            <div class="portaali-toiminnot">
-                <div id="portaali-vieras">
-                    <span class="portal-linkki" onclick="vaihdaLomakeNakyvyys()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        Asiakasportaali / Kirjaudu
-                    </span>
-                </div>
-                <div id="portaali-kirjautunut" style="display: none;">
-                    <span style="color: var(--text-muted); font-size: 13px; font-weight: 500;" id="kayttaja-tunnus"></span>
-                    <a href="pikasyotto.html" class="btn-pika-linkki">⚡ Pika</a>
-                    <a href="somevalvomo.html" class="btn-valvomo-linkki">💻 Avaa Somevalvomo</a>
-                    <button class="btn-ulos-pieni" onclick="kirjauduUlos()">Ulos</button>
-                </div>
-            </div>
-        </header>
+        <!-- Dynaaminen yläpalkki latautuu tähän header.js kautta -->
+        <div id="yla-navigointi-kontti"></div>
 
         <!-- KIRJAUTUMISLOMAKE -->
         <div id="portaali-lomake">
@@ -504,7 +459,9 @@
         </header>
 
         <!-- PÄÄSISÄLTÖ: PAKETTIEN SYVENTÄVÄT ESITTELYT -->
-        <!-- SolOne Personal Edition -->
+        <div class="card">
+            
+            <!-- SolOne Personal Edition -->
             <div class="palvelu-osio" id="personal">
                 <span class="badge" style="background: #e0f2fe; color: #0369a1;">KULUTTAJILLE & YKSITYISHENKILÖILLE</span>
                 <h2 style="margin: 4px 0 4px 0; font-size: 20px;">SolOne Personal Edition</h2>
@@ -534,8 +491,6 @@
                 </div>
             </div>
 
-        <div class="card">
-            
             <!-- 1. SolOne Tekijä -->
             <div class="palvelu-osio" id="tekija">
                 <span class="badge" style="background: #f1f5f9; color: #334155;">YKSINYRITTÄJÄLLE / AMMATINHARJOITTAJALLE</span>
@@ -621,8 +576,8 @@
         </div>
 
         <!-- FOOTER -->
-        <footer class="footer">
-            <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 700;"><span class="optinen-o">O</span>ne</span> HR & Business</strong></p>
+       <footer class="footer">
+            <p class="notranslate"><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 700;"><span class="optinen-o">O</span>ne</span> HR & Business</strong></p>
             <p style="margin: 5px 0;">SolOne Automaatioratkaisut</p>
             <p style="margin: 5px 0; font-size: 13px; color: var(--text-muted);">Y-tunnus: 1391767-8</p>
             <p style="margin: 10px 0; font-size: 13px;">
@@ -640,7 +595,7 @@
 
     function toggleMobiilivalikko() {
         const navi = document.getElementById('paanavigaatio');
-        navi.classList.toggle('auki');
+        if (navi) navi.classList.toggle('auki');
     }
 
     function vaihdaLomakeNakyvyys() {
@@ -728,7 +683,7 @@
                 headers: {
                     'apikey': ANON_KEY,
                     'Authorization': 'Bearer ' + token,
-                    'Content-Type=': 'application/json'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ password: uusiSalasana })
             });
@@ -817,5 +772,8 @@
         }
     });
 </script>
+
+<!-- Tuodaan keskitetty yläpalkki ja kielitoiminnot mukaan -->
+<script src="/header.js"></script>
 </body>
 </html>

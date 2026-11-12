@@ -1,276 +1,673 @@
 <!DOCTYPE html>
 <html lang="fi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tietosuojaseloste | SolOne HR & Business</title>
-  <style>
-    :root {
-      --primary: #1e3a8a;
-      --primary-dark: #0f172a;
-      --accent: #2563eb;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text: #334155;
-      --heading: #0f172a;
-      --border: #e2e8f0;
-      --tag-bg: #eff6ff;
-      --tag-text: #1d4ed8;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/favicon.png?v=2">
+    <!-- iPhone / iPad aloitusnäyttö -->
+    <link rel="apple-touch-icon" href="/icon-192.2.png">
+    <!-- Android Chrome aloitusnäyttö -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.2.png">
+    <title>Tietosuojaseloste | SolOne HR & Business</title>
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --header-bg: #0f172a;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --success: #10b981;
+            --info-bg: #eff6ff;
+            --info-border: #bfdbfe;
+            --info-text: #1e40af;
+            --danger: #ef4444;
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+        * {
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      line-height: 1.7;
-      color: var(--text);
-      background-color: var(--bg);
-      padding: 40px 20px;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
 
-    .container {
-      max-width: 860px;
-      margin: 0 auto;
-      background: var(--card-bg);
-      padding: 48px;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      border: 1px solid var(--border);
-    }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px 16px 40px 16px;
+        }
 
-    header {
-      border-bottom: 2px solid var(--border);
-      padding-bottom: 24px;
-      margin-bottom: 36px;
-    }
+        /* YLÄPALKKI & NAVIGAATIO (Hallitaan header.js kautta) */
+        .asiakasportaalipalkki {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 35px;
+            position: relative;
+        }
 
-    .badge {
-      display: inline-block;
-      padding: 4px 12px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      border-radius: 9999px;
-      background-color: var(--tag-bg);
-      color: var(--tag-text);
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
+        .logo-nav-group {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
 
-    h1 {
-      font-size: 2rem;
-      color: var(--heading);
-      margin-bottom: 12px;
-      line-height: 1.25;
-    }
+        .logo-palkki {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.1px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+        .logo-palkki .sol { color: #1e3a8a; font-weight: 700; }
+        .logo-palkki .one { color: #0284c7; font-weight: 700; }
 
-    .subtitle {
-      font-size: 1.05rem;
-      color: #64748b;
-    }
+        /* Virallinen optinen O-kirjaimen korjaus */
+        .optinen-o {
+            font-size: 1.08em;
+            display: inline-block;
+            vertical-align: -0.01em;
+        }
 
-    .section {
-      margin-bottom: 32px;
-    }
+        .paanavigaatio {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    h2 {
-      font-size: 1.25rem;
-      color: var(--heading);
-      border-left: 4px solid var(--accent);
-      padding-left: 12px;
-      margin-bottom: 14px;
-    }
+        .paanavigaatio a {
+            color: #334155;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
 
-    p {
-      margin-bottom: 14px;
-    }
+        .paanavigaatio a:hover {
+            color: var(--primary);
+            background-color: #f1f5f9;
+        }
 
-    ul {
-      margin-bottom: 14px;
-      padding-left: 20px;
-    }
+        .paanavigaatio a.aktiivinen {
+            color: var(--primary);
+            font-weight: 700;
+            background-color: #e0f2fe;
+        }
 
-    li {
-      margin-bottom: 8px;
-    }
+        /* Hampurilaispainike mobiilissa */
+        .hampurilainen-btn {
+            display: none;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 7px 10px;
+            cursor: pointer;
+            color: var(--text-main);
+            align-items: center;
+            justify-content: center;
+        }
 
-    li strong {
-      color: var(--heading);
-    }
+        .hampurilainen-btn svg {
+            width: 22px;
+            height: 22px;
+            display: block;
+        }
 
-    .contact-box {
-      background: #f1f5f9;
-      border-radius: 8px;
-      padding: 16px 20px;
-      margin: 14px 0;
-      border: 1px solid #cbd5e1;
-    }
+        .portaali-toiminnot {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    .contact-box p {
-      margin-bottom: 6px;
-    }
+        #portaali-kirjautunut {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
 
-    .contact-box p:last-child {
-      margin-bottom: 0;
-    }
+        .portal-linkki {
+            color: #1e293b;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        .portal-linkki:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+            background-color: #f8fafc;
+        }
 
-    a {
-      color: var(--accent);
-      text-decoration: none;
-    }
+        .portal-linkki svg {
+            width: 15px;
+            height: 15px;
+            color: var(--primary);
+        }
 
-    a:hover {
-      text-decoration: underline;
-    }
+        .btn-valvomo-linkki {
+            background-color: var(--primary);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 12.5px;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        .btn-valvomo-linkki:hover { background-color: var(--primary-hover); }
 
-    footer {
-      margin-top: 40px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border);
-      font-size: 0.9rem;
-      color: #64748b;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+        .btn-pika-linkki {
+            background-color: #0f172a;
+            color: #38bdf8;
+            border: 1px solid #334155;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 12.5px;
+            white-space: nowrap;
+        }
 
-    @media (max-width: 640px) {
-      body {
-        padding: 16px;
-      }
-      .container {
-        padding: 24px;
-      }
-      h1 {
-        font-size: 1.5rem;
-      }
-    }
-  </style>
+        .btn-ulos-pieni {
+            background: transparent;
+            border: 1px solid var(--text-muted);
+            color: var(--text-muted);
+            padding: 5px 9px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .btn-ulos-pieni:hover { color: var(--danger); border-color: var(--danger); }
+
+        /* LOMAKKEET */
+        #portaali-lomake {
+            display: none;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08);
+            max-width: 320px;
+            margin-left: auto;
+        }
+
+        .lomake-kentta {
+            width: 100%;
+            padding: 9px 12px;
+            margin-bottom: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 13.5px;
+        }
+
+        .ilmoitus-pieni { color: var(--danger); font-size: 12px; margin-bottom: 10px; display: none; font-weight: bold; }
+        .ilmoitus-onni { color: var(--success); font-size: 12px; margin-bottom: 10px; display: none; font-weight: bold; }
+
+        /* KORTTI (Tietosuojaselosteen sisällölle) */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        /* TIETOSUOJA-SISÄLLÖN TYYLIT */
+        .page-header-content {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 24px;
+            margin-bottom: 36px;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: #e0f2fe;
+            color: #0369a1;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .page-header-content h1 {
+            font-size: 32px;
+            color: var(--text-main);
+            margin: 0 0 12px 0;
+            line-height: 1.25;
+            font-weight: 800;
+        }
+
+        .page-header-content .subtitle {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .section {
+            margin-bottom: 32px;
+            color: #334155;
+            font-size: 15px;
+        }
+
+        .section h2 {
+            font-size: 20px;
+            color: var(--text-main);
+            border-left: 4px solid var(--primary);
+            padding-left: 12px;
+            margin-bottom: 16px;
+        }
+
+        .section p {
+            margin-bottom: 14px;
+        }
+
+        .section ul {
+            margin-bottom: 14px;
+            padding-left: 20px;
+        }
+
+        .section li {
+            margin-bottom: 8px;
+        }
+
+        .section li strong {
+            color: var(--text-main);
+        }
+
+        .contact-box {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            border: 1px solid #cbd5e1;
+        }
+
+        .contact-box p {
+            margin-bottom: 6px;
+        }
+
+        .contact-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .section a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .section a:hover {
+            text-decoration: underline;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--text-muted);
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+
+        /* RESPONSISUUS */
+        @media (max-width: 768px) {
+            .asiakasportaalipalkki {
+                flex-wrap: wrap;
+                gap: 12px;
+                padding-bottom: 15px;
+                margin-bottom: 25px;
+            }
+
+            .logo-nav-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .hampurilainen-btn {
+                display: inline-flex;
+            }
+
+            .paanavigaatio {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: #ffffff;
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                padding: 12px;
+                margin-top: 10px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            }
+
+            .paanavigaatio.auki {
+                display: flex;
+            }
+
+            .paanavigaatio a {
+                width: 100%;
+                padding: 10px 12px;
+                font-size: 14.5px;
+            }
+
+            .portaali-toiminnot {
+                width: 100%;
+                justify-content: flex-start;
+                margin-top: 4px;
+            }
+
+            .card {
+                padding: 24px 20px;
+            }
+
+            .page-header-content h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <span class="badge">GDPR-Tietosuojaseloste</span>
-      <h1>Tietosuojaseloste</h1>
-      <p class="subtitle">Sosiaalisen median automaatiojärjestelmä ja solone.fi -verkkopalvelut</p>
-    </header>
+    <div class="container">
+        
+        <!-- Dynaaminen yläpalkki latautuu tähän header.js kautta -->
+        <div id="yla-navigointi-kontti"></div>
 
-    <div class="section">
-      <p>Tämä tietosuojaseloste kuvaa, miten <strong>SolOne HR & Business</strong> käsittelee henkilötietoja verkkosivustollaan (solone.fi) sekä tarjoamassaan sosiaalisen median automaatiojärjestelmässä, jossa asiakkaat (yritykset ja yksityishenkilöt) voivat ladata kuvia julkaisujen ja tekstisisältöjen automaattista luontia varten.</p>
-    </div>
+        <!-- KIRJAUTUMISLOMAKE -->
+        <div id="portaali-lomake">
+            <div id="pika-virhe" class="ilmoitus-pieni"></div>
+            <div id="pika-info" class="ilmoitus-onni"></div>
+            <input type="email" id="pika-email" class="lomake-kentta" placeholder="Sähköposti">
+            <input type="password" id="pika-password" class="lomake-kentta" placeholder="Salasana">
+            <button style="width: 100%; background: var(--primary); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 10px;" onclick="suoritaKirjautuminen()">Kirjaudu</button>
+            <div style="text-align: center;">
+                <a href="javascript:void(0)" onclick="lahetaSalasananPalautus()" style="font-size: 12px; color: var(--primary); text-decoration: none;">Unohditko salasanasi?</a>
+            </div>
+        </div>
 
-    <div class="section">
-      <h2>1. Rekisterinpitäjä ja palveluntarjoaja</h2>
-      <div class="contact-box">
-        <p><strong>Yritys:</strong> SolOne HR & Business (Y-tunnus: 1391767-8)</p>
-        <p><strong>Osoite:</strong> Krouvikuja 3 C 10, 17200 Asikkala</p>
-        <p><strong>Yhteyshenkilö tietosuoja-asioissa:</strong> Pasi Solonen, <a href="mailto:info@solone.fi">info@solone.fi</a></p>
-      </div>
-      <p><strong>Roolijako tietosuojassa:</strong></p>
-      <ul>
-        <li><strong>Asiakas- ja käyttäjätiedot:</strong> SolOne HR & Business toimii rekisterinpitäjänä asiakassuhteiden, käyttäjätilien ja sivustovierailujen osalta.</li>
-        <li><strong>Palveluun ladattu materiaali:</strong> Mikäli asiakkaana on yritys tai yhteisö, joka lataa järjestelmään kolmansien osapuolten (kuten henkilöstönsä tai asiakkaidensa) henkilötietoja, asiakasyritys toimii kyseisten tietojen rekisterinpitäjänä ja SolOne HR & Business toimii tietojen teknisenä käsittelijänä (Data Processor). Yksityisasiakkaiden osalta käsittely perustuu suoraan sopimukseen palvelun tuottamisesta.</li>
-      </ul>
-    </div>
+        <!-- TIETOSUOJASELOSTEEN SISÄLTÖKORTTI -->
+        <div class="card">
+            
+            <div class="page-header-content">
+                <span class="badge">GDPR-Tietosuojaseloste</span>
+                <h1>Tietosuojaseloste</h1>
+                <p class="subtitle">Sosiaalisen median automaatiojärjestelmä ja solone.fi -verkkopalvelut</p>
+            </div>
 
-    <div class="section">
-      <h2>2. Käsiteltävät henkilötiedot</h2>
-      <p>Järjestelmä käsittelee seuraavia tietoja:</p>
-      <ul>
-        <li><strong>Kuvatiedostot ja syötteet:</strong> Asiakkaan järjestelmään lataamat valokuvat sekä niiden sisältämä tekninen metadata (kuten kuvausajankohta ja kameratiedot), jotka voivat sisältää tunnistettavia henkilöitä tai paikkoja.</li>
-        <li><strong>Luodut tekstisisällöt:</strong> Tekoälyn kuvan ja annettujen ohjeiden perusteella luomat julkaisuluonnokset, jotka voivat sisältää asiakkaan antamia lisätietoja.</li>
-        <li><strong>Käyttäjä- ja asiakastiedot:</strong> Nimi, yrityksen nimi, Y-tunnus, sähköpostiosoite, puhelinnumero, laskutusosoite sekä käyttäjätunnistetiedot järjestelmän hallintaa ja käyttöä varten.</li>
-        <li><strong>Tekniset lokitiedot:</strong> Verkkosivuston ja sovelluksen käyttöön liittyvät tekniset tiedot (IP-osoite, selaintieto, aikaleimat ja vikalokit).</li>
-      </ul>
-    </div>
+            <div class="section">
+                <p>Tämä tietosuojaseloste kuvaa, miten <strong>SolOne HR & Business</strong> käsittelee henkilötietoja verkkosivustollaan (solone.fi) sekä tarjoamassaan sosiaalisen median automaatiojärjestelmässä, jossa asiakkaat (yritykset ja yksityishenkilöt) voivat ladata kuvia julkaisujen ja tekstisisältöjen automaattista luontia varten.</p>
+            </div>
 
-    <div class="section">
-      <h2>3. Käsittelyn tarkoitus ja oikeusperuste</h2>
-      <ul>
-        <li><strong>Käsittelyn tarkoitus:</strong> Sosiaalisen median markkinointimateriaalin automaattinen luonti, kuvien analysointi, julkaisujen esikatselu, asiakassuhteen ylläpito, laskutus sekä palvelun tekninen ylläpito.</li>
-        <li><strong>Oikeusperusteet (GDPR 6 artikla):</strong>
-          <ul>
-            <li><strong>Sopimus:</strong> Palvelun tuottaminen ja tilauksen täyttäminen asiakkaalle.</li>
-            <li><strong>Oikeutettu etu:</strong> Palvelun tekninen laadunvarmistus, virheiden korjaus, vianetsintä ja väärinkäytösten ehkäisy.</li>
-            <li><strong>Lakisääteinen velvoite:</strong> Kirjanpito- ja verolainsäädännön edellyttämät velvoitteet laskutus- ja maksutietojen osalta.</li>
-          </ul>
-        </li>
-      </ul>
-      <p><strong>Asiakkaan vastuu sisällöstä:</strong> Asiakas (sekä yritys- että yksityisasiakas) vastaa siitä, että hänellä on lainmukainen käsittelyperuste tai asianmukainen suostumus järjestelmään lataamiensa kuvien ja tietojen käsittelyyn, mikäli niissä esiintyy tunnistettavia kolmansia henkilöitä.</p>
-    </div>
+            <div class="section">
+                <h2>1. Rekisterinpitäjä ja palveluntarjoaja</h2>
+                <div class="contact-box">
+                    <p><strong>Yritys:</strong> SolOne HR & Business (Y-tunnus: 1391767-8)</p>
+                    <p><strong>Osoite:</strong> Krouvikuja 3 C 10, 17200 Asikkala</p>
+                    <p><strong>Yhteyshenkilö tietosuoja-asioissa:</strong> Pasi Solonen, <a href="mailto:info@solone.fi">info@solone.fi</a></p>
+                </div>
+                <p><strong>Roolijako tietosuojassa:</strong></p>
+                <ul>
+                    <li><strong>Asiakas- ja käyttäjätiedot:</strong> SolOne HR & Business toimii rekisterinpitäjänä asiakassuhteiden, käyttäjätilien ja sivustovierailujen osalta.</li>
+                    <li><strong>Palveluun ladattu materiaali:</strong> Mikäli asiakkaana on yritys tai yhteisö, joka lataa järjestelmään kolmansien osapuolten (kuten henkilöstönsä tai asiakkaidensa) henkilötietoja, asiakasyritys toimii kyseisten tietojen rekisterinpitäjänä ja SolOne HR & Business toimii tietojen teknisenä käsittelijänä (Data Processor). Yksityisasiakkaiden osalta käsittely perustuu suoraan sopimukseen palvelun tuottamisesta.</li>
+                </ul>
+            </div>
 
-    <div class="section">
-      <h2>4. Säännönmukaiset tietolähteet</h2>
-      <p>Tiedot saadaan:</p>
-      <ul>
-        <li>Suoraan asiakkaalta yhteydenoton, rekisteröitymisen, tilauksen, syötteiden antamisen ja kuvien lataamisen yhteydessä.</li>
-        <li>Automaattisesti verkkoselaimelta palvelun käytön ja sivustovierailujen yhteydessä (palvelinlokit).</li>
-      </ul>
-    </div>
+            <div class="section">
+                <h2>2. Käsiteltävät henkilötiedot</h2>
+                <p>Järjestelmä käsittelee seuraavia tietoja:</p>
+                <ul>
+                    <li><strong>Kuvatiedostot ja syötteet:</strong> Asiakkaan järjestelmään lataamat valokuvat sekä niiden sisältämä tekninen metadata (kuten kuvausajankohta ja kameratiedot), jotka voivat sisältää tunnistettavia henkilöitä tai paikkoja.</li>
+                    <li><strong>Luodut tekstisisällöt:</strong> Tekoälyn kuvan ja annettujen ohjeiden perusteella luomat julkaisuluonnokset, jotka voivat sisältää asiakkaan antamia lisätietoja.</li>
+                    <li><strong>Käyttäjä- ja asiakastiedot:</strong> Nimi, yrityksen nimi, Y-tunnus, sähköpostiosoite, puhelinnumero, laskutusosoite sekä käyttäjätunnistetiedot järjestelmän hallintaa ja käyttöä varten.</li>
+                    <li><strong>Tekniset lokitiedot:</strong> Verkkosivuston ja sovelluksen käyttöön liittyvät tekniset tiedot (IP-osoite, selaintieto, aikaleimat ja vikalokit).</li>
+                </ul>
+            </div>
 
-    <div class="section">
-      <h2>5. Tietojen vastaanottajat ja siirto EU/ETA-alueen ulkopuolelle</h2>
-      <p>Palvelun toteuttamisessa käytetään seuraavia luotettavia alihankkijoita (henkilötietojen käsittelijöitä):</p>
-      <ul>
-        <li><strong>Tietokanta ja tallennustila:</strong> Supabase (Supabase Inc.). Asiakkaan lataamat kuvat ja tietokantatiedot tallennetaan Supabasen pilvipalveluun EU-alueella sijaitseville palvelimille.</li>
-        <li><strong>Automaatioalusta (Orkestrointi):</strong> Make.com (Celonis SE / Celonis Inc.). Make ohjaa datavirtoja käyttöliittymän, tietokannan ja tekoälyrajapinnan välillä. Tietoja käsitellään Euroopan talousalueella (ETA).</li>
-        <li><strong>Tekoäly ja kuvien analysointi:</strong> OpenAI (OpenAI LLC).
-          <ul>
-            <li>Analysoitava aineisto siirtyy OpenAI:n palvelimille, jotka voivat sijaita Yhdysvalloissa. Tiedonsiirrossa noudatetaan EU-U.S. Data Privacy Framework -tietosuojakehystä ja/tai Euroopan komission hyväksymiä vakiosopimuslausekkeita (SCC).</li>
-            <li>OpenAI API -rajapinnan kautta toimitettua dataa ei käytetä OpenAI:n mallien kouluttamiseen. Tiedot poistuvat tilapäisistä valvontalokeista 30 päivän kuluessa.</li>
-          </ul>
-        </li>
-        <li><strong>Verkkohotelli:</strong> Domainhotelli (palvelintila ja verkkotunnuspalvelut EU/Suomi-alueella).</li>
-      </ul>
-    </div>
+            <div class="section">
+                <h2>3. Käsittelyn tarkoitus ja oikeusperuste</h2>
+                <ul>
+                    <li><strong>Käsittelyn tarkoitus:</strong> Sosiaalisen median markkinointimateriaalin automaattinen luonti, kuvien analysointi, julkaisujen esikatselu, asiakassuhteen ylläpito, laskutus sekä palvelun tekninen ylläpito.</li>
+                    <li><strong>Oikeusperusteet (GDPR 6 artikla):</strong>
+                        <ul>
+                            <li><strong>Sopimus:</strong> Palvelun tuottaminen ja tilauksen täyttäminen asiakkaalle.</li>
+                            <li><strong>Oikeutettu etu:</strong> Palvelun tekninen laadunvarmistus, virheiden korjaus, vianetsintä ja väärinkäytösten ehkäisy.</li>
+                            <li><strong>Lakisääteinen velvoite:</strong> Kirjanpito- ja verolainsäädännön edellyttämät velvoitteet laskutus- ja maksutietojen osalta.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <p><strong>Asiakkaan vastuu sisällöstä:</strong> Asiakas (sekä yritys- että yksityisasiakas) vastaa siitä, että hänellä on lainmukainen käsittelyperuste tai asianmukainen suostumus järjestelmään lataamiensa kuvien ja tietojen käsittelyyn, mikäli niissä esiintyy tunnistettavia kolmansia henkilöitä.</p>
+            </div>
 
-    <div class="section">
-      <h2>6. Tietojen säilytysaika</h2>
-      <ul>
-        <li><strong>Kuvat ja luodut julkaisut (Supabase):</strong> Säilytetään järjestelmässä 90 vuorokauden ajan tai kunnes käyttäjä itse poistaa kyseisen materiaalin järjestelmästä.</li>
-        <li><strong>Automaation suorituslokit (Make.com):</strong> Työnkulkujen teknisiä suoritus- ja virhelokeja säilytetään vianetsintää varten enintään 30 päivää, minkä jälkeen ne tuhoutuvat automaattisesti.</li>
-        <li><strong>Verkkopalvelinlokit:</strong> Säilytetään verkkohotellin teknisissä järjestelmissä vain vikatilanteiden ja tietoturvan kannalta tarpeellisen ajan.</li>
-        <li><strong>Asiakas- ja laskutustiedot:</strong> Säilytetään asiakassuhteen keston ajan ja sen jälkeen kirjanpitolain vaatiman lakisääteisen ajan (pääsääntöisesti 6 vuotta tilikauden päättymisestä).</li>
-      </ul>
-    </div>
+            <div class="section">
+                <h2>4. Säännönmukaiset tietolähteet</h2>
+                <p>Tiedot saadaan:</p>
+                <ul>
+                    <li>Suoraan asiakkaalta yhteydenoton, rekisteröitymisen, tilauksen, syötteiden antamisen ja kuvien lataamisen yhteydessä.</li>
+                    <li>Automaattisesti verkkoselaimelta palvelun käytön ja sivustovierailujen yhteydessä (palvelinlokit).</li>
+                </ul>
+            </div>
 
-    <div class="section">
-      <h2>7. Verkkosivuston lokitiedot ja evästeet</h2>
-      <ul>
-        <li><strong>Palvelinlokit (solone.fi):</strong> Sivuston verkkohotellipalvelu (Domainhotelli) kerää tavanomaisia teknisiä palvelinlokeja (kuten kävijän IP-osoite, selaintieto, pyynnön kellonaika ja avatut sivut). Tietoja käsitellään palvelun teknisen vakauden, suorituskyvyn seurannan sekä tietoturvan varmistamiseksi (oikeutettu etu).</li>
-        <li><strong>Hakukonenäkyvyys:</strong> Sivuston hakukonenäkyvyyden seurantaan käytetään Google Search Console -työkalua. Työkalu analysoi hakukonetilastoja eikä asenna käyttäjän selaimeen henkilötietoja tallentavia seurantatiedostoja tai evästeitä.</li>
-        <li><strong>Evästeet ja sovelluksen toiminta:</strong> Palvelussa ja sovellussivuilla käytetään ainoastaan palvelun teknisen toiminnan ja istunnon ylläpidon kannalta välttämättömiä toimintoja (kuten selaimen paikallista tallennustilaa tai istuntoevästeitä kirjautumisen varmistamiseksi). Sivustolla ei käytetä kolmansien osapuolten markkinointi- tai profilointievästeitä.</li>
-      </ul>
-    </div>
+            <div class="section">
+                <h2>5. Tietojen vastaanottajat ja siirto EU/ETA-alueen ulkopuolelle</h2>
+                <p>Palvelun toteuttamisessa käytetään seuraavia luotettavia alihankkijoita (henkilötietojen käsittelijöitä):</p>
+                <ul>
+                    <li><strong>Tietokanta ja tallennustila:</strong> Supabase (Supabase Inc.). Asiakkaan lataamat kuvat ja tietokantatiedot tallennetaan Supabasen pilvipalveluun EU-alueella sijaitseville palvelimille.</li>
+                    <li><strong>Automaatioalusta (Orkestrointi):</strong> Make.com (Celonis SE / Celonis Inc.). Make ohjaa datavirtoja käyttöliittymän, tietokannan ja tekoälyrajapinnan välillä. Tietoja käsitellään Euroopan talousalueella (ETA).</li>
+                    <li><strong>Tekoäly ja kuvien analysointi:</strong> OpenAI (OpenAI LLC).
+                        <ul>
+                            <li>Analysoitava aineisto siirtyy OpenAI:n palvelimille, jotka voivat sijaita Yhdysvalloissa. Tiedonsiirrossa noudatetaan EU-U.S. Data Privacy Framework -tietosuojakehystä ja/tai Euroopan komission hyväksymiä vakiosopimuslausekkeita (SCC).</li>
+                            <li>OpenAI API -rajapinnan kautta toimitettua dataa ei käytetä OpenAI:n mallien kouluttamiseen. Tiedot poistuvat tilapäisistä valvontalokeista 30 päivän kuluessa.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Verkkohotelli:</strong> Domainhotelli (palvelintila ja verkkotunnuspalvelut EU/Suomi-alueella).</li>
+                </ul>
+            </div>
 
-    <div class="section">
-      <h2>8. Tietoturvaperiaatteet</h2>
-      <p>Kaikki tietoliikenne järjestelmän käyttöliittymän, tietokannan ja API-rajapintojen välillä on suojattu vahvalla salauksella (HTTPS/TLS). Pääsy tietokantoihin ja hallintatyökaluihin on rajattu ja suojattu henkilökohtaisin tunnuksin, vahvoin salasanoin sekä monivaiheisella tunnistautumisella (2FA).</p>
-    </div>
+            <div class="section">
+                <h2>6. Tietojen säilytysaika</h2>
+                <ul>
+                    <li><strong>Kuvat ja luodut julkaisut (Supabase):</strong> Säilytetään järjestelmässä 90 vuorokauden ajan tai kunnes käyttäjä itse poistaa kyseisen materiaalin järjestelmästä.</li>
+                    <li><strong>Automaation suorituslokit (Make.com):</strong> Työnkulkujen teknisiä suoritus- ja virhelokeja säilytetään vianetsintää varten enintään 30 päivää, minkä jälkeen ne tuhoutuvat automaattisesti.</li>
+                    <li><strong>Verkkopalvelinlokit:</strong> Säilytetään verkkohotellin teknisissä järjestelmissä vain vikatilanteiden ja tietoturvan kannalta tarpeellisen ajan.</li>
+                    <li><strong>Asiakas- ja laskutustiedot:</strong> Säilytetään asiakassuhteen keston ajan ja sen jälkeen kirjanpitolain vaatiman lakisääteisen ajan (pääsääntöisesti 6 vuotta tilikauden päättymisestä).</li>
+                </ul>
+            </div>
 
-    <div class="section">
-      <h2>9. Rekisteröidyn oikeudet</h2>
-      <p>Rekisteröidyllä on EU:n yleisen tietosuoja-asetuksen (GDPR) mukaisesti oikeus:</p>
-      <ul>
-        <li><strong>Tarkastaa tiedot:</strong> Saada vahvistus siitä, käsitelläänkö häntä koskevia tietoja, ja pyytää jäljennös henkilötiedoistaan.</li>
-        <li><strong>Oikaista tiedot:</strong> Vaatia virheellisten, puutteellisten tai vanhentuneiden tietojen korjaamista.</li>
-        <li><strong>Poistaa tiedot:</strong> Pyytää tietojensa poistamista järjestelmästä siltä osin kuin tietojen säilyttämiselle ei ole muuta lakisääteistä velvoitetta (kuten kirjanpito).</li>
-        <li><strong>Rajoittaa tai vastustaa käsittelyä:</strong> Tietyissä tilanteissa rajoittaa tietojensa käsittelyä tai vastustaa sitä oikeutettuun etuun perustuvissa tapauksissa.</li>
-        <li><strong>Valitusoikeus valvontaviranomaiselle:</strong> Rekisteröidyllä on oikeus tehdä valitus tietosuojavaltuutetulle (<a href="https://www.tietosuoja.fi" target="_blank" rel="noopener noreferrer">Tietosuojavaltuutetun toimisto, www.tietosuoja.fi</a>), mikäli hän katsoo henkilötietojen käsittelyssä rikotun tietosuojalainsäädäntöä.</li>
-      </ul>
-    </div>
+            <div class="section">
+                <h2>7. Verkkosivuston lokitiedot ja evästeet</h2>
+                <ul>
+                    <li><strong>Palvelinlokit (solone.fi):</strong> Sivuston verkkohotellipalvelu (Domainhotelli) kerää tavanomaisia teknisiä palvelinlokeja (kuten kävijän IP-osoite, selaintieto, pyynnön kellonaika ja avatut sivut). Tietoja käsitellään palvelun teknisen vakauden, suorituskyvyn seurannan sekä tietoturvan varmistamiseksi (oikeutettu etu).</li>
+                    <li><strong>Hakukonenäkyvyys:</strong> Sivuston hakukonenäkyvyyden seurantaan käytetään Google Search Console -työkalua. Työkalu analysoi hakukonetilastoja eikä asenna käyttäjän selaimeen henkilötietoja tallentavia seurantatiedostoja tai evästeitä.</li>
+                    <li><strong>Evästeet ja sovelluksen toiminta:</strong> Palvelussa ja sovellussivuilla käytetään ainoastaan palvelun teknisen toiminnan ja istunnon ylläpidon kannalta välttämättömiä toimintoja (kuten selaimen paikallista tallennustilaa tai istuntoevästeitä kirjautumisen varmistamiseksi). Sivustolla ei käytetä kolmansien osapuolten markkinointi- tai profilointievästeitä.</li>
+                </ul>
+            </div>
 
-    <footer>
-      <span>&copy; SolOne HR & Business</span>
-      <span>Päivitetty viimeksi: Syyskuu 2026</span>
-    </footer>
-  </div>
+            <div class="section">
+                <h2>8. Tietoturvaperiaatteet</h2>
+                <p>Kaikki tietoliikenne järjestelmän käyttöliittymän, tietokannan ja API-rajapintojen välillä on suojattu vahvalla salauksella (HTTPS/TLS). Pääsy tietokantoihin ja hallintatyökaluihin on rajattu ja suojattu henkilökohtaisin tunnuksin, vahvoin salasanoin sekä monivaiheisella tunnistautumisella (2FA).</p>
+            </div>
 
+            <div class="section">
+                <h2>9. Rekisteröidyn oikeudet</h2>
+                <p>Rekisteröidyllä on EU:n yleisen tietosuoja-asetuksen (GDPR) mukaisesti oikeus:</p>
+                <ul>
+                    <li><strong>Tarkastaa tiedot:</strong> Saada vahvistus siitä, käsitelläänkö häntä koskevia tietoja, ja pyytää jäljennös henkilötiedoistaan.</li>
+                    <li><strong>Oikaista tiedot:</strong> Vaatia virheellisten, puutteellisten tai vanhentuneiden tietojen korjaamista.</li>
+                    <li><strong>Poistaa tiedot:</strong> Pyytää tietojensa poistamista järjestelmästä siltä osin kuin tietojen säilyttämiselle ei ole muuta lakisääteistä velvoitetta (kuten kirjanpito).</li>
+                    <li><strong>Rajoittaa tai vastustaa käsittelyä:</strong> Tietyissä tilanteissa rajoittaa tietojensa käsittelyä tai vastustaa sitä oikeutettuun etuun perustuvissa tapauksissa.</li>
+                    <li><strong>Valitusoikeus valvontaviranomaiselle:</strong> Rekisteröidyllä on oikeus tehdä valitus tietosuojavaltuutetulle (<a href="https://www.tietosuoja.fi" target="_blank" rel="noopener noreferrer">Tietosuojavaltuutetun toimisto, www.tietosuoja.fi</a>), mikäli hän katsoo henkilötietojen käsittelyssä rikotun tietosuojalainsäädäntöä.</li>
+                </ul>
+            </div>
+
+        </div> <!-- KORTTI LOPPUU -->
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <p class="notranslate"><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 700;"><span class="optinen-o">O</span>ne</span> HR & Business</strong></p>
+            <p style="margin: 5px 0;">SolOne Automaatioratkaisut</p>
+            <p style="margin: 5px 0; font-size: 13px; color: var(--text-muted);">Y-tunnus: 1391767-8</p>
+            <p style="margin: 10px 0; font-size: 13px;">
+                <a href="meista.html" style="color: var(--text-muted); text-decoration: none;">SolOnen tarina</a>
+                <span style="color: var(--border-color); margin: 0 8px;">|</span>
+                <a href="vastuullisuus.html" style="color: var(--text-muted); text-decoration: none;">Vastuullisuus</a>
+                <span style="color: var(--border-color); margin: 0 8px;">|</span>
+                <a href="tietosuoja.html" style="color: var(--text-muted); text-decoration: none;">Tietosuojaseloste</a>
+                <span style="color: var(--border-color); margin: 0 8px;">|</span>
+                <a href="yhteystiedot.html" style="color: var(--text-muted); text-decoration: none;">Yhteystiedot</a>
+            </p>
+            <p style="font-size: 12px; color: #94a3b8; margin-top: 15px;">&copy; SolOne. Kaikki oikeudet pidätetään.</p>
+        </footer>
+        
+    </div> <!-- CONTAINER LOPPUU -->
+
+<script>
+    const SUPABASE_URL = 'https://oajnnrrnatqqymmvncxf.supabase.co';
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
+
+    function toggleMobiilivalikko() {
+        const navi = document.getElementById('paanavigaatio');
+        if (navi) navi.classList.toggle('auki');
+    }
+
+    function vaihdaLomakeNakyvyys() {
+        const lomake = document.getElementById('portaali-lomake');
+        if (lomake) {
+            lomake.style.display = lomake.style.display === 'block' ? 'none' : 'block';
+        }
+    }
+
+    async function suoritaKirjautuminen() {
+        const email = document.getElementById('pika-email').value;
+        const password = document.getElementById('pika-password').value;
+        const virheAlue = document.getElementById('pika-virhe');
+        const infoAlue = document.getElementById('pika-info');
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+                method: 'POST',
+                headers: { 'apikey': ANON_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error_description || data.msg || "Kirjautuminen epäonnistui");
+
+            localStorage.setItem('supabase_token', data.access_token);
+            localStorage.setItem('supabase_refresh_token', data.refresh_token);
+            localStorage.setItem('user_email', data.user.email);
+
+            if (virheAlue) virheAlue.style.display = 'none';
+            if (infoAlue) infoAlue.style.display = 'none';
+            const lomake = document.getElementById('portaali-lomake');
+            if (lomake) lomake.style.display = 'none';
+            tarkistaIstunto();
+        } catch (err) {
+            if (virheAlue) {
+                virheAlue.textContent = "Kirjautuminen epäonnistui.";
+                virheAlue.style.display = 'block';
+            }
+        }
+    }
+
+    async function lahetaSalasananPalautus() {
+        const emailKentta = document.getElementById('pika-email');
+        const virheAlue = document.getElementById('pika-virhe');
+        const infoAlue = document.getElementById('pika-info');
+
+        if (virheAlue) virheAlue.style.display = 'none';
+        if (infoAlue) infoAlue.style.display = 'none';
+
+        let email = emailKentta ? emailKentta.value.trim() : '';
+        if (!email) {
+            email = prompt("Syötä sähköpostiosoitteesi salasanan palauttamiseksi:");
+            if (!email) return;
+            if (emailKentta) emailKentta.value = email;
+        }
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/auth/v1/recover`, {
+                method: 'POST',
+                headers: { 'apikey': ANON_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.msg || data.error_description || "Virhe pyynnössä");
+
+            if (infoAlue) {
+                infoAlue.textContent = "✓ Palautuslinkki lähetetty sähköpostiisi!";
+                infoAlue.style.display = 'block';
+            }
+        } catch (err) {
+            if (virheAlue) {
+                virheAlue.textContent = "Virhe: " + err.message;
+                virheAlue.style.display = 'block';
+            }
+        }
+    }
+
+    function kirjauduUlos() {
+        localStorage.removeItem('supabase_token');
+        localStorage.removeItem('supabase_refresh_token');
+        localStorage.removeItem('user_email');
+        tarkistaIstunto();
+    }
+
+    function tarkistaIstunto() {
+        const token = localStorage.getItem('supabase_token');
+        const email = localStorage.getItem('user_email');
+        const vieras = document.getElementById('portaali-vieras');
+        const kirjautunut = document.getElementById('portaali-kirjautunut');
+        const tunnus = document.getElementById('kayttaja-tunnus');
+
+        if (token && kirjautunut && vieras) {
+            vieras.style.display = 'none';
+            if (tunnus) tunnus.textContent = email ? email.split('@')[0] : 'Asiakas';
+            kirjautunut.style.display = 'flex';
+        } else if (kirjautunut && vieras) {
+            kirjautunut.style.display = 'none';
+            vieras.style.display = 'block';
+        }
+    }
+
+    window.addEventListener('load', function() {
+        tarkistaIstunto();
+    });
+</script>
+
+<!-- Tuodaan keskitetty yläpalkki ja kielitoiminnot mukaan -->
+<script src="/header.js"></script>
 </body>
 </html>
