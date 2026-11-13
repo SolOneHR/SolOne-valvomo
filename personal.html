@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fi">
+<html lang="fi" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +8,7 @@
     <link rel="apple-touch-icon" href="/icon-192.2.png">
     <!-- Android Chrome aloitusnäyttö -->
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.2.png">
-    <title>SolOne Personal – Julkaise ajatuksesi omalla äänelläsi</title>
+    <title>SolOne Personal – Julkaise ajatuksesi omalla äänelläsi ja kielelläsi</title>
     <style>
         :root {
             --bg-main: #f8fafc;
@@ -45,7 +45,7 @@
             padding: 20px 16px 40px 16px;
         }
 
-        /* YLÄPALKKI & NAVIGAATIO */
+        /* YLÄPALKKI & NAVIGAATIO (Hallitaan header.js kautta) */
         .asiakasportaalipalkki {
             display: flex;
             justify-content: space-between;
@@ -108,6 +108,129 @@
             background-color: #e0f2fe;
         }
 
+        /* Hampurilainen-painike mobiilissa */
+        .hampurilainen-btn {
+            display: none;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 7px 10px;
+            cursor: pointer;
+            color: var(--text-main);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hampurilainen-btn svg {
+            width: 22px;
+            height: 22px;
+            display: block;
+        }
+
+        .portaali-toiminnot {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #portaali-kirjautunut {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .portal-linkki {
+            color: #1e293b;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        .portal-linkki:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+            background-color: #f8fafc;
+        }
+
+        .portal-linkki svg {
+            width: 15px;
+            height: 15px;
+            color: var(--primary);
+        }
+
+        .btn-valvomo-linkki {
+            background-color: var(--primary);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 12.5px;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        .btn-valvomo-linkki:hover { background-color: var(--primary-hover); }
+
+        .btn-pika-linkki {
+            background-color: #0f172a;
+            color: #38bdf8;
+            border: 1px solid #334155;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 12.5px;
+            white-space: nowrap;
+        }
+
+        .btn-ulos-pieni {
+            background: transparent;
+            border: 1px solid var(--text-muted);
+            color: var(--text-muted);
+            padding: 5px 9px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .btn-ulos-pieni:hover { color: var(--danger); border-color: var(--danger); }
+
+        /* LOMAKKEET */
+        #portaali-lomake {
+            display: none;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08);
+            max-width: 320px;
+            margin-left: auto;
+        }
+
+        .lomake-kentta {
+            width: 100%;
+            padding: 9px 12px;
+            margin-bottom: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 13.5px;
+        }
+
+        .ilmoitus-pieni { color: var(--danger); font-size: 12px; margin-bottom: 10px; display: none; font-weight: bold; }
+        .ilmoitus-onni { color: var(--success); font-size: 12px; margin-bottom: 10px; display: none; font-weight: bold; }
+
         /* HERO-ALUE */
         .hero {
             background: linear-gradient(to bottom, #0f172a 0%, #1e3a8a 100%);
@@ -162,9 +285,10 @@
             text-transform: uppercase;
         }
 
+        /* Tasapainoinen 2 sarakkeen ruudukko (2 x 2 laatikkoa) */
         .ominaisuus-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
             gap: 20px;
             margin-top: 25px;
         }
@@ -216,7 +340,53 @@
         }
 
         @media (max-width: 768px) {
-            .paanavigaatio { display: none; }
+            .asiakasportaalipalkki {
+                flex-wrap: wrap;
+                gap: 12px;
+                padding-bottom: 15px;
+                margin-bottom: 25px;
+            }
+
+            .logo-nav-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .hampurilainen-btn {
+                display: inline-flex;
+            }
+
+            .paanavigaatio {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: #ffffff;
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                padding: 12px;
+                margin-top: 10px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            }
+
+            .paanavigaatio.auki {
+                display: flex;
+            }
+
+            .paanavigaatio a {
+                width: 100%;
+                padding: 10px 12px;
+                font-size: 14.5px;
+            }
+
+            .portaali-toiminnot {
+                width: 100%;
+                justify-content: flex-start;
+                margin-top: 4px;
+            }
+            
+            .ominaisuus-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -224,62 +394,75 @@
 
     <div class="container">
         
-        <!-- YLÄPALKKI -->
-        <header class="asiakasportaalipalkki">
-            <div class="logo-nav-group">
-                <a href="index.html" class="logo-palkki">
-                    <span class="sol">Sol</span><span class="one"><span class="optinen-o">O</span>ne</span>
-                </a>
+        <!-- Dynaaminen yläpalkki latautuu tähän header.js kautta -->
+        <div id="yla-navigointi-kontti"></div>
+
+        <!-- KIRJAUTUMISLOMAKE -->
+        <div id="portaali-lomake">
+            <div id="pika-virhe" class="ilmoitus-pieni"></div>
+            <div id="pika-info" class="ilmoitus-onni"></div>
+            <input type="email" id="pika-email" class="lomake-kentta" placeholder="Sähköposti">
+            <input type="password" id="pika-password" class="lomake-kentta" placeholder="Salasana">
+            <button style="width: 100%; background: var(--primary); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 10px;" onclick="suoritaKirjautuminen()">Kirjaudu</button>
+            <div style="text-align: center;">
+                <a href="javascript:void(0)" onclick="lahetaSalasananPalautus()" style="font-size: 12px; color: var(--primary); text-decoration: none;">Unohditko salasanasi?</a>
             </div>
-            <nav class="paanavigaatio">
-                <a href="index.html">Etusivu</a>
-                <a href="palvelupaketit.html">Palvelupaketit</a>
-                <a href="personal.html" class="aktiivinen">SolOne Personal</a>
-                <a href="yhteystiedot.html">Yhteystiedot</a>
-            </nav>
-        </header>
+        </div>
+
+        <!-- UUDEN SALASANAN ASETUS -->
+        <div id="salasanan-vaihto-laatikko" style="display: none; background: white; border: 2px solid var(--primary); border-radius: 8px; padding: 20px; margin-bottom: 25px; max-width: 380px; margin-left: auto; margin-right: auto; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+            <h3 style="margin-top: 0; font-size: 16px;">🔑 Aseta uusi salasana</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Syötä uusi salasana tilillesi.</p>
+            <div id="salasana-nollaus-virhe" class="ilmoitus-pieni"></div>
+            <input type="password" id="uusi-salasana-kentta" class="lomake-kentta" placeholder="Uusi salasana (väh. 6 merkkiä)">
+            <button style="width: 100%; background: var(--success); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="tallennaUusiSalasana()">Tallenna uusi salasana</button>
+        </div>
 
         <!-- HERO-BANNERI -->
         <header class="hero">
             <span class="badge" style="background: #0284c7; color: white;">SolOne Personal Edition</span>
-            <h1>Julkaise ajatuksesi – omalla äänelläsi ja omalla kielelläsi.</h1>
+            <h1>Julkaise ajatuksesi – omalla äänelläsi ja kielelläsi.</h1>
             <p class="hero-tagline">Viesti vapaasti. Ei kirjoittamisen esteitä, ei kielimuuria – vain oma äänesi.</p>
-            <p>Tekoälyavusteinen ratkaisu yksityishenkilöille ja sisällöntuottajille, jotka haluavat jakaa tarinansa ja osaamisensa vaivattomasti sosiaalisessa mediassa.</p>
+            <p>Tekoälyavusteinen ratkaisu yksityishenkilöille ja sisällöntuottajille, jotka haluavat jakaa tarinansa ja osaamisensa vaivattomasti sosiaalisessa mediassa suomeksi, englanniksi, ruotsiksi tai omalla kielellään.</p>
         </header>
 
         <!-- PÄÄSISÄLTÖ: KONSEPTIKUVAUS -->
         <div class="card">
             <span class="badge">Konsepti</span>
-            <h2 style="margin-top: 0; font-size: 22px;">Jokainen ansaitsee tulla kuulluksi</h2>
+            <h2 style="margin-top: 0; font-size: 22px;">Jokainen ansaitsee tulla kuulluksi – ilman kielimuureja</h2>
             <p style="font-size: 15.5px; color: #334155; line-height: 1.7;">
-                SolOne Personal on tekoälyavusteinen ratkaisu, jonka ydinajatus on, että jokainen ansaitsee tulla kuulluksi omalla äänellään ja julkaisun voi luonnostella omalla äidinkielellään. Sovellus yhdistää saumattomasti helpon äänisanelun, tekoälyavusteisen kielenhuollon sekä monikanavaisen julkaisun.
+                SolOne Personal on suunniteltu poistamaan kielimuurin esteet sisällöntuotannon tieltä. Järjestelmän monikielisyys mahdollistaa sen, että voit luonnostella ja sanella julkaisutekstin omalla kielelläsi, minkä jälkeen SolOne auttaa muotoilemaan sen halutulle kohdekielelle.
             </p>
             <p style="font-size: 15px; color: var(--text-muted); line-height: 1.7;">
-                Käyttäjä voi kertoa ajatuksensa ääneen puhelimelleen omalla kielellään tai kirjoittaa kuvauksen siitä, mitä haluaa kertoa, jolloin tekoäly muuttaa puheesta, tekstistä ja kuvasta selkeän, sujuvan julkaisuluonnoksen ilman kirjoittamisen tai kielimuurin esteitä. Ennen varsinaista julkaisua käyttäjä tarkistaa ja hyväksyy sisällön, mikä säilyttää täyden kontrollin omasta viestinnästä.
+                Sanele tai kirjoita julkaisuaihe suoraan puhelimellasi tai muulla laitteellasi. Voit liittää mukaan valmiin kuvan tai ottaa uuden kuvan kamerallasi. SolOne muodostaa niiden pohjalta julkaisuluonnoksen.
+
+                Äänisanelu tunnistaa puheen kielestä riippumatta, ja tekoäly osaa tulkita myös kuvien yksityiskohtia sekä niissä esiintyvää tekstiä.
+
+                kätevän tarkastustekstin avulla voit tarkistaa ja tarvittaessa hienosäätää käännöksiä. Voit pyytää tekoälyä muokkaamaan tekstiä edelleen, kunnes lopputulos vastaa toiveitasi. Halutessasi voit myös säilyttää alkuperäisen tekstisi sellaisenaan. Kun olet tyytyväinen julkaisuun, voit julkaista sen yhdellä klikkauksella.
             </p>
         </div>
 
-        <!-- KESKEISET OMINAISUUDET -->
+        <!-- KESKEISET OMINAISUUDET (Neljä laatikkoa 2 x 2 ruudukossa) -->
         <div class="card">
             <span class="badge">Ominaisuudet</span>
             <h2 style="margin-top: 0; font-size: 22px;">Näin SolOne Personal toimii arjessasi</h2>
             
             <div class="ominaisuus-grid">
                 <div class="ominaisuus-box">
-                    <h3>🎙️ Äänisanelu omalla kielellä</h3>
-                    <p>Kerro asiasi vapaasti puhumalla. Äänisanelu poistaa kirjoittamisen vaivan ja madaltaa kynnystä tuoda omat ajatukset esille.</p>
+                    <h3>🎙️ Äänisanelu & Kuvaäly</h3>
+                    <p>Sanele tai kirjoita puhelimellasi tai laitteellasi julkaisuaihe. Liitä mukaan tai ota kuva kamerallasi – äänisanelu tunnistaa puheen kielestä riippumatta ja tekoäly tulkitsee myös kuvassa olevia yksityiskohtia sekä tekstiä.</p>
                 </div>
                 <div class="ominaisuus-box">
-                    <h3>✨ Tekoälyn tekstinmuotoilu</h3>
-                    <p>Muuntaa puheen ja kuvat valmiiksi, laadukkaiksi julkaisuluonnoksiksi, hoitaa kielenhuollon puolestasi ja auttaa sisällön tarkistuksessa.</p>
+                    <h3>🌍 Täysi monikielisyys</h3>
+                    <p>Hallitse sisältöjä ja valitse julkaisukieleksi suomi, englanti, ruotsi tai muu oma kielesi. Ei enää kielimuureja kansainvälisessä viestinnässä.</p>
                 </div>
                 <div class="ominaisuus-box">
-                    <h3>✅ Oma päätösvalta</h3>
-                    <p>Sisältö tarkistetaan ja hyväksytään aina turvallisesti Somevalvomossa ennen sen päätymistä somekanaviin. Ei automaattisia yllätyksiä.</p>
+                    <h3>🔍 Tarkastus ja dynaaminen päivitys</h3>
+                    <p>Tarkista käännökset suoraan valvomossa omalla kielelläsi, tee tarvittavat muokkaukset ja anna tekoälyn päivittää varsinainen julkaisuteksti niiden pohjalta.</p>
                 </div>
                 <div class="ominaisuus-box">
-                    <h3>🚀 Monikanavainen jakaminen</h3>
-                    <p>Jaa tarinasi haluamiisi kanaviin vaivattomasti yhdestä paikasta ilman monimutkaista tilien vaihtelua tai säätämistä.</p>
+                    <h3>✅ Täysi ihmisen kontrolli</h3>
+                    <p>Mitään ei julkaista automaattisesti omin päin. Tarkistat ja hyväksyt sisällön aina Somevalvomossa ennen sen siirtymistä tuotantoon.</p>
                 </div>
             </div>
 
@@ -290,12 +473,208 @@
 
         <!-- FOOTER -->
         <footer class="footer">
-            <p><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 600;">One</span> HR & Business</strong></p>
+            <p class="notranslate"><strong><span style="color: #0f172a; font-weight: 700;">Sol</span><span style="color: #0284c7; font-weight: 700;"><span class="optinen-o">O</span>ne</span> HR & Business</strong></p>
             <p style="margin: 5px 0;">SolOne Automaatioratkaisut</p>
             <p style="margin: 5px 0; font-size: 13px; color: var(--text-muted);">Y-tunnus: 1391767-8</p>
+            <p style="margin: 10px 0; font-size: 13px;">
+                <a href="vastuullisuus.html" style="color: var(--text-muted); text-decoration: none;">Vastuullisuus</a>
+                <span style="color: var(--border-color); margin: 0 8px;">|</span>
+                <a href="tietosuoja.html" style="color: var(--text-muted); text-decoration: none;">Tietosuojaseloste</a>
+            </p>
             <p style="font-size: 12px; color: #94a3b8; margin-top: 15px;">&copy; SolOne. Kaikki oikeudet pidätetään.</p>
         </footer>
     </div>
 
+<script>
+    const SUPABASE_URL = 'https://oajnnrrnatqqymmvncxf.supabase.co';
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
+
+    function toggleMobiilivalikko() {
+        const navi = document.getElementById('paanavigaatio');
+        if (navi) navi.classList.toggle('auki');
+    }
+
+    function vaihdaLomakeNakyvyys() {
+        const lomake = document.getElementById('portaali-lomake');
+        lomake.style.display = lomake.style.display === 'block' ? 'none' : 'block';
+    }
+
+    async function suoritaKirjautuminen() {
+        const email = document.getElementById('pika-email').value;
+        const password = document.getElementById('pika-password').value;
+        const virheAlue = document.getElementById('pika-virhe');
+        const infoAlue = document.getElementById('pika-info');
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+                method: 'POST',
+                headers: { 'apikey': ANON_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error_description || data.msg || "Kirjautuminen epäonnistui");
+
+            localStorage.setItem('supabase_token', data.access_token);
+            localStorage.setItem('supabase_refresh_token', data.refresh_token);
+            localStorage.setItem('user_email', data.user.email);
+
+            virheAlue.style.display = 'none';
+            if (infoAlue) infoAlue.style.display = 'none';
+            document.getElementById('portaali-lomake').style.display = 'none';
+            tarkistaIstunto();
+        } catch (err) {
+            virheAlue.textContent = "Kirjautuminen epäonnistui.";
+            virheAlue.style.display = 'block';
+        }
+    }
+
+    async function lahetaSalasananPalautus() {
+        const emailKentta = document.getElementById('pika-email');
+        const virheAlue = document.getElementById('pika-virhe');
+        const infoAlue = document.getElementById('pika-info');
+
+        virheAlue.style.display = 'none';
+        infoAlue.style.display = 'none';
+
+        let email = emailKentta.value.trim();
+        if (!email) {
+            email = prompt("Syötä sähköpostiosoitteesi salasanan palauttamiseksi:");
+            if (!email) return;
+            emailKentta.value = email;
+        }
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/auth/v1/recover`, {
+                method: 'POST',
+                headers: { 'apikey': ANON_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.msg || data.error_description || "Virhe pyynnössä");
+
+            infoAlue.textContent = "✓ Palautuslinkki lähetetty sähköpostiisi!";
+            infoAlue.style.display = 'block';
+        } catch (err) {
+            virheAlue.textContent = "Virhe: " + err.message;
+            virheAlue.style.display = 'block';
+        }
+    }
+
+    async function tallennaUusiSalasana() {
+        const uusiSalasana = document.getElementById('uusi-salasana-kentta').value;
+        const virheAlue = document.getElementById('salasana-nollaus-virhe');
+        const token = localStorage.getItem('supabase_token');
+
+        if (!uusiSalasana || uusiSalasana.length < 6) {
+            virheAlue.textContent = "Salasanan on oltava vähintään 6 merkkiä.";
+            virheAlue.style.display = 'block';
+            return;
+        }
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+                method: 'PUT',
+                headers: {
+                    'apikey': ANON_KEY,
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ password: uusiSalasana })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.msg || data.error_description || "Tallennus epäonnistui");
+
+            document.getElementById('salasanan-vaihto-laatikko').style.display = 'none';
+            window.location.hash = '';
+            alert("✓ Uusi salasana tallennettu! Voit nyt kirjautua sisään.");
+            tarkistaIstunto();
+        } catch (err) {
+            virheAlue.textContent = "Virhe: " + err.message;
+            virheAlue.style.display = 'block';
+        }
+    }
+
+    async function tarkistaPalautusKoodi() {
+        const hash = window.location.hash;
+        const search = window.location.search;
+        let token = null;
+        let refreshToken = null;
+
+        if (hash && (hash.includes('type=recovery') || hash.includes('access_token='))) {
+            const params = new URLSearchParams(hash.replace('#', '?'));
+            token = params.get('access_token');
+            refreshToken = params.get('refresh_token');
+        } else if (search && search.includes('code=')) {
+            const params = new URLSearchParams(search);
+            const code = params.get('code');
+            try {
+                const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=pkce`, {
+                    method: 'POST',
+                    headers: { 'apikey': ANON_KEY, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ auth_code: code })
+                });
+                const data = await res.json();
+                if (res.ok && data.access_token) {
+                    token = data.access_token;
+                    refreshToken = data.refresh_token;
+                }
+            } catch (e) {
+                console.error("PKCE vaihto epäonnistui:", e);
+            }
+        }
+
+        if (token) {
+            localStorage.setItem('supabase_token', token);
+            if (refreshToken) localStorage.setItem('supabase_refresh_token', refreshToken);
+
+            const laatikko = document.getElementById('salasanan-vaihto-laatikko');
+            if (laatikko) {
+                laatikko.style.display = 'block';
+                laatikko.scrollIntoView({ behavior: 'smooth' });
+            }
+            return true;
+        }
+        return false;
+    }
+
+    function kirjauduUlos() {
+        localStorage.removeItem('supabase_token');
+        localStorage.removeItem('supabase_refresh_token');
+        localStorage.removeItem('user_email');
+        tarkistaIstunto();
+    }
+
+    function tarkistaIstunto() {
+        const token = localStorage.getItem('supabase_token');
+        const email = localStorage.getItem('user_email');
+
+        if (token) {
+            const vieras = document.getElementById('portaali-vieras');
+            if (vieras) vieras.style.display = 'none';
+            const tunnus = document.getElementById('kayttaja-tunnus');
+            if (tunnus) tunnus.textContent = email ? email.split('@')[0] : 'Asiakas';
+            const kirjautunut = document.getElementById('portaali-kirjautunut');
+            if (kirjautunut) kirjautunut.style.display = 'flex';
+        } else {
+            const kirjautunut = document.getElementById('portaali-kirjautunut');
+            if (kirjautunut) kirjautunut.style.display = 'none';
+            const vieras = document.getElementById('portaali-vieras');
+            if (vieras) vieras.style.display = 'block';
+        }
+    }
+
+    window.addEventListener('load', async function() {
+        const onPalautus = await tarkistaPalautusKoodi();
+        if (!onPalautus) {
+            tarkistaIstunto();
+        }
+    });
+</script>
+
+<!-- Tuodaan keskitetty yläpalkki ja kielitoiminnot mukaan -->
+<script src="/header.js"></script>
 </body>
 </html>

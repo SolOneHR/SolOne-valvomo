@@ -52,12 +52,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 <nav class="paanavigaatio" id="paanavigaatio">
                     <a href="index.html" class="${nykyinenSivu === 'index.html' ? 'aktiivinen' : ''}">Etusivu</a>
                     <a href="palvelupaketit.html" class="${nykyinenSivu === 'palvelupaketit.html' ? 'aktiivinen' : ''}">Palvelupaketit</a>
+                    <a href="personal.html" class="${nykyinenSivu === 'personal.html' ? 'aktiivinen' : ''}">SolOne Personal</a>
                     <a href="solonentarina.html" class="${nykyinenSivu === 'solonentarina.html' ? 'aktiivinen' : ''}">SolOnen tarina</a>
                     <a href="index.html#tyokalut">Työkalut</a>
                     <a href="index.html#uutiset">Uutiset</a>
-                    <a href="vastuullisuus.html" class="${nykyinenSivu === 'vastuullisuus.html' ? 'aktiivinen' : ''}">Vastuullisuus</a>
                     <a href="yhteystiedot.html" class="${nykyinenSivu === 'yhteystiedot.html' ? 'aktiivinen' : ''}">Yhteystiedot</a>
-                    <a href="tietosuoja.html" class="${nykyinenSivu === 'tietosuoja.html' ? 'aktiivinen' : ''}">Tietosuojaseloste</a>
                 </nav>
             </div>
 

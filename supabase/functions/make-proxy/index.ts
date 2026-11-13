@@ -56,6 +56,9 @@ serve(async (req) => {
       case 'update-customer':
         webhookUrl = Deno.env.get('MAKE_WEBHOOK_UPDATE_CUSTOMER') ?? ''
         break
+      case 'ai-update':
+        webhookUrl = Deno.env.get('MAKE_WEBHOOK_AI_UPDATE') ?? ''
+        break  
       default:
         throw new Error(`Tuntematon toiminto (action): ${action}`)
     }
