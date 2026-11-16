@@ -1,6 +1,6 @@
 // auth.js
 const SUPABASE_URL = 'https://oajnnrrnatqqymmvncxf.supabase.co';
-const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ham5ucnJuYXRxcXltbXZuY3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Nzc2MDMsImV4cCI6MjA5MjU1MzYwM30.VwnyHdSeN286aGWLuoS-QMy1sZakMmCIwYjWsLh0AWA';
+const ANON_KEY = 'sb_publishable_9JYvInL_2YcjkKnV84ITQg_onf-GVVf';
 
 // 1. Kirjautumistoiminto
 async function suoritaKirjautuminen() {
