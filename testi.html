@@ -438,6 +438,26 @@
             color: #991b1b; 
             border: 1px solid #fecaca; 
         }
+
+        /* Keskustelevan brändiäänen käyttöliittymä */
+        #brand-voice-modal { display:none; position:fixed; inset:0; z-index:10020; background:rgba(15,23,42,.66); padding:16px; box-sizing:border-box; align-items:center; justify-content:center; }
+        .bv-panel { background:#fff; width:100%; max-width:760px; max-height:94vh; overflow-y:auto; border-radius:14px; padding:22px; box-sizing:border-box; box-shadow:0 22px 55px rgba(0,0,0,.25); }
+        .bv-top { display:flex; align-items:flex-start; justify-content:space-between; gap:15px; }
+        .bv-step { font-size:.82rem; color:var(--text-muted); margin:12px 0; }
+        .bv-question { font-size:1.08rem; font-weight:650; margin:14px 0; }
+        .bv-answer { width:100%; min-height:125px; box-sizing:border-box; border:1px solid #cbd5e1; border-radius:8px; padding:12px; font:inherit; resize:vertical; }
+        .bv-actions { display:flex; flex-wrap:wrap; gap:9px; margin:16px 0 0; }
+        .bv-actions button { width:auto; }
+        .bv-message-list { display:flex; flex-direction:column; gap:11px; max-height:340px; overflow-y:auto; padding:12px; background:#f8fafc; border-radius:9px; margin:14px 0; }
+        .bv-message { border-radius:10px; padding:10px 13px; white-space:pre-wrap; overflow-wrap:anywhere; max-width:94%; font-size:.91rem; }
+        .bv-message.user { align-self:flex-end; background:#dbeafe; }
+        .bv-message.assistant { align-self:flex-start; background:#fff; border:1px solid #e2e8f0; }
+        .bv-note { font-size:.85rem; color:var(--text-muted); margin:12px 0; }
+        .bv-preview { border:1px solid #e2e8f0; border-radius:9px; padding:13px; background:#fff; margin-top:12px; }
+        .bv-preview pre { white-space:pre-wrap; overflow-wrap:anywhere; font:inherit; font-size:.86rem; max-height:260px; overflow:auto; margin:8px 0; }
+        .bv-status { font-size:.86rem; margin-top:12px; min-height:1.35em; }
+        .bv-status.error { color:#b91c1c; } .bv-status.success { color:#047857; }
+        @media(max-width:599px) { .bv-panel { padding:16px; } .bv-actions button { flex:1 1 140px; } }
     </style>
     <!-- Ulkoinen kielisanasto -->
     <script src="translations.js"></script>
@@ -744,25 +764,25 @@
                 </p>
                 <button type="button" id="btnConnectMeta" style="background: #1877F2; color: #fff; border: none; padding: 10px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; width: auto;" onclick="kaynnistaMetaOAuth()">
                     <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                    <span data-i18n="btnConnectMetaText">Connect Facebook & Instagram</span>
+                    <span data-i18n="btnConnectMetaText">Yhdistä Facebook & Instagram</span>
                 </button>
-                <div id="meta-oauth-status" style="font-size: 0.8rem; margin-top: 8px; font-weight: 600; display: none;"></div>
+                <div id="meta-oauth-status" role="status" style="font-size: 0.8rem; margin-top: 8px; font-weight: 600; display: none;"></div>
             </div>
-            
-            <div id="sometilit-lista" style="margin-bottom: 20px; display: flex-direction: column; gap: 10px;"></div>
+
+            <div id="sometilit-lista" role="status" style="margin-bottom: 20px; display: flex-direction: column; gap: 10px;"></div>
 
             <div id="lisaa-sivu-lomake-lohko" style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
                 <h4 style="margin: 0 0 10px 0; font-size: 0.95rem; color: var(--text-main);" data-i18n="addPageTitle">➕ Add New Page / Account</h4>
                 <label class="field-label" data-i18n="addPageName">Page / Profile Name:</label>
                 <input type="text" id="uusi-asetus-nimi" class="valinta-kentta" placeholder="esim. SolOne Yrityssivu" style="margin-bottom:10px;">
 
-                <label class="field-label">Facebook Page ID:</label>
+                <label class="field-label" data-meta-l10n="fbId">Facebook Page ID:</label>
                 <input type="text" id="uusi-asetus-fb-id" class="valinta-kentta" placeholder="esim. 108130191086329" style="margin-bottom:10px;">
 
-                <label class="field-label">Instagram Account ID:</label>
+                <label class="field-label" data-meta-l10n="igId">Instagram Account ID:</label>
                 <input type="text" id="uusi-asetus-ig-id" class="valinta-kentta" placeholder="esim. 17841400322950672" style="margin-bottom:10px;">
 
-                <label class="field-label">LinkedIn Organization URN / ID:</label>
+                <label class="field-label" data-meta-l10n="liId">LinkedIn Organization URN / ID:</label>
                 <input type="text" id="uusi-asetus-linkedin-id" class="valinta-kentta" placeholder="esim. urn:li:organization:12345678 tai nimi" style="margin-bottom:12px;">
 
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
@@ -777,6 +797,70 @@
                 <button type="button" class="btn-ulos" style="color:var(--text-main); border: 1px solid #cbd5e1; background: #f1f5f9; width: 100%;" onclick="suljeAsetuksetModaali()" data-i18n="btnClose">Close</button>
             </div>
         </div>
+    </div>
+
+
+    <!-- OMA BRÄNDIÄÄNI: ALKUKYSYMYKSET, KESKUSTELU JA HYVÄKSYNTÄ -->
+    <div id="brand-voice-modal" role="dialog" aria-modal="true" aria-labelledby="bv-modal-title">
+      <div class="bv-panel">
+        <div class="bv-top">
+          <div>
+            <h2 id="bv-modal-title" style="margin:0;" data-i18n="bvTitle">Oma brändiääni</h2>
+            <div id="bv-account-label" class="bv-note"></div>
+          </div>
+          <button type="button" class="btn-testi" style="width:auto;background:#e2e8f0;color:#0f172a;" onclick="suljeBrandVoice()" data-i18n="bvClose">Sulje</button>
+        </div>
+        <p class="bv-note" data-i18n="bvIntro">Vastaa kahdeksaan kysymykseen ja tarkenna tyyliä keskustellen. Brändiääni otetaan käyttöön vasta hyväksynnän jälkeen.</p>
+        <div id="bv-active" class="bv-preview" style="display:none;">
+          <strong data-i18n="bvActiveTitle">Käytössä oleva brändiääni</strong>
+          <p class="bv-note" data-i18n="bvActiveSafe">Muutokset tallennetaan luonnokseksi. Nykyinen brändiääni pysyy käytössä hyväksyntään asti.</p>
+          <pre id="bv-active-prompt" style="max-height:320px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:.88rem;"></pre>
+          <div class="bv-actions" id="bv-active-actions">
+            <button type="button" class="btn-pika" id="bv-begin-edit" onclick="bvAvaaMuokkaus()" data-i18n="bvBeginEdit">Muokkaa brändiääntä</button>
+            <button type="button" class="btn-testi" id="bv-active-restart" onclick="bvAloitaUudelleen()" data-i18n="bvRestart">Aloita uusi luonnos</button>
+          </div>
+        </div>
+        <div id="bv-setup">
+          <div id="bv-active-info" class="bv-note"></div>
+          <div id="bv-step" class="bv-step"></div>
+          <label id="bv-question" for="bv-answer" class="bv-question" style="display:block;"></label>
+          <textarea id="bv-answer" class="bv-answer" maxlength="4000"></textarea>
+          <div class="bv-actions">
+            <button type="button" class="btn-testi" id="bv-prev" onclick="bvSiirry(-1)" data-i18n="bvBack">Edellinen</button>
+            <button type="button" class="btn-testi" id="bv-skip" onclick="bvOhita()" data-i18n="bvSkip">Ohita kysymys</button>
+            <button type="button" class="btn-pika" id="bv-next" onclick="bvSiirry(1)" data-i18n="bvNext">Seuraava</button>
+          </div>
+        </div>
+        <div id="bv-chat" style="display:none;">
+          <div id="bv-messages" class="bv-message-list" aria-live="polite"></div>
+          <div id="bv-preview" class="bv-preview" style="display:none;">
+            <strong data-i18n="bvDraftPreview">Brändiääniluonnos</strong>
+            <div id="bv-voice-name" style="font-weight:600;margin-top:8px;"></div>
+            <p id="bv-voice-summary" class="bv-note" style="white-space:pre-wrap;"></p>
+            <details open><summary data-i18n="bvFullPrompt">Näytä koko brändiääniohje</summary><pre id="bv-voice-prompt"></pre></details>
+            <div class="bv-actions" id="bv-manual-actions" style="display:none;">
+              <button type="button" class="btn-testi" id="bv-manual-open" onclick="bvAvaaTekstimuokkaus()" data-i18n="bvManualOpen">Muokkaa tekstiä suoraan</button>
+            </div>
+            <div id="bv-manual-editor" style="display:none;margin-top:12px;">
+              <label class="field-label" for="bv-manual-input" data-i18n="bvManualLabel">Muokkaa luonnoksen koko brändiääniohjetta</label>
+              <textarea id="bv-manual-input" class="bv-answer" style="min-height:260px;" maxlength="30000"></textarea>
+              <div class="bv-actions">
+                <button type="button" class="btn-pika" id="bv-manual-save" onclick="bvTallennaTeksti()" data-i18n="bvManualSave">Tallenna luonnokseen</button>
+                <button type="button" class="btn-testi" id="bv-manual-cancel" onclick="bvPeruTekstimuokkaus()" data-i18n="bvManualCancel">Peruuta</button>
+              </div>
+            </div>
+          </div>
+          <label for="bv-chat-input" class="field-label" data-i18n="bvMessageLabel">Mitä haluaisit muuttaa tai tarkentaa?</label>
+          <textarea id="bv-chat-input" class="bv-answer" style="min-height:82px;" maxlength="4000" data-i18n-placeholder="bvMessagePlaceholder" placeholder="Kerro omin sanoin..." ></textarea>
+          <div class="bv-actions">
+            <button type="button" class="btn-pika" id="bv-send" onclick="bvLahetaViesti()" data-i18n="bvSend">Lähetä</button>
+            <button type="button" class="btn-hyvaksy" id="bv-approve" onclick="bvHyvaksy()" style="display:none;" data-i18n="bvApprove">Hyväksy ja ota käyttöön</button>
+            <button type="button" class="btn-testi" id="bv-restart" onclick="bvAloitaUudelleen()" data-i18n="bvRestart">Aloita uusi luonnos</button>
+          </div>
+          <p id="bv-approval-note" class="bv-note"></p>
+        </div>
+        <div class="bv-status" id="bv-status" role="status" aria-live="polite"></div>
+      </div>
     </div>
 
     <!-- VALVOMO-OSIO -->
@@ -919,6 +1003,83 @@
                 el.placeholder = sanasto[avain];
             }
         });
+        paivitaMetaTilienKielet(kieli);
+    }
+
+    // Meta-tilinäkymän tekstit ovat kehitysversion yhteisessä kielisanastossa.
+    // Meta-hallinnan tekstit vaihtuvat kielivalinnan mukana.
+    const metaTilienSanasto = {
+        fi: {
+            modalSettingsTitle: '⚙️ Yhdistetyt sosiaalisen median tilit',
+            metaConnectDesc: 'Yhdistä Facebook-sivut ja Instagram-ammattilaistilit automaattisesti:',
+            btnConnectMetaText: 'Yhdistä Facebook ja Instagram',
+            addPageTitle: '➕ Lisää uusi sivu / tili', addPageName: 'Sivun / profiilin nimi:',
+            setPrimaryDefault: 'Aseta ensisijaiseksi sivuksi', btnAddAccount: '+ Tallenna uusi tili',
+            fbId:'Facebook-sivun tunnus:', igId:'Instagram-tilin tunnus:', liId:'LinkedIn-organisaation URN / ID:',
+            btnSaveTest:'Tallenna Meta-tilit (vain testikäyttäjä)',saveConfirm:'Tallennetaan Facebook- ja Instagram-tilit TESTIKÄYTTÄJÄLLE. Jatketaanko?',saveOk:(a,u)=>`✓ Meta-tilit tallennettu. Lisätty ${a}, päivitetty ${u} tiliä.`,diagnosticsTitle:'Vianmääritys', authTest:'🧪 Testaa Meta-tunnistautuminen', noAccounts:'Ei käytettävissä olevia tilejä. Lisää ensimmäinen alla.',
+            loadError:'Sometilien lataus epäonnistui. Tarkista kirjautuminen ja käyttöoikeudet.',
+            running:'Avataan Meta-valtuutus (ei tallennusta)...', savingRunning:'Avataan Meta-valtuutus ja tallennetaan tilit...', missingLogin:'Kirjaudu ensin Somevalvomoon.',
+            selectionTitle:'Valitse SolOneen liitettävät Facebook-sivut:',selectionSave:'Tallenna valitut sivut',selectionCancel:'Peruuta',selectionMissing:'Valitse vähintään yksi sivu.',selectionLoading:'Haetaan valittavissa olevia sivuja...',selectionSaving:'Tallennetaan valitut sivut...',
+            sdkFailed:'Meta-kirjautuminen ei ole käytettävissä. Päivitä sivu.',
+            authCheck:'Tarkistetaan tunnistautumista...',authSuccess:'✅ Tunnistautuminen onnistui. Tietokantaa ei muutettu.',authFailed:'❌ Testi epäonnistui: ',
+            authReceived:'Valtuutus saatu. Tarkistetaan Facebook- ja Instagram-tilit...',
+            previewOk:(n,ig,fail)=>`✓ Meta-valtuutus toimii. Facebook-sivuja: ${n}, Instagram-ammattilaistilejä: ${ig}${fail ? `, Instagram-haun virheitä: ${fail}` : ''}. TESTI: mitään ei tallennettu Supabaseen.`,
+            previewFail:'Meta-toiminto epäonnistui: ', cancelled:'Valtuutus peruutettiin tai ikkuna suljettiin.',
+        },
+        en: {
+            modalSettingsTitle:'⚙️ Connected Social Accounts', metaConnectDesc:'Connect Facebook Pages and Instagram Professional accounts automatically:',
+            btnConnectMetaText:'Connect Facebook & Instagram',
+            addPageTitle:'➕ Add New Page / Account',addPageName:'Page / Profile Name:',
+            setPrimaryDefault:'Set as primary default page',btnAddAccount:'+ Save new account',
+            fbId:'Facebook Page ID:',igId:'Instagram Account ID:',liId:'LinkedIn Organization URN / ID:',
+            btnSaveTest:'Save Meta accounts (test user only)',saveConfirm:'Save Facebook and Instagram accounts FOR THE TEST USER? Continue?',saveOk:(a,u)=>`✓ Meta accounts connected. Added ${a}, updated ${u} accounts.`,diagnosticsTitle:'Diagnostics',authTest:'🧪 Test Meta authentication',noAccounts:'No available accounts. Add your first account below.',
+            loadError:'Could not load social accounts. Check your sign-in and access permissions.',
+            running:'Opening Meta authorization (no saving)...', savingRunning:'Opening Meta authorization and connecting accounts...',missingLogin:'Please sign in first.',
+            selectionTitle:'Select the Facebook Pages to connect to SolOne:',selectionSave:'Save selected Pages',selectionCancel:'Cancel',selectionMissing:'Select at least one Page.',selectionLoading:'Loading available Pages...',selectionSaving:'Saving selected Pages...',
+            sdkFailed:'Meta login is unavailable. Reload the page.',
+            authCheck:'Checking authentication...',authSuccess:'✅ Authentication succeeded. Database unchanged.',authFailed:'❌ Test failed: ',
+            authReceived:'Authorization received. Checking Facebook and Instagram accounts...',
+            previewOk:(n,ig,fail)=>`✓ Meta authorization works. Facebook Pages: ${n}, Instagram professional accounts: ${ig}${fail ? `, Instagram lookup errors: ${fail}` : ''}. TEST: nothing saved to Supabase.`,
+            previewFail:'Meta operation failed: ',cancelled:'Authorization cancelled or window closed.',
+        },
+        sv: {
+            modalSettingsTitle:'⚙️ Anslutna sociala mediekonton',metaConnectDesc:'Anslut Facebook-sidor och professionella Instagram-konton automatiskt:',
+            btnConnectMetaText:'Anslut Facebook och Instagram',
+            addPageTitle:'➕ Lägg till sida / konto',addPageName:'Sidans / profilens namn:',
+            setPrimaryDefault:'Ange som standardsida',btnAddAccount:'+ Spara nytt konto',
+            fbId:'Facebook-sidans ID:',igId:'Instagram-kontots ID:',liId:'LinkedIn-organisationens URN / ID:',
+            btnSaveTest:'Spara Meta-konton (endast testanvändare)',saveConfirm:'Spara Facebook- och Instagram-konton FÖR TESTANVÄNDAREN? Fortsätta?',saveOk:(a,u)=>`✓ Meta-konton har sparats. Tillagda ${a}, uppdaterade ${u} konton.`,diagnosticsTitle:'Felsökning',authTest:'🧪 Testa Meta-autentisering',noAccounts:'Inga tillgängliga konton. Lägg till det första nedan.',
+            loadError:'Kunde inte läsa in konton. Kontrollera inloggning och behörigheter.',
+            running:'Öppnar Meta-auktorisering (sparar inte)...', savingRunning:'Öppnar Meta-auktorisering och ansluter konton...',missingLogin:'Logga in först.',
+            selectionTitle:'Välj de Facebook-sidor som ska anslutas till SolOne:',selectionSave:'Spara valda sidor',selectionCancel:'Avbryt',selectionMissing:'Välj minst en sida.',selectionLoading:'Hämtar tillgängliga sidor...',selectionSaving:'Sparar valda sidor...',
+            sdkFailed:'Meta-inloggning är inte tillgänglig. Ladda om sidan.',
+            authCheck:'Kontrollerar autentiseringen...',authSuccess:'✅ Autentiseringen lyckades. Databasen är oförändrad.',authFailed:'❌ Testet misslyckades: ',
+            authReceived:'Auktorisering mottagen. Kontrollerar Facebook och Instagram...',
+            previewOk:(n,ig,fail)=>`✓ Meta-auktorisering fungerar. Facebook-sidor: ${n}, professionella Instagram-konton: ${ig}${fail ? `, Instagram-fel: ${fail}` : ''}. TEST: inget har sparats i Supabase.`,
+            previewFail:'Meta-åtgärden misslyckades: ',cancelled:'Auktoriseringen avbröts eller fönstret stängdes.',
+        }
+    };
+    function metaT(k) {
+        const locale = localStorage.getItem('solone_kieli') || 'fi';
+        return (metaTilienSanasto[locale] || metaTilienSanasto.fi)[k];
+    }
+    function paivitaMetaTilienKielet(kieli) {
+        const labels = metaTilienSanasto[kieli] || metaTilienSanasto.fi;
+        ['modalSettingsTitle','metaConnectDesc','btnConnectMetaText','addPageTitle','addPageName','setPrimaryDefault','btnAddAccount'].forEach(key => {
+            const el = document.querySelector('#asetukset-modaali [data-i18n="' + key + '"]');
+            if (el) el.textContent = labels[key];
+        });
+        document.querySelectorAll('#asetukset-modaali [data-meta-l10n]').forEach(el => {
+            el.textContent = labels[el.dataset.metaL10n] || el.textContent;
+        });
+        const title = document.getElementById('meta-selection-title');
+        if (title) title.textContent = labels.selectionTitle;
+        const save = document.getElementById('meta-save-selected');
+        if (save) save.textContent = labels.selectionSave;
+        const cancel = document.getElementById('meta-cancel-selected');
+        if (cancel) cancel.textContent = labels.selectionCancel;
+        const testButton = document.querySelector('#asetukset-modaali button[onclick="testaaMetaAuthYhteys()"]');
+        if (testButton) testButton.textContent = labels.authTest;
     }
 
     function paivitaLuoNapinTeksti() {
@@ -1344,14 +1505,30 @@
 
     async function tarkistaIstunto() {
         const token = localStorage.getItem('supabase_token');
-        const email = localStorage.getItem('user_email');
-
         if (!token) {
             naytaKirjautumisIkkuna();
             return false;
         }
 
-        document.getElementById('kayttaja-email').textContent = email || 'Kirjautunut';
+        // Älä käytä selaimen muistissa olevaa sähköpostia asiakkaan identiteetin lähteenä.
+        // Supabase Auth vahvistaa JWT:n omistajan jokaisella istunnon alustuksella.
+        const db = haeSupabaseAsiakas();
+        let email = '';
+        try {
+            const userRes = await fetch(db.url + '/auth/v1/user', {
+                headers: { 'apikey': db.key, 'Authorization': 'Bearer ' + token }
+            });
+            if (!userRes.ok) throw new Error('Istunnon vahvistus epäonnistui (' + userRes.status + ')');
+            const userData = await userRes.json();
+            email = String(userData.email || '').trim().toLowerCase();
+            if (!email) throw new Error('Käyttäjän sähköpostia ei saatu');
+        } catch (error) {
+            console.warn('Istunnon vahvistus epäonnistui', error.message);
+            naytaKirjautumisIkkuna();
+            return false;
+        }
+        localStorage.setItem('user_email', email);
+        document.getElementById('kayttaja-email').textContent = email;
         document.getElementById('kayttaja-kortti').style.display = 'block';
         document.getElementById('kirjautumis-ikkuna').style.display = 'none';
         document.getElementById('valvomo-sisalto').style.display = 'block';
@@ -1377,6 +1554,7 @@
     }
 
     let kayttajanSometilit = [];
+    let sometilienLatausVirhe = false;
 
     async function lataaKayttajanSometilit() {
         if (!nykyinenAsiakastunnus) return;
@@ -1384,6 +1562,7 @@
         const token = localStorage.getItem('supabase_token');
 
         try {
+            sometilienLatausVirhe = false;
             const headers = {
                 'apikey': db.key,
                 'Authorization': 'Bearer ' + token,
@@ -1394,13 +1573,17 @@
                 method: 'GET',
                 headers: headers
             });
-            const omatTilit = await resOmat.json() || [];
+            if (!resOmat.ok) throw new Error('asiakkaan_sometilit HTTP ' + resOmat.status);
+            const omatTilit = await resOmat.json();
+            if (!Array.isArray(omatTilit)) throw new Error('Invalid own accounts response');
 
             const resJaetut = await fetch(db.url + '/rest/v1/v_kayttajaoikeudet?user_email=eq.' + encodeURIComponent(nykyinenAsiakastunnus), {
                 method: 'GET',
                 headers: headers
             });
-            const jaetutTilit = await resJaetut.json() || [];
+            if (!resJaetut.ok) throw new Error('v_kayttajaoikeudet HTTP ' + resJaetut.status);
+            const jaetutTilit = await resJaetut.json();
+            if (!Array.isArray(jaetutTilit)) throw new Error('Invalid shared accounts response');
 
             const tilitKartta = new Map();
             omatTilit.forEach(t => tilitKartta.set(t.id, t));
@@ -1412,6 +1595,7 @@
 
             kayttajanSometilit = Array.from(tilitKartta.values());
         } catch (e) {
+            sometilienLatausVirhe = true;
             console.error("Virhe ladattaessa sometilejä:", e);
         }
     }
@@ -1447,6 +1631,9 @@
         }
 
         document.getElementById('asetukset-modaali').style.display = 'flex';
+        paivitaMetaTilienKielet(localStorage.getItem('solone_kieli') || 'fi');
+        // Palvelin määrää, voiko tämä testikäyttäjä tallentaa. Pelkkä HTML ei voi sallia sitä.
+
     }
 
     function suljeAsetuksetModaali() {
@@ -1474,8 +1661,14 @@
         const aktiivinenKieli = localStorage.getItem('solone_kieli') || 'fi';
         const sanasto = tekstit[aktiivinenKieli];
 
+        if (sometilienLatausVirhe) {
+            lista.textContent = metaT('loadError');
+            lista.style.color = '#b91c1c';
+            return;
+        }
+        lista.style.color = '';
         if (!kayttajanSometilit || kayttajanSometilit.length === 0) {
-            lista.innerHTML = '<div style="font-size: 0.85rem; color: var(--text-muted);">' + sanasto.eiTileja + '</div>';
+            lista.innerHTML = '<div style="font-size: 0.85rem; color: var(--text-muted);">' + metaT('noAccounts') + '</div>';
             return;
         }
 
@@ -1502,6 +1695,8 @@
             
             if (aktiivinen) {
                 html += '  <div style="display: flex; gap: 6px;">';
+                // Brändiäänen luonti on käytettävissä myös oikeutetulle alikäyttäjälle.
+                html += '    <button type="button" class="btn-testi bv-open-button" data-brand-account="' + String(tili.id).replace(/[^a-f0-9-]/gi, '') + '" style="font-size:0.75rem;padding:4px 8px;width:auto;background:#1e3a8a;">' + (sanasto.bvOpen || '🎯 Oma brändiääni') + '</button>';
                 if (onOmaTili) {
                     if (!tili.ensisijainen) {
                         html += '    <button class="btn-ulos" style="color: var(--primary); border-color: var(--primary); font-size: 0.75rem; padding: 4px 8px; width: auto;" onclick="asetaEnsisijaiseksi(\'' + tili.id + '\')">' + sanasto.btnAsetaOletukseksi + '</button>';
@@ -1516,6 +1711,11 @@
             html += '</div>';
         });
         lista.innerHTML = html;
+        lista.querySelectorAll('.bv-open-button').forEach(function(button) {
+            button.addEventListener('click', function() {
+                avaaBrandVoice(button.dataset.brandAccount);
+            });
+        });
     }
 
     async function lisaaUusiSometiliKantaan() {
@@ -2057,14 +2257,25 @@
 
         try {
             const res = await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
-                method: 'DELETE',
-                headers: {
-                    'apikey': db.key,
-                    'Authorization': 'Bearer ' + token
-                }
-            });
+    method: 'DELETE',
+    headers: {
+        'apikey': db.key,
+        'Authorization': 'Bearer ' + token,
+        'Prefer': 'return=representation'
+    }
+});
 
-            if (!res.ok) throw new Error("Poisto epäonnistui");
+if (!res.ok) {
+    throw new Error("Poisto epäonnistui (HTTP " + res.status + ")");
+}
+
+const poistetutRivit = await res.json();
+
+if (!Array.isArray(poistetutRivit) ||
+    poistetutRivit.length !== 1 ||
+    String(poistetutRivit[0].id) !== String(id)) {
+    throw new Error("Julkaisua ei poistettu. Tarkista käyttöoikeudet.");
+}
 
             naytaIlmoitus('✓ Julkaisu poistettu arkistosta!');
             viimeisinHistoriaData = viimeisinHistoriaData.filter(function(j) { return j.id !== id; });
@@ -2366,7 +2577,7 @@
         if (julkaisu.tarkastusteksti) {
             htmlSisalto += '<div style="background: #fff7ed; border: 1px solid #fdba74; padding: 12px; border-radius: 8px; margin-bottom: 18px;">';
             htmlSisalto += '<label class="field-label" style="color: #c2410c;">' + sanasto.tarkistusOtsikko + '</label>';
-            htmlSisalto += '<textarea id="tarkastus-' + julkaisu.id + '" class="teksti-alue" style="border-color: #fdba74; min-height: 60px;"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.tarkastusteksti || '') + '</textarea>';
+            htmlSisalto += '<textarea id="tarkastus-' + julkaisu.id + '" class="teksti-alue" style="border-color: #fdba74; height: 250px; min-height: 150px; resize: vertical;"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.tarkastusteksti || '') + '</textarea>';
             if (!onHistoria) {
                 htmlSisalto += '<button type="button" class="btn-testi" style="background-color: #f97316; width: 100%; border: none;" onclick="paivitaTarkastuksenPohjalta(\'' + julkaisu.id + '\', this)">' + sanasto.btnPaivitaTarkastus + '</button>';
             }
@@ -2402,7 +2613,7 @@
         }
 
         htmlSisalto += '<label class="field-label">' + sanasto.lblJulkaisuteksti + '</label>';
-        htmlSisalto += '<textarea id="teksti-' + julkaisu.id + '" class="teksti-alue" rows="7"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.julkaisuteksti || '') + '</textarea>';
+        htmlSisalto += '<textarea id="teksti-' + julkaisu.id + '" class="teksti-alue" style="height: 250px; min-height: 150px; resize: vertical;"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.julkaisuteksti || '') + '</textarea>';
 
         if (!onHistoria) {
             let valmisAika = '';
@@ -2681,7 +2892,7 @@
 
             await tarkistaAktiivinenTilausOhjaus();
 
-            const resOdottavat = await fetch(db.url + '/rest/v1/somepostaukset?status=in.(odotetaan,kasittelyssa)&order=luotu_aika.asc', { method: 'GET', headers: headers });
+            const resOdottavat = await fetch(db.url + '/rest/v1/somepostaukset?status=in.(odotetaan,kasittelyssa)&order=luotu_aika.desc', { method: 'GET', headers: headers });
             if (resOdottavat.status === 401) { 
                 kirjauduUlos(); 
                 return; 
@@ -2940,6 +3151,345 @@
         }
     }, 5 * 60 * 1000);
 
+
+    // --- Keskusteleva brändiääni (erillinen nykyisestä julkaisutoiminnosta) ---
+    const bvQuestions = {
+      fi: [
+        'Mitä yrityksesi tekee ja kenelle palvelusi tai tuotteesi on tarkoitettu?',
+        'Jos yrityksesi olisi ihminen, millainen hänen luonteensa olisi?',
+        'Millaisen vaikutelman haluat asiakkaallesi jättää?',
+        'Miten haluat puhutella asiakkaita: esimerkiksi sinutellen, me-muodossa tai minä-muodossa?',
+        'Millainen sävy sopii viestintään: rento, asiallinen, asiantunteva, innostava tai jotain muuta?',
+        'Mitä arvoja, vahvuuksia tai lupauksia haluat nostaa esiin?',
+        'Millaisia sanoja, ilmaisuja tai tyylejä haluat käyttää – ja mitä välttää?',
+        'Miten suhtaudut huumoriin, tarinoihin, emojeihin ja suoriin myyntikehotuksiin?' 
+      ],
+      en: [
+        'What does your business do, and who are your products or services for?',
+        'If your business were a person, what would their personality be like?',
+        'What impression should your customers take away?',
+        'How would you like to address customers: personally, as a team, or in another way?',
+        'What tone suits you: relaxed, professional, knowledgeable, enthusiastic, or something else?',
+        'What values, strengths, or promises should your messages convey?',
+        'Which words, expressions, or styles should you use or avoid?',
+        'How do you feel about humor, stories, emojis, and direct sales invitations?'
+      ],
+      sv: [
+        'Vad gör ditt företag, och för vem är era produkter eller tjänster avsedda?',
+        'Om ditt företag var en person, hur skulle dess personlighet vara?',
+        'Vilket intryck vill du lämna hos kunderna?',
+        'Hur vill du tilltala kunderna: personligt, i vi-form eller på något annat sätt?',
+        'Vilken ton passar: avslappnad, saklig, kunnig, inspirerande eller något annat?',
+        'Vilka värderingar, styrkor eller löften vill du lyfta fram?',
+        'Vilka ord, uttryck och stilar vill du använda eller undvika?',
+        'Hur ser du på humor, berättelser, emojier och direkta säljuppmaningar?'
+      ]
+    };
+    let bvAccountId = null;
+    let bvDraft = null;
+    let bvAnswers = Array(8).fill('');
+    let bvStep = 0;
+    let bvBusy = false;
+    let bvOwner = false;
+    let bvActivePrompt = '';
+    let bvManualDirty = false;
+
+    function bvText(key) {
+      const lang = localStorage.getItem('solone_kieli') || 'fi';
+      return (tekstit[lang] && tekstit[lang][key]) || tekstit.fi[key] || key;
+    }
+    function bvStatus(message, error) {
+      const element = document.getElementById('bv-status');
+      element.textContent = message || '';
+      element.className = 'bv-status' + (error ? ' error' : message ? ' success' : '');
+    }
+    function bvAsetaVarattu(busy) {
+      bvBusy = busy;
+      ['bv-prev','bv-skip','bv-next','bv-send','bv-approve','bv-restart','bv-begin-edit','bv-manual-open','bv-manual-save','bv-manual-cancel','bv-active-restart'].forEach(id => {
+        const button = document.getElementById(id);
+        if (button) button.disabled = busy;
+      });
+      if (busy) bvStatus(bvText('bvWorking'));
+    }
+    async function bvRequest(action, extra = {}) {
+      const db = haeSupabaseAsiakas();
+      const token = localStorage.getItem('supabase_token');
+      if (!token) throw new Error(bvText('bvLoginNeeded'));
+      const response = await fetch(db.url + '/functions/v1/brand-voice', {
+        method: 'POST',
+        headers: {
+          'apikey': db.key,
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action, sometili_id: bvAccountId, ...extra })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || data.success === false) {
+        throw new Error(data.error || ('HTTP ' + response.status));
+      }
+      return data;
+    }
+    function bvNaytaVaihe() {
+      const language = localStorage.getItem('solone_kieli') || 'fi';
+      document.getElementById('bv-step').textContent = bvText('bvQuestion') + ' ' + (bvStep + 1) + ' / 8';
+      document.getElementById('bv-question').textContent = (bvQuestions[language] || bvQuestions.fi)[bvStep];
+      document.getElementById('bv-answer').value = bvAnswers[bvStep] || '';
+      document.getElementById('bv-prev').style.display = bvStep === 0 ? 'none' : 'inline-flex';
+      document.getElementById('bv-next').textContent = bvStep === 7 ? bvText('bvGenerate') : bvText('bvNext');
+    }
+    function bvKerääVastaus() {
+      bvAnswers[bvStep] = document.getElementById('bv-answer').value.trim();
+    }
+    function bvNaytaKysymykset() {
+      document.getElementById('bv-active').style.display = 'none';
+      document.getElementById('bv-setup').style.display = 'block';
+      document.getElementById('bv-chat').style.display = 'none';
+      bvNaytaVaihe();
+    }
+    function bvNaytaAktiivinen() {
+      const active = !!bvActivePrompt;
+      document.getElementById('bv-active').style.display = active ? 'block' : 'none';
+      document.getElementById('bv-active-prompt').textContent = bvActivePrompt;
+      document.getElementById('bv-begin-edit').style.display = bvOwner ? 'inline-flex' : 'none';
+      document.getElementById('bv-active-restart').style.display = bvOwner ? 'inline-flex' : 'none';
+      document.getElementById('bv-setup').style.display = active ? 'none' : 'block';
+      document.getElementById('bv-chat').style.display = 'none';
+      if (!active) bvNaytaVaihe();
+    }
+    function bvPeruTekstimuokkaus() {
+      document.getElementById('bv-manual-editor').style.display = 'none';
+      bvManualDirty = false;
+    }
+    function bvAvaaTekstimuokkaus() {
+      if (bvBusy || !bvOwner || !bvDraft) return;
+      const voice = bvDraft.current_voice || {};
+      document.getElementById('bv-manual-input').value = String(voice.custom_brand_prompt || '');
+      document.getElementById('bv-manual-editor').style.display = 'block';
+      bvManualDirty = false;
+    }
+    async function bvAvaaMuokkaus() {
+      if (bvBusy || !bvOwner) return;
+      bvAsetaVarattu(true);
+      try {
+        const result = await bvRequest('begin_edit');
+        bvDraft = result.draft;
+        bvStatus('');
+        bvNaytaKeskustelu();
+      } catch (error) {
+        bvStatus(error.message, true);
+      } finally {
+        bvAsetaVarattu(false);
+      }
+      if (bvDraft) bvAvaaTekstimuokkaus();
+    }
+    async function bvTallennaTeksti() {
+      if (bvBusy || !bvOwner || !bvDraft) return;
+      const prompt = document.getElementById('bv-manual-input').value.trim();
+      if (!prompt) { bvStatus(bvText('bvManualRequired'), true); return; }
+      bvAsetaVarattu(true);
+      try {
+        const result = await bvRequest('edit', { custom_brand_prompt: prompt, revision: bvDraft.revision });
+        bvDraft = result.draft;
+        bvPeruTekstimuokkaus();
+        bvNaytaKeskustelu();
+        bvStatus(bvText('bvManualSaved'));
+      } catch (error) {
+        bvStatus(error.message, true);
+      } finally {
+        bvAsetaVarattu(false);
+      }
+    }
+    function bvNaytaKeskustelu() {
+      document.getElementById('bv-active').style.display = 'none';
+      document.getElementById('bv-setup').style.display = 'none';
+      document.getElementById('bv-chat').style.display = 'block';
+      const chatList = document.getElementById('bv-messages');
+      chatList.replaceChildren();
+      const messages = Array.isArray(bvDraft?.messages) ? bvDraft.messages : [];
+      messages.forEach(msg => {
+        if (!msg || !['user','assistant'].includes(msg.role)) return;
+        const item = document.createElement('div');
+        item.className = 'bv-message ' + msg.role;
+        // Älä tulosta tekoälyn tekstiä HTML:nä.
+        item.textContent = String(msg.content || '');
+        chatList.appendChild(item);
+        if (msg.role === 'assistant' && msg.next_question && !item.textContent.includes(msg.next_question)) {
+          const question = document.createElement('div');
+          question.className = 'bv-message assistant';
+          question.textContent = String(msg.next_question);
+          chatList.appendChild(question);
+        }
+      });
+      if (messages.length === 0) {
+        const item = document.createElement('div');
+        item.className = 'bv-message assistant';
+        item.textContent = bvText('bvNoMessages');
+        chatList.appendChild(item);
+      }
+      chatList.scrollTop = chatList.scrollHeight;
+      const voice = bvDraft?.current_voice || {};
+      const prompt = typeof voice.custom_brand_prompt === 'string' ? voice.custom_brand_prompt : '';
+      document.getElementById('bv-preview').style.display = prompt ? 'block' : 'none';
+      document.getElementById('bv-voice-name').textContent = String(voice.brand_voice_name || '');
+      document.getElementById('bv-voice-summary').textContent = String(voice.brand_voice_summary || '');
+      document.getElementById('bv-voice-prompt').textContent = prompt;
+      document.getElementById('bv-manual-actions').style.display = bvOwner && !!prompt ? 'flex' : 'none';
+      const ready = bvDraft?.status === 'ready' && !!prompt;
+      document.getElementById('bv-approve').style.display = ready && bvOwner ? 'inline-flex' : 'none';
+      document.getElementById('bv-approval-note').textContent =
+        !bvOwner ? bvText('bvOwnerOnly') : ready ? bvText('bvReadyNote') : bvText('bvNotReady');
+    }
+    async function avaaBrandVoice(accountId) {
+      if (!/^[a-f0-9-]{36}$/i.test(String(accountId))) return;
+      bvAccountId = accountId;
+      bvDraft = null;
+      bvActivePrompt = '';
+      bvPeruTekstimuokkaus();
+      bvAnswers = Array(8).fill('');
+      bvStep = 0;
+      const tili = kayttajanSometilit.find(t => t.id === accountId);
+      bvOwner = Boolean(tili && String(tili.asiakastunnus).toLowerCase() === String(nykyinenAsiakastunnus).toLowerCase());
+      document.getElementById('bv-account-label').textContent = tili?.sivun_nimi || '';
+      document.getElementById('bv-active-info').textContent = tili?.custom_brand_prompt ? bvText('bvActiveExists') : bvText('bvActiveMissing');
+      document.getElementById('brand-voice-modal').style.display = 'flex';
+      bvNaytaKysymykset();
+      bvStatus('');
+      bvAsetaVarattu(true);
+      try {
+        const result = await bvRequest('load');
+        bvOwner = Boolean(result.can_approve);
+        bvActivePrompt = typeof result.active_prompt === 'string' ? result.active_prompt : '';
+        document.getElementById('bv-active-info').textContent = bvActivePrompt ? bvText('bvActiveExists') : bvText('bvActiveMissing');
+        if (result.draft) {
+          bvDraft = result.draft;
+          bvNaytaKeskustelu();
+        } else if (bvActivePrompt) {
+          bvNaytaAktiivinen();
+        }
+      } catch (error) {
+        bvStatus(error.message, true);
+      } finally {
+        bvAsetaVarattu(false);
+      }
+    }
+    function suljeBrandVoice() {
+      if (bvBusy) return;
+      if (document.getElementById('bv-manual-editor').style.display !== 'none' &&
+          document.getElementById('bv-manual-input').value !==
+          String(bvDraft?.current_voice?.custom_brand_prompt || '') &&
+          !confirm(bvText('bvUnsavedConfirm'))) return;
+      document.getElementById('brand-voice-modal').style.display = 'none';
+    }
+    function bvAloitaUudelleen() {
+      if (bvBusy) return;
+      if (document.getElementById('bv-manual-editor').style.display !== 'none' &&
+          document.getElementById('bv-manual-input').value !== String(bvDraft?.current_voice?.custom_brand_prompt || '') &&
+          !confirm(bvText('bvUnsavedConfirm'))) return;
+      if (!confirm(bvText('bvRestartConfirm'))) return;
+      bvDraft = null;
+      bvPeruTekstimuokkaus();
+      bvAnswers = Array(8).fill('');
+      bvStep = 0;
+      document.getElementById('bv-chat-input').value = '';
+      bvStatus('');
+      bvNaytaKysymykset();
+    }
+    function bvOhita() {
+      if (bvBusy) return;
+      document.getElementById('bv-answer').value = '';
+      bvSiirry(1);
+    }
+    async function bvSiirry(delta) {
+      if (bvBusy) return;
+      bvKerääVastaus();
+      if (delta < 0) {
+        bvStep = Math.max(0, bvStep - 1);
+        bvNaytaVaihe();
+        return;
+      }
+      if (bvStep < 7) {
+        bvStep++;
+        bvNaytaVaihe();
+        return;
+      }
+      if (bvAnswers.every(v => !v)) {
+        bvStatus(bvText('bvNeedAnswer'), true);
+        return;
+      }
+      bvAsetaVarattu(true);
+      try {
+        const lang = localStorage.getItem('solone_kieli') || 'fi';
+        const questions = bvQuestions[lang] || bvQuestions.fi;
+        const initialAnswers = {};
+        questions.forEach((question, i) => {
+          initialAnswers['question_' + (i + 1)] = {
+            question, answer: bvAnswers[i] || ''
+          };
+        });
+        const response = await bvRequest('start', { initial_answers: initialAnswers });
+        bvDraft = response.draft;
+        bvStatus('');
+        bvNaytaKeskustelu();
+      } catch (error) {
+        bvStatus(error.message, true);
+      } finally {
+        bvAsetaVarattu(false);
+      }
+    }
+    async function bvLahetaViesti() {
+      if (bvBusy) return;
+      if (document.getElementById('bv-manual-editor').style.display !== 'none' &&
+          document.getElementById('bv-manual-input').value !== String(bvDraft?.current_voice?.custom_brand_prompt || '')) {
+        bvStatus(bvText('bvSaveFirst'), true);
+        return;
+      }
+      const input = document.getElementById('bv-chat-input');
+      const message = input.value.trim();
+      if (!message) return;
+      bvAsetaVarattu(true);
+      try {
+        const result = await bvRequest('chat', { user_message: message });
+        bvDraft = result.draft;
+        input.value = '';
+        bvStatus('');
+        bvNaytaKeskustelu();
+      } catch (error) {
+        bvStatus(error.message, true);
+      } finally {
+        bvAsetaVarattu(false);
+      }
+    }
+    async function bvHyvaksy() {
+      if (bvBusy || !bvOwner || bvDraft?.status !== 'ready') return;
+      if (document.getElementById('bv-manual-editor').style.display !== 'none' &&
+          document.getElementById('bv-manual-input').value !== String(bvDraft?.current_voice?.custom_brand_prompt || '')) {
+        bvStatus(bvText('bvSaveFirst'), true);
+        return;
+      }
+      if (!confirm(bvText('bvApproveConfirm'))) return;
+      bvAsetaVarattu(true);
+      try {
+        const result = await bvRequest('approve');
+        bvDraft = null;
+        bvPeruTekstimuokkaus();
+        const refreshed = await bvRequest('load');
+        bvActivePrompt = String(refreshed.active_prompt || '');
+        bvOwner = Boolean(refreshed.can_approve);
+        bvNaytaAktiivinen();
+        // Päivitä käytössä oleva Oma tyyli -tieto lataamalla nykyiset sometilit.
+        await lataaKayttajanSometilit();
+        paivitaAsetuksetListaHtml();
+        bvStatus(result.warning || bvText('bvApproved'));
+        document.getElementById('bv-approve').style.display = 'none';
+        document.getElementById('bv-approval-note').textContent = bvText('bvApproved');
+      } catch (error) {
+        bvStatus(error.message, true);
+      } finally {
+        bvAsetaVarattu(false);
+      }
+    }
+
     window.addEventListener('load', alustaNakyma);
 
     window.fbAsyncInit = function() {
@@ -2951,63 +3501,102 @@
         });
     };
 
-    function kaynnistaMetaOAuth() {
-        const statusDiv = document.getElementById('meta-oauth-status');
-        statusDiv.style.display = 'block';
-        statusDiv.style.color = '#2563eb';
-        statusDiv.textContent = 'Avataan Meta-valtuutus...';
-
-        FB.login(function(response) {
-            if (response.authResponse && response.authResponse.accessToken) {
-                statusDiv.textContent = 'Valtuutus saatu! Päivitetään tilit ja pitkäkestoiset tunnisteet...';
-
-                const db = haeSupabaseAsiakas();
-                const shortLivedToken = response.authResponse.accessToken;
-
-                fetch(db.url + '/functions/v1/meta-auth', {
-                    method: 'POST',
-                    headers: {
-                        'apikey': db.key,
-                        'Authorization': 'Bearer ' + db.key,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        shortLivedToken: shortLivedToken,
-                        asiakastunnus: nykyinenAsiakastunnus
-                    })
-                })
-                .then(async (res) => {
-                    const data = await res.json();
-                    if (!res.ok) {
-                        throw new Error(data.error || 'Palvelinvirhe tokenin vaihdossa');
-                    }
-                    return data;
-                })
-                .then(async (result) => {
-                    statusDiv.style.color = '#10b981';
-                    statusDiv.textContent = '✓ Sivut ja tilit yhdistetty onnistuneesti! (' + (result.count || 0) + ' kpl)';
-                    
-                    if (typeof lataaKayttajanSometilit === 'function') {
-                        await lataaKayttajanSometilit();
-                    }
-                    if (typeof paivitaAsetuksetListaHtml === 'function') {
-                        paivitaAsetuksetListaHtml();
-                    }
-                })
-                .catch((err) => {
-                    statusDiv.style.color = '#ef4444';
-                    statusDiv.textContent = 'Virhe tallennuksessa: ' + err.message;
-                });
-
-            } else {
-                statusDiv.style.color = '#ef4444';
-                statusDiv.textContent = 'Valtuutus peruutettiin tai ikkuna suljettiin.';
+    // Kehitysversion testi: käyttää sisäänkirjautuneen käyttäjän JWT:tä automaattisesti.
+    // Ei kutsu Meta API:a eikä tee tietokantamuutoksia.
+    async function testaaMetaAuthYhteys() {
+        const status = document.getElementById('meta-auth-test-status');
+        const token = localStorage.getItem('supabase_token');
+        const db = haeSupabaseAsiakas();
+        if (!token) {
+            status.textContent = '❌ ' + metaT('missingLogin');
+            status.style.color = '#b91c1c';
+            return;
+        }
+        status.textContent = '⏳ ' + metaT('authCheck');
+        status.style.color = '#334155';
+        try {
+            const response = await fetch(db.url + '/functions/v1/meta-auth-test', {
+                method: 'POST',
+                headers: {
+                    'apikey': db.key,
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action: 'auth-test' })
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.success || !data.authenticated || !data.dry_run) {
+                throw new Error(data.error || 'HTTP ' + response.status);
             }
+            status.textContent = metaT('authSuccess');
+            status.style.color = '#047857';
+        } catch (error) {
+            status.textContent = metaT('authFailed') + error.message;
+            status.style.color = '#b91c1c';
+        }
+    }
+
+    // Käytetään vanhan tuotanto-Somevalvomon virallista Meta FB.login -valtuutusta.
+    // Käyttäjä tunnistetaan Supabase Auth JWT:llä. Sivut tallentaa vain Edge Function.
+    function kaynnistaMetaOAuth() {
+        const status = document.getElementById('meta-oauth-status');
+        status.style.display = 'block';
+        status.style.color = '#2563eb';
+        status.textContent = 'Avataan Meta-valtuutus...';
+        const token = localStorage.getItem('supabase_token');
+        if (!token) {
+            status.style.color = '#b91c1c';
+            status.textContent = metaT('missingLogin');
+            return;
+        }
+        if (!window.FB || typeof FB.login !== 'function') {
+            status.style.color = '#b91c1c';
+            status.textContent = metaT('sdkFailed');
+            return;
+        }
+        FB.login(function(response) {
+            if (!response || !response.authResponse || !response.authResponse.accessToken) {
+                status.style.color = '#b91c1c';
+                status.textContent = metaT('cancelled');
+                return;
+            }
+            status.textContent = 'Valtuutus saatu. Tallennetaan Metan myöntämät sivut...';
+            const db = haeSupabaseAsiakas();
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 60000);
+            fetch(db.url + '/functions/v1/meta-auth-test', {
+                method: 'POST',
+                headers: {
+                    'apikey': db.key,
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'save',
+                    confirm: 'TALLENNA_META_TILIT',
+                    shortLivedToken: response.authResponse.accessToken
+                }),
+                signal: controller.signal
+            }).then(async (res) => {
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok || !data.success || data.dry_run !== false) {
+                    throw new Error(data.error || ('HTTP ' + res.status));
+                }
+                status.style.color = '#047857';
+                status.textContent = metaT('saveOk')(data.added || 0, data.updated || 0);
+                await lataaKayttajanSometilit();
+                paivitaAsetuksetListaHtml();
+            }).catch((err) => {
+                status.style.color = '#b91c1c';
+                status.textContent = 'Virhe tallennuksessa: ' +
+                    (err.name === 'AbortError' ? 'Pyyntö aikakatkaistiin.' : err.message);
+            }).finally(() => clearTimeout(timeout));
         }, {
             scope: 'pages_show_list,pages_manage_posts,pages_read_engagement,instagram_basic,instagram_content_publish,business_management',
             auth_type: 'rerequest'
         });
     }
+
 </script>
 
 </body>
