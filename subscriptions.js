@@ -13,10 +13,75 @@
         return soloneOnAktiivinenTilaus !== false;
     }
 
+    // Jaetun luonnostelijan UI:n tilaus ei anna julkaisuoikeutta. Palvelin tarkistaa tilauksen erikseen.
+    function onJaettuLuonnostelija() {
+        return typeof window.haeValittuTyoskentelyAsiakkuus === 'function'
+            && window.haeValittuTyoskentelyAsiakkuus()?.rooli === 'alikayttaja';
+    }
+
+    // Vaiheen 2 tarkistuksen aikana jaetun käyttäjän julkaisu- ja luonnostelutoiminnot
+    // pidetään lukittuina, kunnes palvelinpuolen kanavaoikeudet on otettu käyttöön.
+    let jaetunTilauksenAktiivisuus = false;
+    const jaetunTilanTekstit = {
+        fi: 'Jaetun asiakkuuden tilaus on voimassa. Luonnostelu on käytettävissä myönnetyillä kanavaoikeuksilla. Hyväksyminen ja julkaiseminen eivät ole käytettävissä luonnosteluoikeudella.',
+        en: 'The shared account subscription is active. Drafting is available for permitted channels. Approval and publishing are not available with drafting-only access.',
+        sv: 'Det delade kontots abonnemang är aktivt. Utkast är tillgängliga för tillåtna kanaler. Godkännande och publicering kräver särskild behörighet.'
+    };
+    function naytaJaetunTilanKeskeneraisyys() {
+        soloneOnAktiivinenTilaus = false; // Estä vanhojen toimintojen avaaminen.
+        paivitaValvomonLukitusTila(false);
+        const banner = document.getElementById('tilaus-varoitus-banneri');
+        if (banner) {
+            banner.textContent = jaetunTilanTekstit[localStorage.getItem('solone_kieli')] || jaetunTilanTekstit.fi;
+            banner.style.backgroundColor = '#eff6ff';
+            banner.style.borderColor = '#2563eb';
+            banner.style.color = '#1e3a8a';
+        }
+    }
+
     async function tarkistaAktiivinenTilausOhjaus() {
         if (!nykyinenAsiakastunnus) return;
         const db = haeSupabaseAsiakas();
         const token = localStorage.getItem('supabase_token');
+        const context = typeof window.haeValittuTyoskentelyAsiakkuus === 'function'
+            ? window.haeValittuTyoskentelyAsiakkuus() : null;
+
+        // Jaetun jäsenen tilaus tarkistetaan valitusta asiakkuudesta palvelinpuolella.
+        // Älä käytä tähän jäsenen omaa sähköpostia tai muuta nykyistä omistajan polkua.
+        if (context?.rooli === 'alikayttaja') {
+            jaetunTilauksenAktiivisuus = false;
+            try {
+                const result = await fetch(db.url + '/functions/v1/member-admin', {
+                    method: 'POST',
+                    headers: { 'apikey': db.key, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'subscription_status', asiakas_id: context.asiakas_id })
+                });
+                if (!result.ok) throw new Error('Tilauksen tarkistus HTTP ' + result.status);
+                const state = await result.json();
+                if (state.asiakas_id !== context.asiakas_id || typeof state.active !== 'boolean') {
+                    throw new Error('Virheellinen tilausvastaus');
+                }
+                if (state.active) {
+                    jaetunTilauksenAktiivisuus = true;
+                    naytaJaetunTilanKeskeneraisyys();
+                } else {
+                    soloneOnAktiivinenTilaus = false;
+                    paivitaValvomonLukitusTila(false);
+                    const banner = document.getElementById('tilaus-varoitus-banneri');
+                    if (banner) {
+                        banner.textContent = (tekstit[localStorage.getItem('solone_kieli')] || tekstit.fi).subWarningBanner;
+                        banner.style.backgroundColor = '#fef2f2';
+                        banner.style.borderColor = 'var(--danger)';
+                        banner.style.color = '#991b1b';
+                    }
+                }
+            } catch (error) {
+                console.error('Jaetun asiakkuuden tilauksen tarkistus epäonnistui:', error);
+                soloneOnAktiivinenTilaus = false;
+                paivitaValvomonLukitusTila(false);
+            }
+            return;
+        }
 
         try {
             const resAsiakas = await fetch(db.url + '/rest/v1/asiakkaat?sahkoposti=eq.' + encodeURIComponent(nykyinenAsiakastunnus) + '&select=id', {
@@ -55,8 +120,11 @@
             varoitusBanneri.style.display = aktiivinen ? 'none' : 'block';
         }
         if (uusiNappi) {
-            uusiNappi.style.opacity = aktiivinen ? '1' : '0.4';
-            uusiNappi.style.pointerEvents = aktiivinen ? 'auto' : 'none';
+            const memberCanDraft = jaetunTilauksenAktiivisuus && onJaettuLuonnostelija()
+                && (window.haeValittuTyoskentelyAsiakkuus()?.channels || [])
+                    .some(c => c.saa_luonnostella || c.saa_julkaista);
+            uusiNappi.style.opacity = (aktiivinen || memberCanDraft) ? '1' : '0.4';
+            uusiNappi.style.pointerEvents = (aktiivinen || memberCanDraft) ? 'auto' : 'none';
         }
     }
 

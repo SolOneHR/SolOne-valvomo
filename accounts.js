@@ -77,6 +77,17 @@
     }
 
     async function lataaKayttajanSometilit() {
+        const sharedContext = haeJaetunAsiakkuudenNaytto();
+        if (sharedContext) {
+            // Nämä ovat vain valikoiden näyttötietoja; oikeus tarkistetaan aina Edge Functionissa.
+            const permitted = (sharedContext.channels || []).filter(c => c.saa_luonnostella || c.saa_julkaista);
+            kayttajanSometilit = [...new Map(permitted.map(c => [c.sometili_id, {
+                id: c.sometili_id, sivun_nimi: c.nimi || 'Jaettu tili', ensisijainen: false,
+                asiakastunnus: '', jaetut_kanavat: permitted.filter(x => x.sometili_id === c.sometili_id).map(x => x.kanava)
+            }])).values()];
+            sometilienLatausVirhe = false;
+            return;
+        }
         if (!nykyinenAsiakastunnus) return;
         const db = haeSupabaseAsiakas();
         const token = localStorage.getItem('supabase_token');
@@ -134,11 +145,81 @@
         }
     }
 
+    // Kehitysvaihe 3: jaetun asiakkuuden kanavat esitetään vain lukunäkymänä.
+    // my_access on jo varmistanut jäsenyyden palvelimella. Selaimen tieto ei
+    // kuitenkaan oikeuta mihinkään kirjoitus- tai julkaisutoimintoon.
+    function haeJaetunAsiakkuudenNaytto() {
+        const context = typeof window.haeValittuTyoskentelyAsiakkuus === 'function'
+            ? window.haeValittuTyoskentelyAsiakkuus() : null;
+        return context?.rooli === 'alikayttaja' ? context : null;
+    }
+
+    function naytaJaetutKanavatLukutilassa(context) {
+        const lista = document.getElementById('sometilit-lista');
+        if (!lista) return;
+        lista.replaceChildren();
+        lista.style.color = '';
+        const kieli = localStorage.getItem('solone_kieli') || 'fi';
+        const labels = {
+            fi: { empty: 'Ei näytettäviä sometilioikeuksia.', shared: 'Jaettu käyttöoikeus', draft: 'Luonnostelu', publish: 'Julkaisu', brand: 'Brändiääni', note: 'Oikeuksien tarkastelu. Toiminnot avataan myöhemmässä kehitysvaiheessa.' },
+            en: { empty: 'No channel permissions to display.', shared: 'Shared access', draft: 'Drafting', publish: 'Publishing', brand: 'Brand voice', note: 'Permissions view only. Actions will be enabled in a later development phase.' },
+            sv: { empty: 'Inga kanalbehörigheter att visa.', shared: 'Delad åtkomst', draft: 'Utkast', publish: 'Publicering', brand: 'Varumärkesröst', note: 'Endast behörighetsvisning. Funktionerna aktiveras i ett senare utvecklingssteg.' }
+        }[kieli] || {
+            empty: 'Ei näytettäviä sometilioikeuksia.', shared: 'Jaettu käyttöoikeus', draft: 'Luonnostelu', publish: 'Julkaisu', brand: 'Brändiääni', note: 'Oikeuksien tarkastelu. Toiminnot avataan myöhemmässä kehitysvaiheessa.'
+        };
+        const visible = (Array.isArray(context.channels) ? context.channels : []).filter(c =>
+            ['facebook', 'instagram', 'linkedin'].includes(c.kanava) &&
+            (c.saa_luonnostella || c.saa_julkaista || c.saa_muokata_brandia));
+        if (!visible.length) {
+            const empty = document.createElement('p');
+            empty.style.cssText = 'font-size:.85rem;color:var(--text-muted);';
+            empty.textContent = labels.empty;
+            lista.appendChild(empty);
+            return;
+        }
+        const channelNames = { facebook: 'Facebook', instagram: 'Instagram', linkedin: 'LinkedIn' };
+        for (const channel of visible) {
+            // Sama korttipohja kuin omilla sometileillä; oikeusdata luetaan my_access-vastauksesta.
+            const card = document.createElement('div');
+            card.style.cssText = 'border:1px solid var(--border-color);border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:12px;background:#fff;flex-wrap:wrap;';
+            const body = document.createElement('div');
+            const name = document.createElement('strong');
+            name.style.fontSize = '.95rem';
+            name.textContent = channelNames[channel.kanava] + ' · ' + (channel.nimi || '');
+            body.appendChild(name);
+            const shared = document.createElement('span');
+            shared.style.cssText = 'font-size:.75rem;background:#64748b;color:#fff;padding:2px 6px;border-radius:4px;margin-left:6px;';
+            shared.textContent = labels.shared;
+            body.appendChild(shared);
+            body.appendChild(document.createElement('br'));
+            const rights = [];
+            if (channel.saa_luonnostella) rights.push(labels.draft);
+            if (channel.saa_julkaista) rights.push(labels.publish);
+            if (channel.saa_muokata_brandia) rights.push(labels.brand);
+            const details = document.createElement('span');
+            details.style.cssText = 'font-size:.8rem;color:var(--text-muted);';
+            details.textContent = rights.join(' · ');
+            body.appendChild(details);
+            card.appendChild(body);
+            lista.appendChild(card);
+        }
+        const note = document.createElement('p');
+        note.style.cssText = 'font-size:.8rem;color:var(--text-muted);margin:0;';
+        note.textContent = labels.note;
+        lista.appendChild(note);
+    }
+
     async function avaaAsetuksetModaali() {
-        await lataaKayttajanSometilit();
+        const jaettu = haeJaetunAsiakkuudenNaytto();
+        if (!jaettu) await lataaKayttajanSometilit();
         paivitaAsetuksetListaHtml();
-        
+
+        // Vain lukunäkymä alikäyttäjälle: älä näytä Meta-kytkentää tai
+        // sometilin lisäyslomaketta ennen kanavakohtaisten oikeuksien valvontaa.
+        const metaConnect = document.getElementById('btnConnectMeta')?.parentElement;
+        if (metaConnect) metaConnect.style.display = jaettu ? 'none' : '';
         const lomakeLohko = document.getElementById('lisaa-sivu-lomake-lohko');
+        if (lomakeLohko) lomakeLohko.style.display = jaettu ? 'none' : '';
         if (lomakeLohko) {
             lomakeLohko.style.opacity = tilaOnAktiivinen() ? '1' : '0.4';
             lomakeLohko.style.pointerEvents = tilaOnAktiivinen() ? 'auto' : 'none';
@@ -158,6 +239,12 @@
     function paivitaAsetuksetListaHtml() {
         const lista = document.getElementById('sometilit-lista');
         if (!lista) return;
+
+        const jaettu = haeJaetunAsiakkuudenNaytto();
+        if (jaettu) {
+            naytaJaetutKanavatLukutilassa(jaettu);
+            return;
+        }
 
         const aktiivinenKieli = localStorage.getItem('solone_kieli') || 'fi';
         const sanasto = tekstit[aktiivinenKieli];

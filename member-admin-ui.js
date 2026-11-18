@@ -25,6 +25,39 @@
     $('member-admin-signed-in-email').textContent=email || '—';
   }
   const myAccess = { accounts: [], selected: '' };
+  // Kehitysvaihe 1: asiakkuuden lukutilainen työkonteksti.
+  // Tämä ei itsessään myönnä oikeuksia eikä vaihda vanhoja julkaisu-/tilaushakuja.
+  let tyokontekstinOmistaja = '';
+  function haeValittuTyoskentelyAsiakkuus() {
+    const kirjautunut = (localStorage.getItem('user_email') || '').trim().toLowerCase();
+    if (!kirjautunut || tyokontekstinOmistaja !== kirjautunut) return null;
+    const tili = myAccess.accounts.find(a => a.asiakas_id === myAccess.selected);
+    if (!tili) return null;
+    return {
+      asiakas_id: tili.asiakas_id,
+      nimi: tili.nimi || '',
+      rooli: tili.rooli || '',
+      channels: (tili.channels || []).map(c => ({...c}))
+    };
+  }
+  // Näytön ja työkontekstin rajapinta; ei turvallisuuspäätösten lähde.
+  window.haeValittuTyoskentelyAsiakkuus = haeValittuTyoskentelyAsiakkuus;
+  async function alustaTyoskentelyAsiakkuus() {
+    // Supabase JWT vahvistetaan ensin session.js:n tarkistaIstunto-funktiossa.
+    tyokontekstinOmistaja = '';
+    myAccess.accounts = [];
+    myAccess.selected = '';
+    try {
+      const response = await request('my_access');
+      myAccess.accounts = Array.isArray(response.accounts) ? response.accounts : [];
+      tyokontekstinOmistaja = (localStorage.getItem('user_email') || '').trim().toLowerCase();
+      renderMyAccess();
+    } catch (error) {
+      // Ei arvata asiakkuutta eikä muuteta vanhan käyttöliittymän toimintoja.
+      console.warn('Asiakkuuden työkontekstia ei saatu:', error);
+    }
+  }
+  window.alustaTyoskentelyAsiakkuus = alustaTyoskentelyAsiakkuus;
   const state = { accounts: [], selected: '', data: null, selectedMember: '', loading:false };
   function dict() { return dictionaries[localStorage.getItem('solone_kieli')] || dictionaries.fi; }
   function element(tag, text, attrs={}) { const el = document.createElement(tag); if (text !== undefined && text !== null) el.textContent = String(text); for (const [k,v] of Object.entries(attrs)) el.setAttribute(k,v); return el; }
@@ -85,6 +118,7 @@
       select.append(element('option',(account.nimi||account.asiakas_id)+(account.rooli==='alikayttaja'?' – '+role(account.rooli):''),{value:account.asiakas_id}));
     }
     myAccess.selected=accounts.some(a=>a.asiakas_id===previous)?previous:accounts[0].asiakas_id;
+    // Työkonteksti sidotaan siihen kirjautuneeseen käyttäjään, jonka my_access palautti.
     select.value=myAccess.selected;
     const account=accounts.find(a=>a.asiakas_id===myAccess.selected);
     const content=$('member-admin-myaccess-content');clear(content);
@@ -120,6 +154,7 @@
     const response=await perform('my_access',{},'');
     if(!response)return;
     myAccess.accounts=response.accounts||[];
+    tyokontekstinOmistaja=(localStorage.getItem('user_email')||'').trim().toLowerCase();
     renderMyAccess();
   }
   function translate() {
@@ -234,6 +269,17 @@
     await loadMyAccess();await renderInvites();await loadAccounts();
   }
   function close() { $('member-admin-modal').style.display='none';state.selectedMember=''; }
+  // Näytä käyttäjän omat odottavat kutsut kirjautumisen jälkeen.
+  // Virhe ei estä Somevalvomon muiden toimintojen käyttöä.
+  async function tarkistaOdottavatJasenkutsut() {
+    try {
+      const result = await request('my_invites');
+      if ((result.invitations || []).length > 0) await open();
+    } catch (error) {
+      console.warn('Jäsenkutsujen tarkistus epäonnistui:', error);
+    }
+  }
+  window.tarkistaOdottavatJasenkutsut=tarkistaOdottavatJasenkutsut;
   window.avaaJasenhallinta=open;
   window.suljeJasenhallinta=close;
   window.paivitaJasenhallinnanKieli=translate;
@@ -241,6 +287,10 @@
     myAccess.selected=e.target.value;
     renderMyAccess();
     await synchronizeManagement();
+    // Vaihda samaan Somevalvomoon kuuluvat luonnokset ja kanavat.
+    if (typeof window.paivitaTyoskentelyAsiakkuus === 'function') {
+      await window.paivitaTyoskentelyAsiakkuus();
+    }
   });
   // Sisäinen valitsin on piilotettu, eikä käyttäjä voi vaihtaa hallintakontekstia erikseen.
   $('member-admin-package-order').addEventListener('click',()=>{

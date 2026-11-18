@@ -129,26 +129,148 @@
     }
 
 
-    function kaynnistaMakeSkenaario(id) {
+    // Yhteinen käyttöliittymä, erillinen palvelimella valvottu kirjoitusreitti jaetulle jäsenelle.
+    function saakoJulkaistaJaetun(julkaisu) {
+        const context=haeJaettuTyokonteksti();
+        if(!context)return false;
+        const selected=String(julkaisu.target_channel||'').toUpperCase();
+        const map={FB:['facebook'],IG:['instagram'],LI:['linkedin'],FB_IG:['facebook','instagram'],FB_IG_LI:['facebook','instagram','linkedin']};
+        const required=map[selected]||[];
+        return required.length>0 && required.every(channel =>
+            (context.channels||[]).some(right=>right.sometili_id===julkaisu.sometili_id&&right.kanava===channel&&right.saa_julkaista));
+    }
+    function haeJaettuTyokonteksti() {
+        const context = typeof window.haeValittuTyoskentelyAsiakkuus === 'function'
+            ? window.haeValittuTyoskentelyAsiakkuus() : null;
+        return context?.rooli === 'alikayttaja' ? context : null;
+    }
+    async function kutsuJaettujaLuonnoksia(action, data = {}) {
+        const context = haeJaettuTyokonteksti();
+        if (!context) throw new Error('Jaettua asiakkuutta ei ole valittu');
         const db = haeSupabaseAsiakas();
         const token = localStorage.getItem('supabase_token');
-        
-        fetch(db.url + '/functions/v1/make-proxy', {
+        const res = await fetch(db.url + '/functions/v1/shared-drafts', {
             method: 'POST',
-            headers: { 
-                'apikey': db.key,
-                'Authorization': 'Bearer ' + token,
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify({ action: 'publish', id: id })
-        })
-        .then(function() {
-            naytaIlmoitus('🚀 Julkaisu hyväksytty ja lähetetty julkaisujärjestelmään!');
-        })
-        .catch(function(error) {
-            console.error('Virhe:', error);
-            naytaIlmoitus('⚠️ Virhe yhdistettäessä julkaisujärjestelmään.', 'error');
+            headers: {'apikey': db.key, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
+            body: JSON.stringify({action, asiakas_id: context.asiakas_id, ...data})
         });
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(payload.error || 'Luonnospalvelu HTTP ' + res.status);
+        return payload;
+    }
+    function jaetutSallitutKanavat(context) {
+        return (context?.channels || []).filter(c => c.saa_luonnostella || c.saa_julkaista)
+            .filter(c => ['facebook','instagram','linkedin'].includes(c.kanava));
+    }
+    let alkuperaisetKanavaValinnat = null;
+    function palautaOmatKanavaValinnat() {
+        const sel = document.getElementById('uusi-kanava');
+        if (sel && alkuperaisetKanavaValinnat) {
+            sel.innerHTML = alkuperaisetKanavaValinnat;
+            sel.onchange = null;
+        }
+    }
+    function paivitaJaetunLuonnoksenValinnat() {
+        const context = haeJaettuTyokonteksti();
+        if (!context) return;
+        const list = jaetutSallitutKanavat(context);
+        const kanavaEl = document.getElementById('uusi-kanava');
+        const tiliEl = document.getElementById('uusi-sometili-valinta');
+        const lohko = document.getElementById('uusi-sometili-valinta-lohko');
+        if (!kanavaEl || !tiliEl) return;
+        if (alkuperaisetKanavaValinnat === null) alkuperaisetKanavaValinnat = kanavaEl.innerHTML;
+        kanavaEl.replaceChildren();
+        tiliEl.replaceChildren();
+        const labels = {facebook:'Facebook', instagram:'Instagram', linkedin:'LinkedIn'};
+        const values = {facebook:'FB', instagram:'IG', linkedin:'LI'};
+        for (const entry of list) {
+            const opt = document.createElement('option');
+            opt.value = entry.sometili_id + '|' + values[entry.kanava];
+            opt.textContent = labels[entry.kanava] + ' · ' + (entry.nimi || 'Sometili');
+            kanavaEl.appendChild(opt);
+        }
+        // Jaetulle käyttäjälle valittu kohdekanava sisältää myös sometilin tunnisteen.
+        kanavaEl.onchange = () => {
+            const [id] = (kanavaEl.value || '').split('|');
+            tiliEl.replaceChildren();
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = list.find(x => x.sometili_id === id)?.nimi || 'Sometili';
+            tiliEl.appendChild(option);
+        };
+        kanavaEl.onchange();
+        if (lohko) lohko.style.display = 'block';
+        // Vältä jaetulta käyttäjältä muut lomakkeen riskialttiit tallennustyypit.
+        const type = document.getElementById('uusi-tallennus-tyyppi');
+        if (type) type.value = 'some';
+    }
+    async function tallennaJaettuLuonnos() {
+        const input = document.getElementById('uusi-raw-teksti');
+        const raw = input?.value.trim() || '';
+        if (!raw) { alert('Kirjoita julkaisun aihe tai teksti.'); return; }
+        const combined = document.getElementById('uusi-kanava')?.value || '';
+        const [sometili_id, value] = combined.split('|');
+        const kanava = ({FB:'facebook', IG:'instagram', LI:'linkedin'})[value];
+        if (!kanava || !sometili_id) { alert('Valitse sallittu sometili.'); return; }
+        const file = document.getElementById('uusi-kuva-tiedosto')?.files?.[0];
+        if (kopioituKuvaUrl) { alert('Poista kopioitu kuva ja lisää kuva uudelleen tiedostosta.'); return; }
+        const button = document.getElementById('btn-luo-luonnos');
+        if (button) button.disabled = true;
+        try {
+            const ai = !document.getElementById('uusi-ohita-ai')?.checked;
+            let image_b64;
+            if (file) {
+                const compressed = await optimoiKuva(file);
+                if (compressed.type !== 'image/jpeg' || compressed.size > 4800000) throw new Error('Kuvan on oltava JPEG ja alle 4,8 Mt');
+                image_b64 = await new Promise((resolve,reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(String(reader.result).split(',')[1]);
+                    reader.onerror = () => reject(new Error('Kuvaa ei voitu lukea'));
+                    reader.readAsDataURL(compressed);
+                });
+            }
+            const result = await kutsuJaettujaLuonnoksia('create', {
+                sometili_id, kanava, raw_text: raw, image_b64,
+                profiili: document.getElementById('uusi-profiili')?.value || 'Yleinen',
+                kohdekieli: document.getElementById('uusi-kohdekieli')?.value || 'Suomi', ai
+            });
+            suljeUusiPostausModaali();
+            naytaIlmoitus(result.warning || 'Luonnos tallennettu.', result.warning ? 'error' : 'success');
+            haeValvomonTiedot(true);
+        } catch (error) { naytaIlmoitus('Luonnoksen tallennus: ' + error.message, 'error'); }
+        finally { if (button) button.disabled = false; }
+    }
+    async function tallennaJaetunKortinTekstitIlmanLatausta(id) {
+        const raw = document.getElementById('raw-teksti-' + id)?.value || '';
+        const text = document.getElementById('teksti-' + id)?.value || '';
+        const profiili = document.getElementById('profiili-' + id)?.value || 'Yleinen';
+        await kutsuJaettujaLuonnoksia('update', {id, raw_text:raw, julkaisuteksti:text, profiili});
+    }
+    async function tallennaJaetunKortinTekstit(id) {
+        const raw = document.getElementById('raw-teksti-' + id)?.value || '';
+        const text = document.getElementById('teksti-' + id)?.value || '';
+        try {
+            await kutsuJaettujaLuonnoksia('update', {id, raw_text:raw, julkaisuteksti:text});
+            naytaIlmoitus('Luonnos tallennettu.', 'success');
+            haeValvomonTiedot(true);
+        } catch(error){ naytaIlmoitus('Tallennus epäonnistui: '+error.message,'error'); }
+    }
+    async function paivitaTyoskentelyAsiakkuus() {
+        if (!haeJaettuTyokonteksti()) palautaOmatKanavaValinnat();
+        await lataaKayttajanSometilit();
+        await tarkistaAktiivinenTilausOhjaus();
+        haeValvomonTiedot(true);
+    }
+    window.paivitaTyoskentelyAsiakkuus = paivitaTyoskentelyAsiakkuus;
+
+    async function kaynnistaMakeSkenaario(id) {
+        const db = haeSupabaseAsiakas();
+        const response = await fetch(db.url + '/functions/v1/make-proxy-v2', {
+            method:'POST',headers:{'apikey':db.key,'Authorization':'Bearer '+localStorage.getItem('supabase_token'),'Content-Type':'application/json'},
+            body:JSON.stringify({action:'publish',id})
+        });
+        if (!response.ok) {const details=await response.json().catch(()=>({}));throw new Error(details.error||'Julkaisun lähetys epäonnistui');}
+        naytaIlmoitus('Julkaisupyyntö lähetetty julkaisujärjestelmään!', 'success');
     }
 
 
@@ -215,7 +337,7 @@
     }
 
     async function avaaUusiPostausModaali() {
-        if (!tilaOnAktiivinen()) {
+        if (!tilaOnAktiivinen() && !(haeJaettuTyokonteksti() && jaetunTilauksenAktiivisuus)) {
             alert("Uuden julkaisun luonti vaatii voimassa olevan ja aktiivisen tilauksen.");
             return;
         }
@@ -274,6 +396,7 @@
         paivitaLuoNapinTeksti();
         document.getElementById('uusi-postaus-modaali').style.display = 'flex';
         paivitaKielet(aktiivinenKieli);
+        if (haeJaettuTyokonteksti()) paivitaJaetunLuonnoksenValinnat();
     }
 
     function suljeUusiPostausModaali() {
@@ -332,6 +455,7 @@
     }
 
     async function luoUusiPostausKantaan() {
+        if (haeJaettuTyokonteksti()) return tallennaJaettuLuonnos();
         if (!tilaOnAktiivinen()) return;
 
         const rawTeksti = document.getElementById('uusi-raw-teksti').value.trim();
@@ -502,7 +626,7 @@
                 naytaIlmoitus('🚀 Uusi julkaisu luotu, tekoäly käsittelee tekstiä...');
                 haeValvomonTiedot();
 
-                fetch(db.url + '/functions/v1/make-proxy', {
+                fetch(db.url + '/functions/v1/make-proxy-v2', {
                     method: 'POST',
                     headers: { 
                         'apikey': db.key,
@@ -529,6 +653,16 @@
     }
 
     async function paivitaTarkastuksenPohjalta(id, nappiElem) {
+        if (haeJaettuTyokonteksti()) {
+            try {
+                const value = document.getElementById('tarkastus-' + id)?.value.trim() || '';
+                if (!value) throw new Error('Tarkastusteksti on tyhjä');
+                await kutsuJaettujaLuonnoksia('update', {id, tarkastusteksti:value});
+                await kutsuJaettujaLuonnoksia('ai-update', {id});
+                naytaIlmoitus('Tarkastusteksti lähetetty tekoälylle.', 'success');
+            } catch(e) { naytaIlmoitus('Tarkastusteksti: '+e.message,'error'); }
+            return;
+        }
         const tarkastusKentta = document.getElementById('tarkastus-' + id);
         const muokattuTarkastus = tarkastusKentta ? tarkastusKentta.value.trim() : '';
         const db = haeSupabaseAsiakas();
@@ -559,7 +693,7 @@
                 body: JSON.stringify({ tarkastusteksti: muokattuTarkastus })
             });
 
-            const response = await fetch(db.url + '/functions/v1/make-proxy', {
+            const response = await fetch(db.url + '/functions/v1/make-proxy-v2', {
                 method: 'POST',
                 headers: { 
                     'apikey': db.key,
@@ -590,6 +724,7 @@
     }
 
     async function poistaJulkaisuKannasta(id) {
+        if (haeJaettuTyokonteksti()) { alert("Toiminto vaatii erillisen oikeuden."); return; }
         if (!confirm("Haluatko varmasti poistaa tämän julkaisun kokonaan arkistosta?")) return;
         const db = haeSupabaseAsiakas();
         const token = localStorage.getItem('supabase_token');
@@ -625,6 +760,13 @@ if (!Array.isArray(poistetutRivit) ||
     }
 
     async function kaytaOmaaTekstia(id) {
+        if (haeJaettuTyokonteksti()) {
+            const raw = document.getElementById('raw-teksti-' + id)?.value || '';
+            if (!raw) { naytaIlmoitus('Alkuperäinen teksti on tyhjä.', 'error'); return; }
+            document.getElementById('teksti-' + id).value = raw;
+            await tallennaJaetunKortinTekstit(id);
+            return;
+        }
         const rawKentta = document.getElementById('raw-teksti-' + id);
         const julkaisuKentta = document.getElementById('teksti-' + id);
         const omaTeksti = rawKentta ? rawKentta.value : '';
@@ -670,6 +812,7 @@ if (!Array.isArray(poistetutRivit) ||
 
         const pvm = julkaisu.luotu_aika ? new Date(julkaisu.luotu_aika).toLocaleString('fi-FI') : '-';
         const card = document.createElement('div');
+        const onJaettuLuonnos = Boolean(haeJaettuTyokonteksti());
         
         if (julkaisu.status === 'kasittelyssa') {
             card.className = 'julkaisu-card kasittelyssa';
@@ -702,7 +845,19 @@ if (!Array.isArray(poistetutRivit) ||
                 }
             } else if (onHylatty) {
                 htmlSisalto += '<div class="tilamerkinta hylatty-badge">' + sanasto.historiaHylatty + '</div>';
-            } else {
+            } else if (julkaisu.status === 'julkaistaan') {
+                const julkaistaanTeksti = aktiivinenKieli === 'en' ? 'Publishing' : aktiivinenKieli === 'sv' ? 'Publiceras' : 'Julkaistaan';
+                htmlSisalto += '<div class="tilamerkinta">' + julkaistaanTeksti + '</div>';
+            } else if (julkaisu.status === 'hyvaksytty' && julkaisu.ajastettu_aika) {
+                const ajastettuTeksti = aktiivinenKieli === 'en' ? 'Scheduled' : aktiivinenKieli === 'sv' ? 'Schemalagd' : 'Ajastettu';
+                const ajastuksenKieli = aktiivinenKieli === 'en' ? 'en-GB' : aktiivinenKieli === 'sv' ? 'sv-SE' : 'fi-FI';
+                const ajastettuPvm = new Date(julkaisu.ajastettu_aika);
+                const ajastettuArvo = Number.isNaN(ajastettuPvm.getTime()) ? '' : ' – ' + ajastettuPvm.toLocaleString(ajastuksenKieli, { dateStyle: 'short', timeStyle: 'short' });
+                htmlSisalto += '<div class="tilamerkinta">' + ajastettuTeksti + ajastettuArvo + '</div>';
+            } else if (julkaisu.status === 'hyvaksytty') {
+                const hyvaksyttyTeksti = aktiivinenKieli === 'en' ? 'Approved' : aktiivinenKieli === 'sv' ? 'Godkänd' : 'Hyväksytty';
+                htmlSisalto += '<div class="tilamerkinta">' + hyvaksyttyTeksti + '</div>';
+            } else if (julkaisu.status === 'julkaistu') {
                 htmlSisalto += '<div class="tilamerkinta">' + sanasto.historiaJulkaistu + '</div>';
             }
         }
@@ -721,11 +876,15 @@ if (!Array.isArray(poistetutRivit) ||
         }
 
         let aikaTeksti = '';
-        if (julkaisu.julkaistu_aika) {
+        // Hyväksytyllä tai käynnissä olevalla ajastuksella näytetään aina
+        // ajastettu_aika, vaikka vanhalla rivillä olisi julkaistu_aika täytetty.
+        if ((julkaisu.status === 'hyvaksytty' || julkaisu.status === 'julkaistaan') && julkaisu.ajastettu_aika) {
+            aikaTeksti = '<span><strong>' + sanasto.metaAjastettu + '</strong> ' + new Date(julkaisu.ajastettu_aika).toLocaleString('fi-FI') + '</span>';
+        } else if (julkaisu.status === 'julkaistu' && julkaisu.julkaistu_aika) {
             aikaTeksti = '<span><strong>' + sanasto.metaJulkaistu + '</strong> ' + new Date(julkaisu.julkaistu_aika).toLocaleString('fi-FI') + '</span>';
         } else if (julkaisu.ajastettu_aika) {
             aikaTeksti = '<span><strong>' + sanasto.metaAjastettu + '</strong> ' + new Date(julkaisu.ajastettu_aika).toLocaleString('fi-FI') + '</span>';
-        } else if (onHistoria) {
+        } else if (onHistoria && julkaisu.status === 'julkaistu') {
             aikaTeksti = '<span><strong>' + sanasto.metaJulkaistu + '</strong> ' + sanasto.metaVälitön + '</span>';
         }
 
@@ -815,7 +974,7 @@ if (!Array.isArray(poistetutRivit) ||
         htmlSisalto += '<label class="field-label">' + sanasto.lblJulkaisuteksti + '</label>';
         htmlSisalto += '<textarea id="teksti-' + julkaisu.id + '" class="teksti-alue" style="height: 250px; min-height: 150px; resize: vertical;"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.julkaisuteksti || '') + '</textarea>';
 
-        if (!onHistoria) {
+        if (!onHistoria && !onJaettuLuonnos) {
             let valmisAika = '';
             if (julkaisu.ajastettu_aika) {
                 const d = new Date(julkaisu.ajastettu_aika);
@@ -867,7 +1026,17 @@ if (!Array.isArray(poistetutRivit) ||
             htmlSisalto += '</div>';
         }
 
-        if (onHistoria) {
+        if (!onHistoria && onJaettuLuonnos) {
+            htmlSisalto += '<div class="nappi-ryhma"><button type="button" class="btn-hyvaksy" onclick="tallennaJaetunKortinTekstit(\'' + julkaisu.id + '\')">💾 Tallenna luonnos</button></div>';
+            if(saakoJulkaistaJaetun(julkaisu)) {
+                htmlSisalto += '<label class="field-label">' + sanasto.lblAjastaValinnainen + '</label>';
+                htmlSisalto += '<input type="datetime-local" id="ajastus-' + julkaisu.id + '" class="aika-kentta">';
+                htmlSisalto += '<div class="nappi-ryhma"><button class="btn-hyvaksy" onclick="hyvaksyJaettuJulkaisu(\''+julkaisu.id+'\',false)">'+sanasto.btnHyvaksyJonoon+'</button>';
+                htmlSisalto += '<button class="btn-pika" onclick="hyvaksyJaettuJulkaisu(\''+julkaisu.id+'\',true)">'+sanasto.btnJulkaiseHeti+'</button>';
+                htmlSisalto += '<button class="btn-hylkaa" onclick="hylkaaJaettuJulkaisu(\''+julkaisu.id+'\')">'+sanasto.btnHylkaa+'</button></div>';
+            }
+        }
+        if (onHistoria && !onJaettuLuonnos) {
             const turvattuTeksti = (julkaisu.raw_text || '').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/"/g, '&quot;');
             const turvattuKuvaUrl = julkaisu.kuva_url || '';
             htmlSisalto += '<div style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">';
@@ -885,6 +1054,15 @@ if (!Array.isArray(poistetutRivit) ||
     }
 
     async function muotoileAIlla(id) {
+        if (haeJaettuTyokonteksti()) {
+            try {
+                await tallennaJaetunKortinTekstitIlmanLatausta(id);
+                await kutsuJaettujaLuonnoksia('ai-format', {id});
+                naytaIlmoitus('AI-muotoilupyyntö lähetetty.', 'success');
+                haeValvomonTiedot(true);
+            } catch(e) { naytaIlmoitus('AI-muotoilu: '+e.message,'error'); }
+            return;
+        }
         const rawTeksti = document.getElementById('raw-teksti-' + id) ? document.getElementById('raw-teksti-' + id).value : '';
         const profiiliSelect = document.getElementById('profiili-' + id);
         const profiili = profiiliSelect ? profiiliSelect.value : 'Yleinen';
@@ -922,7 +1100,7 @@ if (!Array.isArray(poistetutRivit) ||
             const kuvaElem = cardElem ? cardElem.querySelector('.kuva-esikatselu') : null;
             const kuvaUrlValmis = kuvaElem ? kuvaElem.src : null;
 
-            const response = await fetch(db.url + '/functions/v1/make-proxy', {
+            const response = await fetch(db.url + '/functions/v1/make-proxy-v2', {
                 method: 'POST',
                 headers: { 
                     'apikey': db.key,
@@ -1092,14 +1270,37 @@ if (!Array.isArray(poistetutRivit) ||
 
             await tarkistaAktiivinenTilausOhjaus();
 
-            const resOdottavat = await fetch(db.url + '/rest/v1/somepostaukset?status=in.(odotetaan,kasittelyssa)&order=luotu_aika.desc', { method: 'GET', headers: headers });
+            if (haeJaettuTyokonteksti()) {
+                const response = await kutsuJaettujaLuonnoksia('list');
+                const drafts = response.drafts || [];
+                const history = response.history || [];
+                const labels = tekstit[localStorage.getItem('solone_kieli') || 'fi'] || tekstit.fi;
+                odottavatLista.replaceChildren();
+                if (!drafts.length) {
+                    const message = document.createElement('div');
+                    message.className = 'tyhja-tila';
+                    message.textContent = labels.eiOdottavia || 'Ei odottavia luonnoksia.';
+                    odottavatLista.appendChild(message);
+                } else drafts.forEach(p => odottavatLista.appendChild(luoKorttiHtml(p,false)));
+                viimeisinHistoriaData = history;
+                paivitaHistoriaSuodatinValikko();
+                suodataHistoria(false);
+                if (automaattiPäivitysAjastin) clearTimeout(automaattiPäivitysAjastin);
+                automaattiPäivitysAjastin = setTimeout(haeValvomonTiedot, 10000);
+                return;
+            }
+
+            const omatTilit = (kayttajanSometilit||[]).map(t=>t.id).filter(Boolean);
+            if (!omatTilit.length) { odottavatLista.replaceChildren(); viimeisinHistoriaData=[];suodataHistoria(false);return; }
+            const tiliRajaus = '&sometili_id=in.(' + omatTilit.join(',') + ')';
+            const resOdottavat = await fetch(db.url + '/rest/v1/somepostaukset?status=in.(odotetaan,kasittelyssa)' + tiliRajaus + '&order=luotu_aika.desc', { method: 'GET', headers: headers });
             if (resOdottavat.status === 401) { 
                 kirjauduUlos(); 
                 return; 
             }
             const dataOdottavat = await resOdottavat.json();
 
-            const resHistoria = await fetch(db.url + '/rest/v1/somepostaukset?status=not.in.(odotetaan,kasittelyssa)&order=luotu_aika.desc&limit=100', { method: 'GET', headers: headers });
+            const resHistoria = await fetch(db.url + '/rest/v1/somepostaukset?status=not.in.(odotetaan,kasittelyssa)' + tiliRajaus + '&order=luotu_aika.desc&limit=100', { method: 'GET', headers: headers });
             const dataHistoria = await resHistoria.json();
 
             if (!dataOdottavat || dataOdottavat.length === 0) {
@@ -1127,7 +1328,23 @@ if (!Array.isArray(poistetutRivit) ||
         }
     }
 
+    async function hyvaksyJaettuJulkaisu(id, julkaiseHeti) {
+        try {
+            const db=haeSupabaseAsiakas();
+            const txt=document.getElementById('teksti-'+id)?.value||'';
+            const dt=document.getElementById('ajastus-'+id)?.value||'';
+            const res=await fetch(db.url+'/functions/v1/make-proxy-v2',{method:'POST',headers:{apikey:db.key,Authorization:'Bearer '+localStorage.getItem('supabase_token'),'Content-Type':'application/json'},body:JSON.stringify({action:'set-status',id,status:'hyvaksytty',julkaisuteksti:txt,ajastettu_aika:julkaiseHeti?null:(dt?new Date(dt).toISOString():null),julkaise_heti:Boolean(julkaiseHeti)})});
+            const payload=await res.json().catch(()=>({}));if(!res.ok)throw new Error(payload.error||'Hyväksyntä estetty');
+            if(julkaiseHeti)await kaynnistaMakeSkenaario(id);
+            else naytaIlmoitus('Julkaisu hyväksytty jonoon!','success');
+            haeValvomonTiedot(true);
+        }catch(e){naytaIlmoitus('Hyväksyntä epäonnistui: '+e.message,'error');}
+    }
+    async function hylkaaJaettuJulkaisu(id){
+        try{const db=haeSupabaseAsiakas();const res=await fetch(db.url+'/functions/v1/make-proxy-v2',{method:'POST',headers:{apikey:db.key,Authorization:'Bearer '+localStorage.getItem('supabase_token'),'Content-Type':'application/json'},body:JSON.stringify({action:'set-status',id,status:'hylatty'})});const payload=await res.json().catch(()=>({}));if(!res.ok)throw new Error(payload.error||'Hylkäys estetty');haeValvomonTiedot(true);}catch(e){naytaIlmoitus('Hylkäys epäonnistui: '+e.message,'error');}
+    }
     async function paivitaStatus(id, uusiStatus, kaynnistaPika) {
+        if (haeJaettuTyokonteksti()) { alert('Julkaisua ei voi hyväksyä tai julkaista luonnosteluoikeudella.'); return; }
         if (!tilaOnAktiivinen()) {
             alert("Julkaiseminen vaatii voimassa olevan ja aktiivisen tilauksen.");
             return;
@@ -1154,40 +1371,18 @@ if (!Array.isArray(poistetutRivit) ||
         const db = haeSupabaseAsiakas();
 
         try {
-            const updatePayload = {
-                status: uusiStatus,
-                raw_text: muokattuRawTeksti,
-                julkaisuteksti: muokattuTeksti,
-                profile_id: valittuProfiili,
-                target_channel: valittuKanava,
-                alusta: valittuKanava,
-                sometili_id: valittuSometiliId,
-                sivun_nimi: sivunNimi,
-                ajastettu_aika: kaynnistaPika ? null : (valittuAika ? new Date(valittuAika).toISOString() : null),
-                julkaistu_aika: (kaynnistaPika || (uusiStatus === 'hyvaksytty' && !valittuAika)) ? new Date().toISOString() : null,
-                julkaissut_kayttaja: (uusiStatus === 'hyvaksytty' || kaynnistaPika) ? nykyinenAsiakastunnus : null
-            };
-
-            const response = await fetch(db.url + '/rest/v1/somepostaukset?id=eq.' + id, {
-                method: 'PATCH',
-                headers: {
-                    'apikey': db.key,
-                    'Authorization': 'Bearer ' + localStorage.getItem('supabase_token'),
-                    'Content-Type': 'application/json',
-                    'Prefer': 'return=minimal'
-                },
-                body: JSON.stringify(updatePayload)
+            // Palvelin tarkistaa oikeudet nykyiseen ja valittuun sometiliin/kanavaan; asiakkuutta ei saa vaihtaa.
+            const response = await fetch(db.url + '/functions/v1/make-proxy-v2', {
+                method:'POST', headers:{'apikey':db.key,'Authorization':'Bearer '+localStorage.getItem('supabase_token'),'Content-Type':'application/json'},
+                body:JSON.stringify({action:'set-status',id,status:uusiStatus,raw_text:muokattuRawTeksti,
+                    julkaisuteksti:muokattuTeksti,profile_id:valittuProfiili,
+                    sometili_id:valittuSometiliId,target_channel:valittuKanava,
+                    ajastettu_aika:kaynnistaPika?null:(valittuAika?new Date(valittuAika).toISOString():null),julkaise_heti:kaynnistaPika})
             });
-
-            if (!response.ok) throw new Error("Tilan päivitys epäonnistui palvelimella.");
-
-            if (kaynnistaPika) {
-                kaynnistaMakeSkenaario(id);
-            } else if (uusiStatus === 'hyvaksytty') {
-                naytaIlmoitus('✓ Julkaisu hyväksytty jonoon!');
-            } else {
-                naytaIlmoitus('✕ Julkaisu hylätty.', 'error');
-            }
+            if (!response.ok) {const details=await response.json().catch(()=>({}));throw new Error(details.error||'Hyväksyntä estettiin');}
+            if (kaynnistaPika) await kaynnistaMakeSkenaario(id);
+            else if (uusiStatus === 'hyvaksytty') naytaIlmoitus('✓ Julkaisu hyväksytty jonoon!');
+            else naytaIlmoitus('✕ Julkaisu hylätty.', 'error');
 
             setTimeout(haeValvomonTiedot, 1200);
         } catch (error) {
@@ -1197,6 +1392,14 @@ if (!Array.isArray(poistetutRivit) ||
 
 
     async function paivitaProfiiliKantaan(id, uusiProfiili) {
+        if (haeJaettuTyokonteksti()) {
+            try {
+                await kutsuJaettujaLuonnoksia('update', {id, profiili: uusiProfiili});
+            } catch (error) {
+                naytaIlmoitus('Julkaisuprofiilin tallennus: ' + error.message, 'error');
+            }
+            return;
+        }
         if (uusiProfiili === 'Oma tyyli') {
             const sometiliSelect = document.getElementById('sometili-' + id);
             let tiliId = sometiliSelect ? sometiliSelect.value : null;
@@ -1237,6 +1440,7 @@ if (!Array.isArray(poistetutRivit) ||
     }
 
     async function paivitaSometiliKantaan(id, uusiTiliId) {
+        if (haeJaettuTyokonteksti()) { alert("Toiminto vaatii erillisen oikeuden."); return; }
         const db = haeSupabaseAsiakas();
         const valittuTili = kayttajanSometilit.find(function(t) { return t.id === uusiTiliId; });
         const sivunNimi = valittuTili ? valittuTili.sivun_nimi : null;
@@ -1262,6 +1466,7 @@ if (!Array.isArray(poistetutRivit) ||
     }
 
     async function palautaEnsimmainenVersio(id) {
+        if (haeJaettuTyokonteksti()) { alert("Toiminto vaatii erillisen oikeuden."); return; }
         if (!confirm("Haluatko varmasti palauttaa ensimmäisen AI-generoidun tekstiversion?")) {
             return;
         }

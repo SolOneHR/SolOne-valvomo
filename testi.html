@@ -1093,8 +1093,18 @@
 
         const onneksiVoimassa = await tarkistaIstunto();
         if (onneksiVoimassa) {
+            // Valmistellaan työkonteksti vain my_access-jäsenyyksistä.
+            // Nykyisiä tietohakuja tai käyttöoikeuksia ei muuteta vielä tässä vaiheessa.
+            if (typeof window.alustaTyoskentelyAsiakkuus === 'function') {
+                await window.alustaTyoskentelyAsiakkuus();
+            }
             await lataaKayttajanSometilit();
             haeValvomonTiedot();
+            // Tarkista odottavat jäsenkutsut vasta vahvistetun kirjautumisen jälkeen.
+            // Kutsua ei hyväksytä automaattisesti.
+            if (typeof window.tarkistaOdottavatJasenkutsut === 'function') {
+                await window.tarkistaOdottavatJasenkutsut();
+            }
         }
     }
 
