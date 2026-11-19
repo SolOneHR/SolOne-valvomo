@@ -161,11 +161,11 @@
         lista.style.color = '';
         const kieli = localStorage.getItem('solone_kieli') || 'fi';
         const labels = {
-            fi: { empty: 'Ei näytettäviä sometilioikeuksia.', shared: 'Jaettu käyttöoikeus', draft: 'Luonnostelu', publish: 'Julkaisu', brand: 'Brändiääni', note: 'Oikeuksien tarkastelu. Toiminnot avataan myöhemmässä kehitysvaiheessa.' },
-            en: { empty: 'No channel permissions to display.', shared: 'Shared access', draft: 'Drafting', publish: 'Publishing', brand: 'Brand voice', note: 'Permissions view only. Actions will be enabled in a later development phase.' },
-            sv: { empty: 'Inga kanalbehörigheter att visa.', shared: 'Delad åtkomst', draft: 'Utkast', publish: 'Publicering', brand: 'Varumärkesröst', note: 'Endast behörighetsvisning. Funktionerna aktiveras i ett senare utvecklingssteg.' }
+            fi: { empty: 'Ei näytettäviä sometilioikeuksia.', shared: 'Jaettu käyttöoikeus', draft: 'Luonnostelu', publish: 'Julkaisu', brand: 'Brändiääni', note: 'Muut oikeudet ovat tarkasteltavissa. Brändiäänen muokkaus avautuu vain erikseen oikeutetuille.' },
+            en: { empty: 'No channel permissions to display.', shared: 'Shared access', draft: 'Drafting', publish: 'Publishing', brand: 'Brand voice', note: 'Other permissions are shown for reference. Brand voice editing is available only with explicit permission.' },
+            sv: { empty: 'Inga kanalbehörigheter att visa.', shared: 'Delad åtkomst', draft: 'Utkast', publish: 'Publicering', brand: 'Varumärkesröst', note: 'Övriga behörigheter visas endast för information. Varumärkesrösten kan redigeras med särskild behörighet.' }
         }[kieli] || {
-            empty: 'Ei näytettäviä sometilioikeuksia.', shared: 'Jaettu käyttöoikeus', draft: 'Luonnostelu', publish: 'Julkaisu', brand: 'Brändiääni', note: 'Oikeuksien tarkastelu. Toiminnot avataan myöhemmässä kehitysvaiheessa.'
+            empty: 'Ei näytettäviä sometilioikeuksia.', shared: 'Jaettu käyttöoikeus', draft: 'Luonnostelu', publish: 'Julkaisu', brand: 'Brändiääni', note: 'Muut oikeudet ovat tarkasteltavissa. Brändiäänen muokkaus avautuu vain erikseen oikeutetuille.'
         };
         const visible = (Array.isArray(context.channels) ? context.channels : []).filter(c =>
             ['facebook', 'instagram', 'linkedin'].includes(c.kanava) &&
@@ -192,15 +192,33 @@
             shared.textContent = labels.shared;
             body.appendChild(shared);
             body.appendChild(document.createElement('br'));
-            const rights = [];
-            if (channel.saa_luonnostella) rights.push(labels.draft);
-            if (channel.saa_julkaista) rights.push(labels.publish);
-            if (channel.saa_muokata_brandia) rights.push(labels.brand);
-            const details = document.createElement('span');
-            details.style.cssText = 'font-size:.8rem;color:var(--text-muted);';
-            details.textContent = rights.join(' · ');
-            body.appendChild(details);
+            // Sama oikeusmerkintätapa ja värikoodit kuin käyttäjähallinnassa.
+            // Vain my_access-vastauksen myönnetyt oikeudet näytetään.
+            const badges = document.createElement('div');
+            badges.className = 'ma-channel-badges';
+            badges.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;';
+            const addBadge = (text, kind) => {
+                const badge = document.createElement('span');
+                badge.className = 'ma-rights-badge ma-rights-badge--' + kind;
+                badge.textContent = text;
+                badges.appendChild(badge);
+            };
+            if (channel.saa_luonnostella) addBadge(labels.draft, 'draft');
+            if (channel.saa_julkaista) addBadge(labels.publish, 'publish');
+            if (channel.saa_muokata_brandia) addBadge(labels.brand, 'brand');
+            body.appendChild(badges);
             card.appendChild(body);
+            // Brändiäänioikeus ei anna luonnostelu- tai julkaisuoikeutta.
+            // Näytä toiminto erillään julkaisutileistä; Edge Function tarkistaa oikeuden.
+            if (channel.saa_muokata_brandia && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(channel.sometili_id || ''))) {
+                const brandButton = document.createElement('button');
+                brandButton.type = 'button';
+                brandButton.className = 'btn-testi';
+                brandButton.style.cssText = 'font-size:.75rem;padding:4px 8px;width:auto;background:#1e3a8a;';
+                brandButton.textContent = '🎯 ' + labels.brand;
+                brandButton.addEventListener('click', () => avaaBrandVoice(channel.sometili_id));
+                card.appendChild(brandButton);
+            }
             lista.appendChild(card);
         }
         const note = document.createElement('p');

@@ -513,6 +513,11 @@
         #member-admin-myaccess-content .ma-rights-badge--draft { background:#e0f2fe; color:#075985; border-color:#bae6fd; }
         #member-admin-myaccess-content .ma-rights-badge--publish { background:#dcfce7; color:#166534; border-color:#bbf7d0; }
         #member-admin-myaccess-content .ma-rights-badge--brand { background:#ede9fe; color:#5b21b6; border-color:#ddd6fe; }
+        /* Jaettujen sometilien oikeusmerkit: sama ilme kuin käyttäjähallinnassa. */
+        #sometilit-lista .ma-rights-badge { display:inline-flex; align-items:center; padding:3px 9px; border-radius:999px; font-size:.75rem; font-weight:650; border:1px solid transparent; }
+        #sometilit-lista .ma-rights-badge--draft { background:#e0f2fe; color:#075985; border-color:#bae6fd; }
+        #sometilit-lista .ma-rights-badge--publish { background:#dcfce7; color:#166534; border-color:#bbf7d0; }
+        #sometilit-lista .ma-rights-badge--brand { background:#ede9fe; color:#5b21b6; border-color:#ddd6fe; }
         #member-admin-myaccess-content .ma-legacy-note { display:block; flex-basis:100%; margin-top:1px; color:#64748b; font-size:.75rem; }
         #member-admin-myaccess-content .ma-access-summary { padding:9px 12px; border-radius:8px; background:#eff6ff; color:#1e40af; font-weight:600; margin:8px 0 10px; }
         @media(max-width:520px) {
@@ -738,7 +743,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                 <label class="field-label" id="label-raw-teksti" data-i18n="lblRawText" style="margin-bottom:0;">Julkaisun aihe / Alkuperäinen teksti (Raw text):</label>
                 <!-- SANELUPAINIKE (KÄYTTÄJÄN LAITTEEN OMA / WEB SPEECH API) -->
-                <button type="button" id="btn-sanelu" class="btn-testi" style="width: auto; padding: 4px 10px; font-size: 0.8rem; background-color: #64748b;" onclick="kaynnistaSanelu()">🎙️ Sanelu (Laite)</button>
+                <button type="button" id="btn-sanelu" class="btn-testi" style="width: auto; padding: 4px 10px; font-size: 0.8rem; background-color: #64748b;" onclick="kaynnistaSanelu()" data-i18n="btnDictation">🎙️ Sanelu (Laite)</button>
             </div>
             <textarea id="uusi-raw-teksti" class="teksti-alue" placeholder="Kirjoita aihe, ajatus tai luonnos tähän..." data-i18n-placeholder="phRawText" style="min-height:100px;"></textarea>
 
@@ -797,10 +802,10 @@
             <div style="margin-bottom: 15px;">
                 <label class="field-label" data-i18n="lblPublicationLanguage">Julkaisun kieli:</label>
                 <select id="uusi-kohdekieli" class="valinta-kentta">
-                    <option value="Suomi" selected>Suomi (oletus)</option>
-                    <option value="Alkuperäinen kieli">Alkuperäinen kieli (ei käännöstä)</option>
-                    <option value="Englanti">Englanti</option>
-                    <option value="Ruotsi">Ruotsi</option>
+                    <option value="Suomi" selected data-i18n="langTargetFinnish">Suomi (oletus)</option>
+                    <option value="Alkuperäinen kieli" data-i18n="langTargetOriginal">Alkuperäinen kieli (ei käännöstä)</option>
+                    <option value="Englanti" data-i18n="langTargetEnglish">Englanti</option>
+                    <option value="Ruotsi" data-i18n="langTargetSwedish">Ruotsi</option>
                 </select>
             </div>
 
@@ -928,7 +933,7 @@
           </div>
           <button type="button" class="btn-testi" style="width:auto;background:#e2e8f0;color:#0f172a;" onclick="suljeBrandVoice()" data-i18n="bvClose">Sulje</button>
         </div>
-        <p class="bv-note" data-i18n="bvIntro">Vastaa kahdeksaan kysymykseen ja tarkenna tyyliä keskustellen. Brändiääni otetaan käyttöön vasta hyväksynnän jälkeen.</p>
+        <p class="bv-note" id="bv-context-guide" aria-live="polite">Vastaa kahdeksaan kysymykseen ja tarkenna tyyliä keskustellen. Brändiääni otetaan käyttöön vasta hyväksynnän jälkeen.</p>
         <div id="bv-active" class="bv-preview" style="display:none;">
           <strong data-i18n="bvActiveTitle">Käytössä oleva brändiääni</strong>
           <p class="bv-note" data-i18n="bvActiveSafe">Muutokset tallennetaan luonnokseksi. Nykyinen brändiääni pysyy käytössä hyväksyntään asti.</p>
@@ -1127,6 +1132,71 @@
 <script src="subscriptions.js"></script>
 <script src="posts.js"></script>
 <script src="brand-voice.js"></script>
+<script>
+// Vain brändiääni-ikkunan tilanteeseen sopiva ohjeteksti; ei muuta luonti- tai oikeuslogiikkaa.
+(function () {
+    const guide = document.getElementById('bv-context-guide');
+    const setup = document.getElementById('bv-setup');
+    const chat = document.getElementById('bv-chat');
+    const active = document.getElementById('bv-active');
+    if (!guide || !setup || !chat || !active) return;
+
+    const guides = {
+        fi: {
+            start: 'Vastaa kahdeksaan kysymykseen ja tarkenna tyyliä keskustellen. Brändiääni otetaan käyttöön vasta hyväksynnän jälkeen.',
+            draft: 'Sinulla on keskeneräinen brändiääniluonnos. Voit jatkaa sen kehittämistä tai aloittaa uuden.',
+            editing: 'Nykyinen brändiäänesi on käytössä. Muutokset tulevat voimaan vasta, kun hyväksyt uuden version.',
+            active: 'Brändiäänesi on käytössä. Voit tarkastella sitä tai tehdä siihen muutoksia.'
+        },
+        en: {
+            start: 'Answer eight questions and refine the style through conversation. Your brand voice will be activated only after approval.',
+            draft: 'You have an unfinished brand voice draft. You can continue working on it or start a new one.',
+            editing: 'Your current brand voice remains active. Changes take effect only after you approve the new version.',
+            active: 'Your brand voice is active. You can review it or make changes.'
+        },
+        sv: {
+            start: 'Svara på åtta frågor och utveckla stilen genom samtal. Varumärkesrösten tas i bruk först efter godkännande.',
+            draft: 'Du har ett pågående utkast till varumärkesröst. Du kan fortsätta med det eller börja ett nytt.',
+            editing: 'Din nuvarande varumärkesröst används fortfarande. Ändringarna träder i kraft först när du godkänner den nya versionen.',
+            active: 'Din varumärkesröst används. Du kan granska den eller göra ändringar.'
+        }
+    };
+    function updateGuide() {
+        const lang = localStorage.getItem('solone_kieli');
+        const t = guides[lang] || guides.fi;
+        const hasActiveVoice = typeof bvActivePrompt !== 'undefined' && Boolean(bvActivePrompt);
+        // brand-voice.js näyttää vain yhden näistä näkymistä kerrallaan.
+        let next = t.start;
+        if (chat.style.display !== 'none') next = hasActiveVoice ? t.editing : t.draft;
+        else if (active.style.display !== 'none') next = t.active;
+        if (guide.textContent !== next) guide.textContent = next;
+    }
+    const observer = new MutationObserver(updateGuide);
+    [setup, chat, active].forEach(el => observer.observe(el, {attributes: true, attributeFilter: ['style']}));
+    observer.observe(document.documentElement, {attributes: true, attributeFilter: ['lang']});
+    updateGuide();
+})();
+// Poista vain aiemmin tallennettu yleinen AI-aloitusviesti näkyvästä keskustelusta.
+// Tallennettua luonnosta, muita AI-viestejä tai palvelimen logiikkaa ei muuteta.
+(function () {
+    const list = document.getElementById('bv-messages');
+    if (!list) return;
+    const initialMessages = new Set([
+        'Kerro, millaista tyyliä haluaisit kehittää.',
+        'Tell me what kind of style you would like to develop.',
+        'Berätta vilken stil du vill utveckla.'
+    ]);
+    function hideGenericOpening() {
+        // Aloitusviesti esiintyy normaalisti keskustelun ensimmäisenä AI-viestinä.
+        const first = list.firstElementChild;
+        if (first && first.classList.contains('assistant') && initialMessages.has(first.textContent.trim())) {
+            first.remove();
+        }
+    }
+    new MutationObserver(hideGenericOpening).observe(list, {childList:true});
+    hideGenericOpening();
+})();
+</script>
 
 </body>
 </html>
