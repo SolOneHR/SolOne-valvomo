@@ -544,7 +544,7 @@
         const sanasto = tekstit[aktiivinenKieli] || tekstit.fi;
 
         if (!muokattuTarkastus) {
-            naytaIlmoitus(solonePostSanasto().verificationEmpty, 'error');
+            naytaJulkaisunIlmoitus(id, solonePostSanasto().verificationEmpty, 'error');
             return;
         }
 
@@ -580,14 +580,14 @@
             });
 
             if (response.ok) {
-                naytaIlmoitus(solonePostSanasto().notifVerificationSent, 'success');
+                naytaJulkaisunIlmoitus(id, solonePostSanasto().notifVerificationSent, 'success');
                 setTimeout(function() { haeValvomonTiedot(); }, 4000);
             } else {
                 throw new Error("Virhe Make-kutsussa");
             }
         } catch (err) {
             console.error('Virhe:', err);
-            naytaIlmoitus(sanasto.virhePäivitys, 'error');
+            naytaJulkaisunIlmoitus(id, sanasto.virhePäivitys, 'error');
             if (nappiElem) {
                 nappiElem.disabled = false;
                 nappiElem.textContent = sanasto.btnPaivitaTarkastus;
@@ -636,7 +636,7 @@ if (!Array.isArray(poistetutRivit) ||
         const omaTeksti = rawKentta ? rawKentta.value : '';
 
         if (!omaTeksti) {
-            naytaIlmoitus(solonePostSanasto().rawEmpty, 'error');
+            naytaJulkaisunIlmoitus(id, solonePostSanasto().rawEmpty, 'error');
             return;
         }
 
@@ -662,12 +662,27 @@ if (!Array.isArray(poistetutRivit) ||
             });
 
             if (!updateRes.ok) throw new Error("Tallennus epäonnistui");
-            naytaIlmoitus(solonePostSanasto().notifTextCopied);
+            naytaJulkaisunIlmoitus(id, solonePostSanasto().notifTextCopied);
         } catch (e) {
-            naytaIlmoitus(solonePostSanasto().saveErrorPrefix + e.message, 'error');
+            naytaJulkaisunIlmoitus(id, solonePostSanasto().saveErrorPrefix + e.message, 'error');
         }
     }
 
+
+    // Näytä muokkauspalautteet kyseisen julkaisun yhteydessä, älä sivun yläosassa.
+    // Palaute säilyy seuraavaan kortin päivitykseen tai uuteen ilmoitukseen saakka.
+    function naytaJulkaisunIlmoitus(id, viesti, tyyppi) {
+        const alue = document.getElementById('julkaisu-ilmoitus-' + id);
+        if (!alue) {
+            // Julkaisukortti saattaa poistua automaattisen tietopäivityksen aikana.
+            // Älä silloin vieritä sivua yläosan yleisilmoitukseen.
+            console.warn('Julkaisukohtainen ilmoitusalue ei ole enää näkyvissä:', id);
+            return;
+        }
+        alue.textContent = viesti;
+        alue.className = 'ilmoitus ' + (tyyppi || 'success');
+        alue.style.display = 'block';
+    }
 
     function luoKorttiHtml(julkaisu, onHistoria) {
         onHistoria = onHistoria || false;
@@ -676,6 +691,8 @@ if (!Array.isArray(poistetutRivit) ||
 
         const pvm = julkaisu.luotu_aika ? new Date(julkaisu.luotu_aika).toLocaleString('fi-FI') : '-';
         const card = document.createElement('div');
+        // Säilytä julkaisun oma kohdekieli myös profiilia vaihdettaessa.
+        card.dataset.kohdekieli = julkaisu.kohdekieli || 'Suomi';
         
         if (julkaisu.status === 'kasittelyssa') {
             card.className = 'julkaisu-card kasittelyssa';
@@ -779,17 +796,6 @@ if (!Array.isArray(poistetutRivit) ||
         htmlSisalto += '<label class="field-label">' + sanasto.lblRawTextCard + '</label>';
         htmlSisalto += '<textarea id="raw-teksti-' + julkaisu.id + '" class="teksti-alue"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.raw_text || '') + '</textarea>';
 
-        // --- TARKASTUSTEKSTILAATIKKO (NÄKYY VAIN JOS SISÄLTÖÄ ON) ---
-        if (julkaisu.tarkastusteksti) {
-            htmlSisalto += '<div style="background: #fff7ed; border: 1px solid #fdba74; padding: 12px; border-radius: 8px; margin-bottom: 18px;">';
-            htmlSisalto += '<label class="field-label" style="color: #c2410c;">' + sanasto.tarkistusOtsikko + '</label>';
-            htmlSisalto += '<textarea id="tarkastus-' + julkaisu.id + '" class="teksti-alue" style="border-color: #fdba74; height: 250px; min-height: 150px; resize: vertical;"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.tarkastusteksti || '') + '</textarea>';
-            if (!onHistoria) {
-                htmlSisalto += '<button type="button" class="btn-testi" style="background-color: #f97316; width: 100%; border: none;" onclick="paivitaTarkastuksenPohjalta(\'' + julkaisu.id + '\', this)">' + sanasto.btnPaivitaTarkastus + '</button>';
-            }
-            htmlSisalto += '</div>';
-        }
-
         if (!onHistoria) {
             htmlSisalto += '<div class="grid-valinnat">'; 
             htmlSisalto += '<div>';
@@ -816,6 +822,23 @@ if (!Array.isArray(poistetutRivit) ||
             }
             htmlSisalto += '</div>';
             htmlSisalto += '</div>';
+        }
+
+        // --- TARKASTUSTEKSTILAATIKKO (NÄKYY VAIN JOS SISÄLTÖÄ ON) ---
+        if (julkaisu.tarkastusteksti) {
+            htmlSisalto += '<div style="background: #fff7ed; border: 1px solid #fdba74; padding: 12px; border-radius: 8px; margin-bottom: 18px;">';
+            htmlSisalto += '<label class="field-label" style="color: #c2410c;">' + sanasto.tarkistusOtsikko + '</label>';
+            htmlSisalto += '<textarea id="tarkastus-' + julkaisu.id + '" class="teksti-alue" style="border-color: #fdba74; height: 250px; min-height: 150px; resize: vertical;"' + (onHistoria ? ' readonly' : '') + '>' + (julkaisu.tarkastusteksti || '') + '</textarea>';
+            if (!onHistoria) {
+                htmlSisalto += '<button type="button" class="btn-testi" style="background-color: #f97316; width: 100%; border: none;" onclick="paivitaTarkastuksenPohjalta(\'' + julkaisu.id + '\', this)">' + sanasto.btnPaivitaTarkastus + '</button>';
+            }
+            htmlSisalto += '</div>';
+        }
+
+        // Julkaisukohtainen palaute julkaisutekstin yläpuolella.
+        // Ei vieritystä eikä automaattista katoamista (vältetään näkymän hyppäys).
+        if (!onHistoria) {
+            htmlSisalto += '<div id="julkaisu-ilmoitus-' + julkaisu.id + '" class="ilmoitus" role="status" aria-live="polite" style="display:none;"></div>';
         }
 
         htmlSisalto += '<label class="field-label">' + sanasto.lblJulkaisuteksti + '</label>';
@@ -899,7 +922,7 @@ if (!Array.isArray(poistetutRivit) ||
         const token = localStorage.getItem('supabase_token');
 
         if (!rawTeksti && document.getElementById('raw-teksti-' + id)) {
-            naytaIlmoitus(solonePostSanasto().rawEmpty, 'error');
+            naytaJulkaisunIlmoitus(id, solonePostSanasto().rawEmpty, 'error');
             return;
         }
 
@@ -941,15 +964,15 @@ if (!Array.isArray(poistetutRivit) ||
                     tyyli: profiili,
                     rawTeksti: rawTeksti,
                     kuvaUrl: kuvaUrlValmis,
-                    kohdekieli: document.getElementById('uusi-kohdekieli') ? document.getElementById('uusi-kohdekieli').value : 'Suomi'
+                    kohdekieli: document.getElementById('card-' + id)?.dataset.kohdekieli || 'Suomi'
                 })     
             });
 
             if (response.ok) {
-                naytaIlmoitus(solonePostSanasto().notifFormatSent, 'success');
+                naytaJulkaisunIlmoitus(id, solonePostSanasto().notifFormatSent, 'success');
                 setTimeout(function() { haeValvomonTiedot(); }, 4000);
             } else {
-                naytaIlmoitus(solonePostSanasto().formatRequestError, 'error');
+                naytaJulkaisunIlmoitus(id, solonePostSanasto().formatRequestError, 'error');
                 if (reformatNappi) {
                     reformatNappi.disabled = false;
                     reformatNappi.textContent = solonePostSanasto().btnMuotoileAi;
@@ -957,7 +980,7 @@ if (!Array.isArray(poistetutRivit) ||
             }
         } catch (err) {
             console.error('Virhe:', err);
-            naytaIlmoitus(solonePostSanasto().formatNetworkError, 'error');
+            naytaJulkaisunIlmoitus(id, solonePostSanasto().formatNetworkError, 'error');
             if (reformatNappi) {
                 reformatNappi.disabled = false;
                 reformatNappi.textContent = solonePostSanasto().btnMuotoileAi;
@@ -1261,7 +1284,7 @@ if (!Array.isArray(poistetutRivit) ||
                     sivun_nimi: sivunNimi
                 })
             });
-            naytaIlmoitus(solonePostSanasto().notifPageUpdated);
+            naytaJulkaisunIlmoitus(id, solonePostSanasto().notifPageUpdated);
         } catch (e) {
             console.error("Sometilin tallennus epäonnistui:", e);
         }
@@ -1288,7 +1311,7 @@ if (!Array.isArray(poistetutRivit) ||
             const haettuTeksti = data && data[0] ? data[0].alkuperainen_ai_teksti : null;
 
             if (!haettuTeksti) {
-                naytaIlmoitus(solonePostSanasto().restoreVersionMissing, 'error');
+                naytaJulkaisunIlmoitus(id, solonePostSanasto().restoreVersionMissing, 'error');
                 return;
             }
 
@@ -1314,10 +1337,10 @@ if (!Array.isArray(poistetutRivit) ||
                 tekstikentta.value = haettuTeksti;
             }
 
-            naytaIlmoitus(solonePostSanasto().notifVersionRestored, 'success');
+            naytaJulkaisunIlmoitus(id, solonePostSanasto().notifVersionRestored, 'success');
 
         } catch (err) {
             console.error("Virhe palautuksessa:", err);
-            naytaIlmoitus(solonePostSanasto().restoreVersionErrorPrefix + err.message, 'error');
+            naytaJulkaisunIlmoitus(id, solonePostSanasto().restoreVersionErrorPrefix + err.message, 'error');
         }
     }
