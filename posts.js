@@ -161,6 +161,17 @@
     let kayttajanSometilit = [];
     let sometilienLatausVirhe = false;
 
+    // Säilytä käyttäjän valitsema ajastusaika automaattisen korttipäivityksen yli.
+    // Arvo lähetetään tietokantaan vasta, kun käyttäjä hyväksyy julkaisun.
+    const soloneAjastusValinnat = new Map();
+    function muistaAjastusValinta(id, arvo) {
+        soloneAjastusValinnat.set(String(id), arvo);
+    }
+
+    // Uuden luonnoksen AI-käsittelyilmoitus näkyy tallennetun käsittelytilan ajan.
+    let soloneSeurattavaLuonnosId = null;
+    let soloneKasittelyilmoitusTeksti = null;
+
 
     function kasitteleProjektiValinta(arvo) {
         const uusiSyottoLohko = document.getElementById('uusi-projekti-syotto-lohko');
@@ -505,7 +516,9 @@
                 naytaIlmoitus(solonePostSanasto().notifDraftCreated);
                 haeValvomonTiedot();
             } else {
-                naytaIlmoitus(solonePostSanasto().notifAiProcessing);
+                soloneSeurattavaLuonnosId = String(uusiRivi.id);
+                soloneKasittelyilmoitusTeksti = solonePostSanasto().notifAiProcessing;
+                naytaIlmoitus(soloneKasittelyilmoitusTeksti, 'success', true);
                 haeValvomonTiedot();
 
                 fetch(db.url + '/functions/v1/make-proxy', {
@@ -709,7 +722,9 @@ if (!Array.isArray(poistetutRivit) ||
 
         const onHylatty = julkaisu.status === 'hylatty';
         const onVirhe = julkaisu.status === 'virhe';
-        card.className = 'julkaisu-card' + (onHistoria ? ((onHylatty || onVirhe) ? ' hylatty-kortti' : ' historia') : '');
+        // Hyväksytty ja ajastettu julkaisu odottaa varsinaista julkaisutulosta.
+        const onAjastettu = julkaisu.status === 'hyvaksytty' && Boolean(julkaisu.ajastettu_aika) && !julkaisu.julkaistu_aika;
+        card.className = 'julkaisu-card' + (onHistoria ? ((onHylatty || onVirhe) ? ' hylatty-kortti' : (onAjastettu ? '' : ' historia')) : '');
         card.id = 'card-' + julkaisu.id;
 
         const nykyinenAlusta = (julkaisu.target_channel || julkaisu.alusta || 'FB_IG').trim();
@@ -725,6 +740,9 @@ if (!Array.isArray(poistetutRivit) ||
                 }
             } else if (onHylatty) {
                 htmlSisalto += '<div class="tilamerkinta hylatty-badge">' + sanasto.historiaHylatty + '</div>';
+            } else if (onAjastettu) {
+                const ajastettuOtsikko = ({ fi: 'AJASTETTU', en: 'SCHEDULED', sv: 'SCHEMALAGD' })[aktiivinenKieli] || 'AJASTETTU';
+                htmlSisalto += '<div class="tilamerkinta" style="background-color:#d97706">' + ajastettuOtsikko + '</div>';
             } else {
                 htmlSisalto += '<div class="tilamerkinta">' + sanasto.historiaJulkaistu + '</div>';
             }
@@ -855,7 +873,11 @@ if (!Array.isArray(poistetutRivit) ||
                 const minuutit = String(d.getMinutes()).padStart(2, '0');
                 valmisAika = `${vuosi}-${kuukausi}-${paiva}T${tunnit}:${minuutit}`;
             }
-            
+            // Käyttäjän keskeneräinen valinta on etusijalla kortin automaattipäivityksessä.
+            if (soloneAjastusValinnat.has(String(julkaisu.id))) {
+                valmisAika = soloneAjastusValinnat.get(String(julkaisu.id));
+            }
+
             htmlSisalto += '<div class="grid-valinnat">'; 
             
             if (kayttajanSometilit && kayttajanSometilit.length > 0) {
@@ -885,7 +907,7 @@ if (!Array.isArray(poistetutRivit) ||
 
             htmlSisalto += '<div>';
             htmlSisalto += '<label class="field-label">' + sanasto.lblAjastaValinnainen + '</label>';
-            htmlSisalto += '<input type="datetime-local" id="ajastus-' + julkaisu.id + '" class="aika-kentta" value="' + valmisAika + '">';
+            htmlSisalto += '<input type="datetime-local" id="ajastus-' + julkaisu.id + '" class="aika-kentta" value="' + valmisAika + '" oninput="muistaAjastusValinta(\'' + julkaisu.id + '\', this.value)" onchange="muistaAjastusValinta(\'' + julkaisu.id + '\', this.value)">';
             htmlSisalto += '</div>';
             htmlSisalto += '</div>';
 
@@ -1131,6 +1153,26 @@ if (!Array.isArray(poistetutRivit) ||
             const resHistoria = await fetch(db.url + '/rest/v1/somepostaukset?status=not.in.(odotetaan,kasittelyssa)&order=luotu_aika.desc&limit=100', { method: 'GET', headers: headers });
             const dataHistoria = await resHistoria.json();
 
+            // Päättele valmistuminen tietokantaan tallennetusta tilasta, ei Make-kutsun kuittauksesta.
+            if (soloneSeurattavaLuonnosId && resOdottavat.ok && resHistoria.ok &&
+                Array.isArray(dataOdottavat) && Array.isArray(dataHistoria)) {
+                const seurattu = [...dataOdottavat, ...dataHistoria].find(function(j) {
+                    return String(j.id) === soloneSeurattavaLuonnosId;
+                });
+                if (seurattu && seurattu.status !== 'kasittelyssa') {
+                    const viimeisinKasittelyViesti = soloneKasittelyilmoitusTeksti;
+                    soloneSeurattavaLuonnosId = null;
+                    soloneKasittelyilmoitusTeksti = null;
+                    if (typeof suljeKasittelyilmoitus === 'function') suljeKasittelyilmoitus(viimeisinKasittelyViesti);
+                } else if (seurattu && soloneKasittelyilmoitusTeksti) {
+                    const ilmoitus = document.getElementById('ilmoitus-alue');
+                    // Palauta vain, jos muu ilmoitus ei ole syrjäyttänyt käsittelyilmoitusta.
+                    if (ilmoitus && ilmoitus.style.display === 'none') {
+                        naytaIlmoitus(soloneKasittelyilmoitusTeksti, 'success', true);
+                    }
+                }
+            }
+
             if (!dataOdottavat || dataOdottavat.length === 0) {
                 const aktiivinenKieli = localStorage.getItem('solone_kieli') || 'fi';
                 const sanasto = tekstit[aktiivinenKieli] || tekstit.fi;
@@ -1209,6 +1251,7 @@ if (!Array.isArray(poistetutRivit) ||
             });
 
             if (!response.ok) throw new Error("Tilan päivitys epäonnistui palvelimella.");
+            soloneAjastusValinnat.delete(String(id));
 
             if (kaynnistaPika) {
                 kaynnistaMakeSkenaario(id);

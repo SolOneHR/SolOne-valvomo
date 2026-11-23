@@ -409,6 +409,19 @@
             background-color: #475569; 
         }
 
+        /* Yhdistettyjen sometilien toimintopainikkeet saman korkuisiksi. */
+        #sometilit-lista .bv-open-button,
+        #sometilit-lista .bv-open-button ~ .btn-ulos {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 52px;
+            box-sizing: border-box;
+            margin-top: 0;
+            line-height: 1.15;
+            text-align: center;
+        }
+
         .tyhja-tila { 
             text-align: center; 
             padding: 30px 20px; 
@@ -889,6 +902,9 @@
                     <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                     <span data-i18n="btnConnectMetaText">Yhdistä Facebook & Instagram</span>
                 </button>
+                <div style="margin-top: 10px; font-size: 0.85rem;">
+                    <a href="meta-ohje.html" target="_blank" rel="noopener noreferrer" data-meta-l10n="metaGuideLink" style="color: #1e40af; font-weight: 600; text-decoration: underline; text-underline-offset: 2px;">Ohje Facebookin ja Instagramin yhdistämiseen sekä käyttöoikeuksien uusimiseen</a>
+                </div>
                 <div id="meta-oauth-status" role="status" style="font-size: 0.8rem; margin-top: 8px; font-weight: 600; display: none;"></div>
             </div>
 
@@ -942,6 +958,9 @@
             <button type="button" class="btn-pika" id="bv-begin-edit" onclick="bvAvaaMuokkaus()" data-i18n="bvBeginEdit">Muokkaa brändiääntä</button>
             <button type="button" class="btn-testi" id="bv-active-restart" onclick="bvAloitaUudelleen()" data-i18n="bvRestart">Aloita uusi luonnos</button>
           </div>
+          <div class="bv-actions" id="bv-delete-active-actions" style="display:none;">
+            <button type="button" class="btn-testi" id="bv-delete-active" onclick="bvPoistaAktiivinen()" style="color:#b91c1c;border:1px solid #fecaca;background:#fff;" data-i18n="bvDeleteActive">Poista käytössä oleva brändiääni</button>
+          </div>
         </div>
         <div id="bv-setup">
           <div id="bv-active-info" class="bv-note"></div>
@@ -956,6 +975,11 @@
         </div>
         <div id="bv-chat" style="display:none;">
           <div id="bv-messages" class="bv-message-list" aria-live="polite"></div>
+          <label for="bv-chat-input" class="field-label" data-i18n="bvMessageLabel">Mitä haluaisit muuttaa tai tarkentaa?</label>
+          <textarea id="bv-chat-input" class="bv-answer" style="min-height:82px;" maxlength="4000" data-i18n-placeholder="bvMessagePlaceholder" placeholder="Kerro omin sanoin..." ></textarea>
+          <div class="bv-actions">
+            <button type="button" class="btn-pika" id="bv-send" onclick="bvLahetaViesti()" data-i18n="bvSend">Lähetä</button>
+          </div>
           <div id="bv-preview" class="bv-preview" style="display:none;">
             <strong data-i18n="bvDraftPreview">Brändiääniluonnos</strong>
             <div id="bv-voice-name" style="font-weight:600;margin-top:8px;"></div>
@@ -973,10 +997,7 @@
               </div>
             </div>
           </div>
-          <label for="bv-chat-input" class="field-label" data-i18n="bvMessageLabel">Mitä haluaisit muuttaa tai tarkentaa?</label>
-          <textarea id="bv-chat-input" class="bv-answer" style="min-height:82px;" maxlength="4000" data-i18n-placeholder="bvMessagePlaceholder" placeholder="Kerro omin sanoin..." ></textarea>
           <div class="bv-actions">
-            <button type="button" class="btn-pika" id="bv-send" onclick="bvLahetaViesti()" data-i18n="bvSend">Lähetä</button>
             <button type="button" class="btn-hyvaksy" id="bv-approve" onclick="bvHyvaksy()" style="display:none;" data-i18n="bvApprove">Hyväksy ja ota käyttöön</button>
             <button type="button" class="btn-testi" id="bv-restart" onclick="bvAloitaUudelleen()" data-i18n="bvRestart">Aloita uusi luonnos</button>
           </div>
@@ -1075,17 +1096,33 @@
         paivitaMetaTilienKielet(kieli);
     }
 
-    function naytaIlmoitus(viesti, tyyppi) {
+    // Yleisilmoituksen ajastin: aiempi ilmoitus ei saa piilottaa uutta.
+    let soloneIlmoitusAjastin = null;
+    function naytaIlmoitus(viesti, tyyppi, pysyva) {
         tyyppi = tyyppi || 'success';
         const alue = document.getElementById('ilmoitus-alue');
+        if (!alue) return;
+        if (soloneIlmoitusAjastin) {
+            clearTimeout(soloneIlmoitusAjastin);
+            soloneIlmoitusAjastin = null;
+        }
         alue.textContent = viesti;
         alue.className = 'ilmoitus ' + tyyppi;
         alue.style.display = 'block';
         alue.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        setTimeout(function() { 
-            alue.style.display = 'none'; 
-        }, 6000);
+        if (!pysyva) {
+            soloneIlmoitusAjastin = setTimeout(function() {
+                alue.style.display = 'none';
+                soloneIlmoitusAjastin = null;
+            }, 6000);
+        }
+    }
+    function suljeKasittelyilmoitus(odotettuViesti) {
+        const alue = document.getElementById('ilmoitus-alue');
+        if (!alue || alue.textContent !== odotettuViesti) return;
+        if (soloneIlmoitusAjastin) clearTimeout(soloneIlmoitusAjastin);
+        soloneIlmoitusAjastin = null;
+        alue.style.display = 'none';
     }
 
     async function alustaNakyma() {

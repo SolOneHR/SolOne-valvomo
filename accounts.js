@@ -4,9 +4,11 @@
     // Meta-hallinnan tekstit vaihtuvat kielivalinnan mukana.
     const metaTilienSanasto = {
         fi: {
+            avaaProfiili: 'Avaa profiili',
             modalSettingsTitle: '⚙️ Yhdistetyt sosiaalisen median tilit',
             metaConnectDesc: 'Yhdistä Facebook-sivut ja Instagram-ammattilaistilit automaattisesti:',
             btnConnectMetaText: 'Yhdistä Facebook ja Instagram',
+            metaGuideLink: 'Ohje tilien yhdistämiseen ja käyttöoikeuksien uusimiseen',
             addPageTitle: '➕ Lisää uusi sivu / tili', addPageName: 'Sivun / profiilin nimi:',
             setPrimaryDefault: 'Aseta ensisijaiseksi sivuksi', btnAddAccount: '+ Tallenna uusi tili',
             fbId:'Facebook-sivun tunnus:', igId:'Instagram-tilin tunnus:', liId:'LinkedIn-organisaation URN / ID:',
@@ -21,8 +23,10 @@
             previewFail:'Meta-toiminto epäonnistui: ', cancelled:'Valtuutus peruutettiin tai ikkuna suljettiin.',
         },
         en: {
+            avaaProfiili: 'Open profile',
             modalSettingsTitle:'⚙️ Connected Social Accounts', metaConnectDesc:'Connect Facebook Pages and Instagram Professional accounts automatically:',
             btnConnectMetaText:'Connect Facebook & Instagram',
+            metaGuideLink:'Guide to connecting accounts and renewing permissions',
             addPageTitle:'➕ Add New Page / Account',addPageName:'Page / Profile Name:',
             setPrimaryDefault:'Set as primary default page',btnAddAccount:'+ Save new account',
             fbId:'Facebook Page ID:',igId:'Instagram Account ID:',liId:'LinkedIn Organization URN / ID:',
@@ -37,8 +41,10 @@
             previewFail:'Meta operation failed: ',cancelled:'Authorization cancelled or window closed.',
         },
         sv: {
+            avaaProfiili: 'Öppna profil',
             modalSettingsTitle:'⚙️ Anslutna sociala mediekonton',metaConnectDesc:'Anslut Facebook-sidor och professionella Instagram-konton automatiskt:',
             btnConnectMetaText:'Anslut Facebook och Instagram',
+            metaGuideLink:'Guide för att ansluta konton och förnya behörigheter',
             addPageTitle:'➕ Lägg till sida / konto',addPageName:'Sidans / profilens namn:',
             setPrimaryDefault:'Ange som standardsida',btnAddAccount:'+ Spara nytt konto',
             fbId:'Facebook-sidans ID:',igId:'Instagram-kontots ID:',liId:'LinkedIn-organisationens URN / ID:',
@@ -66,6 +72,8 @@
         document.querySelectorAll('#asetukset-modaali [data-meta-l10n]').forEach(el => {
             el.textContent = labels[el.dataset.metaL10n] || el.textContent;
         });
+        const guideLink = document.querySelector('#asetukset-modaali a[data-meta-l10n="metaGuideLink"]');
+        if (guideLink) guideLink.href = 'meta-ohje.html?lang=' + encodeURIComponent(metaTilienSanasto[kieli] ? kieli : 'fi');
         const title = document.getElementById('meta-selection-title');
         if (title) title.textContent = labels.selectionTitle;
         const save = document.getElementById('meta-save-selected');
@@ -254,6 +262,60 @@
         haeValvomonTiedot();
     }
 
+
+    // Julkiset profiililinkit. Tunnisteet validoidaan ennen URL:n muodostamista.
+    function soloneSometiliLinkit(tili) {
+        const links = [];
+        const fb = String(tili.fb_page_id || '').trim();
+        if (/^\d{1,30}$/.test(fb)) links.push({ channel: 'Facebook', url: 'https://www.facebook.com/' + fb });
+        const li = String(tili.linkedin_org_id || '').trim();
+        const liMatch = li.match(/^(?:urn:li:organization:)?(\d{1,30})$/i);
+        if (liMatch) links.push({ channel: 'LinkedIn', url: 'https://www.linkedin.com/company/' + liMatch[1] + '/' });
+        const ig = String(tili.ig_username || tili.instagram_username || '').trim().replace(/^@/, '');
+        if (/^[a-zA-Z0-9._]{1,30}$/.test(ig)) links.push({ channel: 'Instagram', url: 'https://www.instagram.com/' + ig + '/' });
+        return links;
+    }
+
+    function soloneLisaaProfiililinkit(container, tili) {
+        container.replaceChildren();
+        for (const item of soloneSometiliLinkit(tili)) {
+            const a = document.createElement('a');
+            a.href = item.url;
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            a.textContent = item.channel + ' · ' + metaT('avaaProfiili') + ' ↗';
+            a.style.cssText = 'display:inline-block;margin:6px 10px 0 0;font-size:.8rem;color:var(--primary);text-decoration:underline;';
+            container.appendChild(a);
+        }
+    }
+
+    // IG-käyttäjänimi haetaan vain käyttäjän oman tilin suojatulla Edge-pyynnöllä.
+    // Haku ei muuta tilitietoja, tokeneita tai Meta-valtuutusta.
+    async function soloneHaeInstagramProfiililinkit() {
+        const token = localStorage.getItem('supabase_token');
+        if (!token) return;
+        const db = haeSupabaseAsiakas();
+        const nodes = document.querySelectorAll('#sometilit-lista [data-solone-profile-id]');
+        for (const node of nodes) {
+            const tili = kayttajanSometilit.find(t => String(t.id) === node.dataset.soloneProfileId);
+            if (!tili || tili.asiakastunnus !== nykyinenAsiakastunnus ||
+                !/^\d{1,30}$/.test(String(tili.ig_account_id || '')) ||
+                soloneSometiliLinkit(tili).some(l => l.channel === 'Instagram')) continue;
+            try {
+                const res = await fetch(db.url + '/functions/v1/meta-auth-test', {
+                    method: 'POST',
+                    headers: { 'apikey': db.key, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'instagram-profile', accountId: tili.id })
+                });
+                if (!res.ok) continue;
+                const data = await res.json();
+                if (typeof data.username !== 'string') continue;
+                tili.ig_username = data.username;
+                if (node.isConnected && node.dataset.soloneProfileId === String(tili.id)) soloneLisaaProfiililinkit(node, tili);
+            } catch (error) { console.warn('Instagram-profiilin haku ei onnistunut.', error); }
+        }
+    }
+
     function paivitaAsetuksetListaHtml() {
         const lista = document.getElementById('sometilit-lista');
         if (!lista) return;
@@ -297,6 +359,7 @@
 
             html += '<br>';
             html += '    <span style="font-size: 0.8rem; color: var(--text-muted);">FB: ' + (tili.fb_page_id || '-') + ' | IG: ' + (tili.ig_account_id || '-') + ' | LI: ' + (tili.linkedin_org_id || '-') + '</span>';
+            html += '    <div data-solone-profile-id="' + String(tili.id).replace(/[^a-f0-9-]/gi, '') + '" style="display:flex;flex-wrap:wrap;gap:0 6px;"></div>';
             html += '  </div>';
             
             if (aktiivinen) {
@@ -317,6 +380,11 @@
             html += '</div>';
         });
         lista.innerHTML = html;
+        lista.querySelectorAll('[data-solone-profile-id]').forEach(function(node) {
+            const tili = kayttajanSometilit.find(t => String(t.id) === node.dataset.soloneProfileId);
+            if (tili) soloneLisaaProfiililinkit(node, tili);
+        });
+        void soloneHaeInstagramProfiililinkit();
         lista.querySelectorAll('.bv-open-button').forEach(function(button) {
             button.addEventListener('click', function() {
                 avaaBrandVoice(button.dataset.brandAccount);

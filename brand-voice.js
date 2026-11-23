@@ -46,16 +46,23 @@
     }
     function bvStatus(message, error) {
       const element = document.getElementById('bv-status');
+      const inChat = document.getElementById('bv-chat').style.display === 'block';
+      const inSetup = document.getElementById('bv-setup').style.display === 'block';
+      // Show progress beside the action that started the AI request.
+      const anchor = inChat ? document.getElementById('bv-send').parentElement
+        : inSetup ? document.getElementById('bv-next').parentElement
+        : document.getElementById('bv-context-guide');
+      anchor.insertAdjacentElement('afterend', element);
       element.textContent = message || '';
       element.className = 'bv-status' + (error ? ' error' : message ? ' success' : '');
     }
-    function bvAsetaVarattu(busy) {
+    function bvAsetaVarattu(busy, messageKey) {
       bvBusy = busy;
-      ['bv-prev','bv-skip','bv-next','bv-send','bv-approve','bv-restart','bv-begin-edit','bv-manual-open','bv-manual-save','bv-manual-cancel','bv-active-restart'].forEach(id => {
+      ['bv-prev','bv-skip','bv-next','bv-send','bv-approve','bv-restart','bv-begin-edit','bv-manual-open','bv-manual-save','bv-manual-cancel','bv-active-restart','bv-delete-active'].forEach(id => {
         const button = document.getElementById(id);
         if (button) button.disabled = busy;
       });
-      if (busy) bvStatus(bvText('bvWorking'));
+      if (busy) bvStatus(bvText(messageKey || 'bvWorking'));
     }
     async function bvRequest(action, extra = {}) {
       const db = haeSupabaseAsiakas();
@@ -89,18 +96,26 @@
     }
     function bvNaytaKysymykset() {
       document.getElementById('bv-active').style.display = 'none';
+      document.getElementById('bv-delete-active-actions').style.display = 'none';
       document.getElementById('bv-setup').style.display = 'block';
       document.getElementById('bv-chat').style.display = 'none';
+      const divider = document.getElementById('bv-draft-divider');
+      if (divider) divider.style.display = 'none';
       bvNaytaVaihe();
     }
     function bvNaytaAktiivinen() {
       const active = !!bvActivePrompt;
       document.getElementById('bv-active').style.display = active ? 'block' : 'none';
       document.getElementById('bv-active-prompt').textContent = bvActivePrompt;
+      document.getElementById('bv-delete-active-actions').style.display = active && bvOwner ? 'flex' : 'none';
+      document.getElementById('bv-active-info').textContent = active ? bvText('bvActiveExists') : bvText('bvActiveMissing');
+      document.getElementById('bv-active-actions').style.display = 'flex';
       document.getElementById('bv-begin-edit').style.display = bvOwner ? 'inline-flex' : 'none';
       document.getElementById('bv-active-restart').style.display = bvOwner ? 'inline-flex' : 'none';
       document.getElementById('bv-setup').style.display = active ? 'none' : 'block';
       document.getElementById('bv-chat').style.display = 'none';
+      const divider = document.getElementById('bv-draft-divider');
+      if (divider) divider.style.display = 'none';
       if (!active) bvNaytaVaihe();
     }
     function bvPeruTekstimuokkaus() {
@@ -147,9 +162,28 @@
       }
     }
     function bvNaytaKeskustelu() {
-      document.getElementById('bv-active').style.display = 'none';
+      // Näytä voimassa oleva brändiääni myös keskeneräisen luonnoksen rinnalla.
+      // Aktiivinen ohje on tässä näkymässä vain luettavissa; luonnosta muokataan erikseen.
+      const activeVisible = !!bvActivePrompt;
+      document.getElementById('bv-active').style.display = activeVisible ? 'block' : 'none';
+      document.getElementById('bv-active-prompt').textContent = bvActivePrompt;
+      document.getElementById('bv-delete-active-actions').style.display = activeVisible && bvOwner ? 'flex' : 'none';
+      document.getElementById('bv-active-actions').style.display = 'none';
       document.getElementById('bv-setup').style.display = 'none';
-      document.getElementById('bv-chat').style.display = 'block';
+      // Erota käytössä oleva brändiääni keskeneräisestä luonnoksesta.
+      const chatPanel = document.getElementById('bv-chat');
+      let draftDivider = document.getElementById('bv-draft-divider');
+      if (!draftDivider) {
+        draftDivider = document.createElement('div');
+        draftDivider.id = 'bv-draft-divider';
+        draftDivider.setAttribute('role', 'heading');
+        draftDivider.setAttribute('aria-level', '3');
+        draftDivider.style.cssText = 'border-top:2px solid #cbd5e1;margin:24px 0 16px;padding:16px 14px 0;font-weight:700;font-size:1.05rem;color:#0f172a;';
+        chatPanel.parentElement.insertBefore(draftDivider, chatPanel);
+      }
+      draftDivider.textContent = bvText('bvNewDraftHeading');
+      draftDivider.style.display = activeVisible ? 'block' : 'none';
+      chatPanel.style.display = 'block';
       const chatList = document.getElementById('bv-messages');
       chatList.replaceChildren();
       const messages = Array.isArray(bvDraft?.messages) ? bvDraft.messages : [];
@@ -181,10 +215,12 @@
       document.getElementById('bv-voice-summary').textContent = String(voice.brand_voice_summary || '');
       document.getElementById('bv-voice-prompt').textContent = prompt;
       document.getElementById('bv-manual-actions').style.display = bvOwner && !!prompt ? 'flex' : 'none';
-      const ready = bvDraft?.status === 'ready' && !!prompt;
-      document.getElementById('bv-approve').style.display = ready && bvOwner ? 'inline-flex' : 'none';
+      // A saved AI draft can be explicitly approved by the owner even if
+      // the AI offers further refinements (status 'draft').
+      const canApprove = bvOwner && !!prompt && ['draft', 'ready'].includes(bvDraft?.status);
+      document.getElementById('bv-approve').style.display = canApprove ? 'inline-flex' : 'none';
       document.getElementById('bv-approval-note').textContent =
-        !bvOwner ? bvText('bvOwnerOnly') : ready ? bvText('bvReadyNote') : bvText('bvNotReady');
+        !bvOwner ? bvText('bvOwnerOnly') : canApprove ? bvText('bvReadyNote') : bvText('bvNotReady');
     }
     async function avaaBrandVoice(accountId) {
       if (!/^[a-f0-9-]{36}$/i.test(String(accountId))) return;
@@ -213,6 +249,7 @@
         } else if (bvActivePrompt) {
           bvNaytaAktiivinen();
         }
+        bvStatus('');
       } catch (error) {
         bvStatus(error.message, true);
       } finally {
@@ -263,7 +300,7 @@
         bvStatus(bvText('bvNeedAnswer'), true);
         return;
       }
-      bvAsetaVarattu(true);
+      bvAsetaVarattu(true, 'bvGenerating');
       try {
         const lang = localStorage.getItem('solone_kieli') || 'fi';
         const questions = bvQuestions[lang] || bvQuestions.fi;
@@ -275,8 +312,8 @@
         });
         const response = await bvRequest('start', { initial_answers: initialAnswers });
         bvDraft = response.draft;
-        bvStatus('');
         bvNaytaKeskustelu();
+        bvStatus(bvText('bvDraftSaved'));
       } catch (error) {
         bvStatus(error.message, true);
       } finally {
@@ -293,13 +330,13 @@
       const input = document.getElementById('bv-chat-input');
       const message = input.value.trim();
       if (!message) return;
-      bvAsetaVarattu(true);
+      bvAsetaVarattu(true, 'bvSending');
       try {
         const result = await bvRequest('chat', { user_message: message });
         bvDraft = result.draft;
         input.value = '';
-        bvStatus('');
         bvNaytaKeskustelu();
+        bvStatus(bvText('bvDraftUpdated'));
       } catch (error) {
         bvStatus(error.message, true);
       } finally {
@@ -307,7 +344,9 @@
       }
     }
     async function bvHyvaksy() {
-      if (bvBusy || !bvOwner || bvDraft?.status !== 'ready') return;
+      if (bvBusy || !bvOwner ||
+          !['draft', 'ready'].includes(bvDraft?.status) ||
+          !String(bvDraft?.current_voice?.custom_brand_prompt || '').trim()) return;
       if (document.getElementById('bv-manual-editor').style.display !== 'none' &&
           document.getElementById('bv-manual-input').value !== String(bvDraft?.current_voice?.custom_brand_prompt || '')) {
         bvStatus(bvText('bvSaveFirst'), true);
@@ -316,9 +355,13 @@
       if (!confirm(bvText('bvApproveConfirm'))) return;
       bvAsetaVarattu(true);
       try {
+        // Näytä hyväksytty ohje heti onnistuneen palvelinvastauksen jälkeen.
+        const approvedPrompt = String(bvDraft.current_voice.custom_brand_prompt || '');
         const result = await bvRequest('approve');
+        bvActivePrompt = approvedPrompt;
         bvDraft = null;
         bvPeruTekstimuokkaus();
+        bvNaytaAktiivinen();
         const refreshed = await bvRequest('load');
         bvActivePrompt = String(refreshed.active_prompt || '');
         bvOwner = Boolean(refreshed.can_approve);
@@ -329,6 +372,33 @@
         bvStatus(result.warning || bvText('bvApproved'));
         document.getElementById('bv-approve').style.display = 'none';
         document.getElementById('bv-approval-note').textContent = bvText('bvApproved');
+      } catch (error) {
+        bvStatus(error.message, true);
+      } finally {
+        bvAsetaVarattu(false);
+      }
+    }
+
+    // Poistaa vain aktiivisen brändiäänen; mahdollinen luonnos säilyy.
+    async function bvPoistaAktiivinen() {
+      if (bvBusy || !bvOwner || !bvActivePrompt.trim()) return;
+      if (!confirm(bvText('bvDeleteConfirm'))) return;
+      bvAsetaVarattu(true);
+      try {
+        await bvRequest('delete_active');
+        bvActivePrompt = '';
+        bvPeruTekstimuokkaus();
+        if (bvDraft) bvNaytaKeskustelu();
+        else bvNaytaAktiivinen();
+        bvStatus(bvText('bvDeleted'));
+        // Päivitetään tilikohtainen Oma tyyli -tieto ilman sivun uudelleenlatausta.
+        try {
+          await lataaKayttajanSometilit();
+          paivitaAsetuksetListaHtml();
+        } catch (refreshError) {
+          console.warn('Sometilien näkymän päivitys ei onnistunut poistamisen jälkeen');
+          bvStatus(bvText('bvDeletedRefreshWarning'), true);
+        }
       } catch (error) {
         bvStatus(error.message, true);
       } finally {
