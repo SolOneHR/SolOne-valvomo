@@ -314,7 +314,7 @@
             <select id="pika-ui-kieli" aria-label="Käyttöliittymän kieli" onchange="vaihdaPikaKieli(this.value, true)" style="padding:5px;border-radius:5px;max-width:105px;">
                 <option value="fi">Suomi</option><option value="en">English</option><option value="sv">Svenska</option>
             </select>
-            <a href="testi.html" class="valvomo-link" data-pika-key="monitor" target="_blank">🖥️ Somevalvomo ↗</a>
+            <a href="testi.html" onclick="siirryPikaValvomoon(event)" class="valvomo-link" data-pika-key="monitor">🖥️ Somevalvomo ↗</a>
         </div>
     </div>
 
@@ -488,6 +488,22 @@
     }
     let pikaSanelu = null;
     function pikaSanasto() { return pikaTekstit[localStorage.getItem('solone_kieli')] || pikaTekstit.fi; }
+    // Somevalvomo lukee käynnistyessään kieliasetuksen käyttäjäprofiilista.
+    // Odotetaan Pikan kielitallennus valmiiksi ennen siirtymistä.
+    let pikaKielenTallennus = null;
+    async function siirryPikaValvomoon(event) {
+        event.preventDefault();
+        const href = event.currentTarget.getAttribute('href');
+        if (pikaKielenTallennus) {
+            try { await pikaKielenTallennus; }
+            catch (err) {
+                console.error('Pikan kieliasetuksen tallennus:', err);
+                naytaIlmoitus(pikaSanasto().languageSaveError, 'banner-error');
+                return;
+            }
+        }
+        window.location.href = href;
+    }
     function vaihdaPikaKieli(kieli, tallennaProfiili = false) {
         if (!pikaTekstit[kieli]) kieli = 'fi';
         localStorage.setItem('solone_kieli', kieli);
@@ -511,13 +527,15 @@
             // Somevalvomo lukee saman kentän Auth-käyttäjän user_metadata.kieli-arvosta.
             const token = localStorage.getItem('supabase_token');
             if (token) {
-                fetch(`${SUPABASE_URL}/auth/v1/user`, {
+                pikaKielenTallennus = fetch(`${SUPABASE_URL}/auth/v1/user`, {
                     method:'PUT',
                     headers:{'apikey':ANON_KEY,'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},
                     body:JSON.stringify({data:{kieli}})
                 }).then(res=>{
                     if (!res.ok) throw new Error('HTTP '+res.status);
-                }).catch(err=>{
+                });
+                // Tallennuksen virhe näytetään myös, jos käyttäjä ei siirry Somevalvomoon.
+                pikaKielenTallennus.catch(err=>{
                     console.error('Pikan kieliasetuksen tallennus:', err);
                     naytaIlmoitus(pikaSanasto().languageSaveError, 'banner-error');
                 });
@@ -1125,7 +1143,7 @@
                     ${kuvaHtml}
                     <div class="item-meta">
                         <span>${pikaEscape(pikaSanasto().channel)} <b>${pikaEscape(item.target_channel || 'FB_IG')}</b></span>
-                        <a href="testi.html" class="valvomo-link" style="color:var(--primary); font-size:0.75rem;">${pikaEscape(pikaSanasto().openMonitor)}</a>
+                        <a href="testi.html" onclick="siirryPikaValvomoon(event)" class="valvomo-link" style="color:var(--primary); font-size:0.75rem;">${pikaEscape(pikaSanasto().openMonitor)}</a>
                     </div>
                     <label>${pikaEscape(pikaSanasto().postText)}</label>
                     <textarea id="edit-teksti-${item.id}" rows="4" class="input-field" style="margin-bottom:8px;">${pikaEscape(item.julkaisuteksti || item.raw_text || '')}</textarea>
