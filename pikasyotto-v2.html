@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SolOne Pika</title>
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest-v2.json">
     <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -79,6 +79,42 @@
             text-decoration: none;
             cursor: pointer;
             margin-left: 8px;
+        }
+
+        /* Mobiili: kielivalinta oikealla kuten alkuperäisessä, pitkä sähköposti rivittyy vasemmalla. */
+        @media (max-width: 540px) {
+            .top-bar {
+                flex-direction: row;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .top-bar > .pika-header-main {
+                flex: 1 1 0;
+                min-width: 0;
+            }
+            .top-bar .user-status {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+                min-width: 0;
+            }
+            #kayttaja-status-teksti {
+                max-width: 100%;
+                overflow-wrap: anywhere;
+            }
+            .top-bar .logout-link { margin-left: 0; }
+            .top-bar .pika-header-tools {
+                flex: 0 0 auto;
+                min-width: 0;
+                align-items: flex-end;
+                text-align: right;
+            }
+            .top-bar .pika-header-tools label { max-width: 100%; }
+            .top-bar .pika-header-tools a.valvomo-link {
+                max-width: 100%;
+                white-space: nowrap;
+                justify-content: flex-end;
+            }
         }
 
         .tab-nav {
@@ -266,14 +302,14 @@
 
 <div class="container">
     <div class="top-bar">
-        <div>
+        <div class="pika-header-main">
             <h1>⚡ SolOne Pika</h1>
             <div class="user-status">
                 <span id="kayttaja-status-teksti">Ei kirjautunut</span>
                 <a href="javascript:void(0)" data-pika-key="logout" id="linkki-kirjaudu-ulos" class="logout-link" style="display:none;" onclick="kirjauduUlosPwa()">Poistu</a>
             </div>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
+        <div class="pika-header-tools" style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
             <label for="pika-ui-kieli" class="pika-i18n" data-pika-key="languageUi" style="color:#cbd5e1;font-size:0.72rem;margin:0;">Käyttöliittymän kieli</label>
             <select id="pika-ui-kieli" aria-label="Käyttöliittymän kieli" onchange="vaihdaPikaKieli(this.value, true)" style="padding:5px;border-radius:5px;max-width:105px;">
                 <option value="fi">Suomi</option><option value="en">English</option><option value="sv">Svenska</option>
@@ -319,7 +355,7 @@
                 <img id="kuva-preview" class="file-preview" alt="Kuvaesikatselu">
 
                 <!-- Kehitysversion asiakkuusvalinta; ladataan palvelimelta tunnistettu my_access. -->
-                <label for="pika-asiakkuus">Työskentelyasiakkuus:</label>
+                <label for="pika-asiakkuus" data-pika-key="workingAccount">Valittu asiakkuus:</label>
                 <select id="pika-asiakkuus" class="input-field" onchange="vaihdaPikaAsiakkuus(this.value)"><option value="">Haetaan asiakkuuksia...</option></select>
                 <!-- SOMETILIN VALINTA -->
                 <label data-pika-key="chooseAccount">🌐 Valitse Sometili / Sivu:</label>
@@ -329,7 +365,7 @@
 
                 <label data-pika-key="inputLabel">✏️ Kirjoita tai sanele julkaisun aihe</label>
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
-                    <button type="button" id="pika-sanelu-nappi" class="btn-kuva" style="padding:7px 12px;" onclick="kaynnistaPikaSanelu()">🎙️ Sanelu (laite)</button>
+                    <button type="button" id="pika-sanelu-nappi" class="btn-kuva" style="padding:7px 12px;" onclick="kaynnistaPikaSanelu()">🎙️ Sanelu</button>
                     <span id="pika-sanelu-tila" role="status" style="font-size:.78rem;color:var(--text-muted);"></span>
                 </div>
                 <textarea id="kentta-teksti" rows="3" placeholder="Sanele tai kirjoita lyhyesti..." data-pika-placeholder="inputPlaceholder"></textarea>
@@ -431,13 +467,13 @@
 
     // Pika käyttää samaa kieliasetusta kuin Somevalvomo; ei erillistä kielitietokantaa.
     const pikaTekstit = {
-        fi: {languageUi:'Käyttöliittymän kieli', inputLabel:'✏️ Kirjoita tai sanele julkaisun aihe', inputPlaceholder:'Sanele tai kirjoita lyhyesti...', targetLanguage:'Julkaisun kohdekieli', startDictation:'🎙️ Sanelu (laite)', stopDictation:'■ Lopeta sanelu', listening:'Kuunnellaan…', reviewTitle:'Tarkastusteksti omalla kielellä', reviewButton:'🔄 Päivitä tarkastuksen pohjalta', updating:'Päivitetään…', original:'Alkuperäinen kieli (ei käännöstä)', languageAuto:'Puheentunnistuksen kieli määräytyy laitteen kielestä.', reviewError:'Tarkastustekstin päivitys epäonnistui: ', reviewSent:'Korjaus lähetetty AI-muotoiluun.'},
-        en: {languageUi:'Interface language', inputLabel:'✏️ Write or dictate your post topic', inputPlaceholder:'Write or dictate a short description...', targetLanguage:'Publication language', startDictation:'🎙️ Dictate (device)', stopDictation:'■ Stop dictation', listening:'Listening…', reviewTitle:'Review text in your language', reviewButton:'🔄 Update from review text', updating:'Updating…', original:'Original language (no translation)', languageAuto:'Speech recognition uses your device language.', reviewError:'Review update failed: ', reviewSent:'Revision sent for AI formatting.'},
-        sv: {languageUi:'Gränssnittets språk', inputLabel:'✏️ Skriv eller diktera inläggets ämne', inputPlaceholder:'Skriv eller diktera en kort beskrivning...', targetLanguage:'Publiceringsspråk', startDictation:'🎙️ Diktera (enhet)', stopDictation:'■ Avsluta diktering', listening:'Lyssnar…', reviewTitle:'Granskningstext på ditt språk', reviewButton:'🔄 Uppdatera utifrån granskningen', updating:'Uppdaterar…', original:'Originalspråk (ingen översättning)', languageAuto:'Taligenkänning använder enhetens språk.', reviewError:'Granskningen kunde inte uppdateras: ', reviewSent:'Ändringen skickades till AI-formatering.'}
+        fi: {languageUi:'Käyttöliittymän kieli', inputLabel:'✏️ Kirjoita tai sanele julkaisun aihe', inputPlaceholder:'Sanele tai kirjoita lyhyesti...', targetLanguage:'Julkaisun kohdekieli', startDictation:'🎙️ Sanelu', stopDictation:'■ Lopeta sanelu', listening:'Kuunnellaan…', reviewTitle:'Tarkastusteksti omalla kielellä', reviewButton:'🔄 Päivitä tarkastuksen pohjalta', updating:'Päivitetään…', original:'Alkuperäinen kieli (ei käännöstä)', languageAuto:'Puheentunnistuksen kieli määräytyy laitteen kielestä.', reviewError:'Tarkastustekstin päivitys epäonnistui: ', reviewSent:'Korjaus lähetetty AI-muotoiluun.'},
+        en: {languageUi:'Interface language', inputLabel:'✏️ Write or dictate your post topic', inputPlaceholder:'Write or dictate a short description...', targetLanguage:'Publication language', startDictation:'🎙️ Dictate', stopDictation:'■ Stop dictation', listening:'Listening…', reviewTitle:'Review text in your language', reviewButton:'🔄 Update from review text', updating:'Updating…', original:'Original language (no translation)', languageAuto:'Speech recognition uses your device language.', reviewError:'Review update failed: ', reviewSent:'Revision sent for AI formatting.'},
+        sv: {languageUi:'Gränssnittets språk', inputLabel:'✏️ Skriv eller diktera inläggets ämne', inputPlaceholder:'Skriv eller diktera en kort beskrivning...', targetLanguage:'Publiceringsspråk', startDictation:'🎙️ Diktera', stopDictation:'■ Avsluta diktering', listening:'Lyssnar…', reviewTitle:'Granskningstext på ditt språk', reviewButton:'🔄 Uppdatera utifrån granskningen', updating:'Uppdaterar…', original:'Originalspråk (ingen översättning)', languageAuto:'Taligenkänning använder enhetens språk.', reviewError:'Granskningen kunde inte uppdateras: ', reviewSent:'Ändringen skickades till AI-formatering.'}
     };
-    Object.assign(pikaTekstit.fi, {logout:'Poistu', monitor:'🖥️ Somevalvomo ↗', loginTitle:'Kirjaudu pikasyöttöön', loginHelp:'Kirjaudu kerran samoilla Somevalvomon tunnuksillasi.', email:'Sähköposti:', password:'Salasana:', emailPlaceholder:'sähköpostiosoite', passwordPlaceholder:'Salasana', login:'Kirjaudu sisään', tabEntry:'⚡ Pikasyöttö', tabPending:'📋 Odottavat', tabSubscription:'📦 Tilaus', attachPicture:'📷 Liitä kuva:', takePicture:'📸 Ota kuva', gallery:'🖼️ Galleriasta', chooseAccount:'🌐 Valitse Sometili / Sivu:', channel:'Kohdekanava:', profile:'Profiili:', savePost:'🚀 Tallenna kentältä', mySubscriptions:'📦 Omat tilaukset', subscriptionHelp:'Voimassa olevat tilaukset ja jaksot.', langFi:'Suomi', langEn:'Englanti', langSv:'Ruotsi', allChannels:'Kaikki (FB/IG/LI)', onlyLi:'Vain LinkedIn', onlyFb:'Vain FB', onlyIg:'Vain IG', general:'Yleinen', creator:'Somesisällöntuottaja', community:'Yhdistys/yhteisö', blog:'Blogi', keepText:'✨ Säilytä teksti (vain emojit & tagit)', notLogged:'Ei kirjautunut', noAccounts:'Ei kytkettyjä sometilejä', openMonitor:'Avaa Somevalvomossa ↗', postText:'Julkaisuteksti:', publishNow:'🚀 Julkaise heti', reject:'✕ Hylkää'});
-    Object.assign(pikaTekstit.en, {logout:'Sign out', monitor:'🖥️ Dashboard ↗', loginTitle:'Sign in to Pika', loginHelp:'Use the same credentials as your Somevalvomo dashboard.', email:'Email:', password:'Password:', emailPlaceholder:'Email address', passwordPlaceholder:'Password', login:'Sign in', tabEntry:'⚡ Quick entry', tabPending:'📋 Pending', tabSubscription:'📦 Subscription', attachPicture:'📷 Attach photo:', takePicture:'📸 Take photo', gallery:'🖼️ Gallery', chooseAccount:'🌐 Select social account / Page:', channel:'Target channel:', profile:'Style:', savePost:'🚀 Save draft', mySubscriptions:'📦 My subscriptions', subscriptionHelp:'Active subscriptions and periods.', langFi:'Finnish', langEn:'English', langSv:'Swedish', allChannels:'All (FB/IG/LI)', onlyLi:'LinkedIn only', onlyFb:'Facebook only', onlyIg:'Instagram only', general:'General', creator:'Content creator', community:'Association/community', blog:'Blog', keepText:'✨ Keep original text (emojis and tags only)', notLogged:'Not signed in', noAccounts:'No connected accounts', openMonitor:'Open dashboard ↗', postText:'Post text:', publishNow:'🚀 Publish now', reject:'✕ Reject'});
-    Object.assign(pikaTekstit.sv, {logout:'Logga ut', monitor:'🖥️ Kontrollpanel ↗', loginTitle:'Logga in i Pika', loginHelp:'Använd samma inloggning som i Somevalvomo.', email:'E-post:', password:'Lösenord:', emailPlaceholder:'E-postadress', passwordPlaceholder:'Lösenord', login:'Logga in', tabEntry:'⚡ Snabbinmatning', tabPending:'📋 Väntande', tabSubscription:'📦 Abonnemang', attachPicture:'📷 Lägg till bild:', takePicture:'📸 Ta bild', gallery:'🖼️ Galleri', chooseAccount:'🌐 Välj konto / sida:', channel:'Målkanal:', profile:'Stil:', savePost:'🚀 Spara utkast', mySubscriptions:'📦 Mina abonnemang', subscriptionHelp:'Aktiva abonnemang och perioder.', langFi:'Finska', langEn:'Engelska', langSv:'Svenska', allChannels:'Alla (FB/IG/LI)', onlyLi:'Endast LinkedIn', onlyFb:'Endast Facebook', onlyIg:'Endast Instagram', general:'Allmän', creator:'Innehållsskapare', community:'Förening/gemenskap', blog:'Blogg', keepText:'✨ Behåll texten (endast emojier och taggar)', notLogged:'Inte inloggad', noAccounts:'Inga anslutna konton', openMonitor:'Öppna kontrollpanelen ↗', postText:'Inläggstext:', publishNow:'🚀 Publicera nu', reject:'✕ Avvisa'});
+    Object.assign(pikaTekstit.fi, {workingAccount:'Valittu asiakkuus:', logout:'Poistu', monitor:'🖥️ Somevalvomo ↗', loginTitle:'Kirjaudu pikasyöttöön', loginHelp:'Kirjaudu kerran samoilla Somevalvomon tunnuksillasi.', email:'Sähköposti:', password:'Salasana:', emailPlaceholder:'sähköpostiosoite', passwordPlaceholder:'Salasana', login:'Kirjaudu sisään', tabEntry:'⚡ Pikasyöttö', tabPending:'📋 Odottavat', tabSubscription:'📦 Tilaus', attachPicture:'📷 Liitä kuva:', takePicture:'📸 Ota kuva', gallery:'🖼️ Galleriasta', chooseAccount:'🌐 Valitse Sometili / Sivu:', channel:'Kohdekanava:', profile:'Profiili:', savePost:'🚀 Tallenna kentältä', mySubscriptions:'📦 Omat tilaukset', subscriptionHelp:'Voimassa olevat tilaukset ja jaksot.', langFi:'Suomi', langEn:'Englanti', langSv:'Ruotsi', allChannels:'Kaikki (FB/IG/LI)', onlyLi:'Vain LinkedIn', onlyFb:'Vain FB', onlyIg:'Vain IG', general:'Yleinen', creator:'Somesisällöntuottaja', community:'Yhdistys/yhteisö', blog:'Blogi', keepText:'✨ Säilytä teksti (vain emojit & tagit)', notLogged:'Ei kirjautunut', noAccounts:'Ei kytkettyjä sometilejä', openMonitor:'Avaa Somevalvomossa ↗', postText:'Julkaisuteksti:', publishNow:'🚀 Julkaise heti', reject:'✕ Hylkää'});
+    Object.assign(pikaTekstit.en, {workingAccount:'Selected account:', logout:'Sign out', monitor:'🖥️ Dashboard ↗', loginTitle:'Sign in to Pika', loginHelp:'Use the same credentials as your Somevalvomo dashboard.', email:'Email:', password:'Password:', emailPlaceholder:'Email address', passwordPlaceholder:'Password', login:'Sign in', tabEntry:'⚡ Quick entry', tabPending:'📋 Pending', tabSubscription:'📦 Subscription', attachPicture:'📷 Attach photo:', takePicture:'📸 Take photo', gallery:'🖼️ Gallery', chooseAccount:'🌐 Select social account / Page:', channel:'Target channel:', profile:'Style:', savePost:'🚀 Save draft', mySubscriptions:'📦 My subscriptions', subscriptionHelp:'Active subscriptions and periods.', langFi:'Finnish', langEn:'English', langSv:'Swedish', allChannels:'All (FB/IG/LI)', onlyLi:'LinkedIn only', onlyFb:'Facebook only', onlyIg:'Instagram only', general:'General', creator:'Content creator', community:'Association/community', blog:'Blog', keepText:'✨ Keep original text (emojis and tags only)', notLogged:'Not signed in', noAccounts:'No connected accounts', openMonitor:'Open dashboard ↗', postText:'Post text:', publishNow:'🚀 Publish now', reject:'✕ Reject'});
+    Object.assign(pikaTekstit.sv, {workingAccount:'Valt kundkonto:', logout:'Logga ut', monitor:'🖥️ Kontrollpanel ↗', loginTitle:'Logga in i Pika', loginHelp:'Använd samma inloggning som i Somevalvomo.', email:'E-post:', password:'Lösenord:', emailPlaceholder:'E-postadress', passwordPlaceholder:'Lösenord', login:'Logga in', tabEntry:'⚡ Snabbinmatning', tabPending:'📋 Väntande', tabSubscription:'📦 Abonnemang', attachPicture:'📷 Lägg till bild:', takePicture:'📸 Ta bild', gallery:'🖼️ Galleri', chooseAccount:'🌐 Välj konto / sida:', channel:'Målkanal:', profile:'Stil:', savePost:'🚀 Spara utkast', mySubscriptions:'📦 Mina abonnemang', subscriptionHelp:'Aktiva abonnemang och perioder.', langFi:'Finska', langEn:'Engelska', langSv:'Svenska', allChannels:'Alla (FB/IG/LI)', onlyLi:'Endast LinkedIn', onlyFb:'Endast Facebook', onlyIg:'Endast Instagram', general:'Allmän', creator:'Innehållsskapare', community:'Förening/gemenskap', blog:'Blogg', keepText:'✨ Behåll texten (endast emojier och taggar)', notLogged:'Inte inloggad', noAccounts:'Inga anslutna konton', openMonitor:'Öppna kontrollpanelen ↗', postText:'Inläggstext:', publishNow:'🚀 Publicera nu', reject:'✕ Avvisa'});
     // Tilausnäkymän tekstit: käännetään vain näyttö, ei tietokannan arvoja.
     Object.assign(pikaTekstit.fi, {subscriptionService:'Palvelu', subscriptionStatus:'Tila', subscriptionType:'Tilaustyyppi', subscriptionStart:'Alkupäivä', subscriptionEnd:'Loppupäivä', subscriptionOpenEnd:'Toistaiseksi voimassa', subscriptionMissing:'Ei määritelty', subscriptionNoLogin:'Ei kirjautumistietoja.', subscriptionLoading:'Ladataan tilauksia...', subscriptionNoCustomer:'Ei löytynyt asiakastietoja tälle sähköpostille.', subscriptionNoOrders:'Sinulla ei ole vielä tilauksia.', subscriptionLoadError:'Virhe ladattaessa tilauksia.', subscriptionActive:'Aktiivinen', subscriptionAccepted:'Hyväksytty', subscriptionInactive:'Ei aktiivinen', subscriptionCancelled:'Peruutettu', subscriptionExpired:'Päättynyt', languageSaveError:'Kieliasetuksen tallennus profiiliin epäonnistui.'});
     Object.assign(pikaTekstit.en, {subscriptionService:'Service', subscriptionStatus:'Status', subscriptionType:'Subscription type', subscriptionStart:'Start date', subscriptionEnd:'End date', subscriptionOpenEnd:'Ongoing', subscriptionMissing:'Not specified', subscriptionNoLogin:'No sign-in details.', subscriptionLoading:'Loading subscriptions...', subscriptionNoCustomer:'No customer record found for this email address.', subscriptionNoOrders:'You have no subscriptions yet.', subscriptionLoadError:'Unable to load subscriptions.', subscriptionActive:'Active', subscriptionAccepted:'Accepted', subscriptionInactive:'Inactive', subscriptionCancelled:'Cancelled', subscriptionExpired:'Expired', languageSaveError:'Could not save your language preference to your profile.'});
@@ -1130,7 +1166,7 @@
         vaihdaPikaKieli(localStorage.getItem('solone_kieli') || 'fi');
         tarkistaPwaIstunto();
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(console.error);
+            navigator.serviceWorker.register('sw-v2.js', { scope: './pikasyotto-v2.html' }).catch(console.error);
         }
     });
 </script>

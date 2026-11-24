@@ -543,6 +543,11 @@
     <!-- Ulkoinen kielisanasto -->
     <script src="translations.js"></script>
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+<style>
+.solone-nakymavalitsin {display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 20px;}
+.solone-nakymavalitsin button {width:auto;flex:1 1 130px;min-height:44px;}
+.solone-nakymavalitsin button[aria-pressed="true"] {background:#1e3a8a;color:#fff;border-color:#1e3a8a;}
+</style>
 </head>
 <body>
 
@@ -1016,11 +1021,21 @@
             ⚠️ Tilauksesi ei ole voimassa tai aktiivinen. Uudet julkaisutoiminnot ja sometilien kytkennät ovat tilapäisesti poissa käytöstä, kunnes tilaus on aktiivinen.
         </div>
 
-        <div class="osio-otsikko">
-            <span data-i18n="sectionPending">Odottavat julkaisut</span>
-        </div>
-        <div id="julkaisut-lista" data-i18n="loadingPending">Ladataan odottavia julkaisuja...</div>
-
+        <!-- Kolme näkymää: nykyiset julkaisutietueet ja korttitoiminnot säilyvät. -->
+        <nav class="solone-nakymavalitsin" aria-label="Julkaisunäkymät">
+            <button type="button" class="btn-testi" id="nakymavalinta-tyopoyta" aria-pressed="true" onclick="vaihdaValvomoNakyma('tyopoyta')">Työpöytä</button>
+            <button type="button" class="btn-testi" id="nakymavalinta-ajastetut" aria-pressed="false" onclick="vaihdaValvomoNakyma('ajastetut')">Ajastetut</button>
+            <button type="button" class="btn-testi" id="nakymavalinta-historia" aria-pressed="false" onclick="vaihdaValvomoNakyma('historia')">Julkaisuhistoria</button>
+        </nav>
+        <section id="nakymapaneeli-tyopoyta">
+            <div class="osio-otsikko"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><span data-solone-nakymateksti="tyopoyta">Työpöytä</span><select id="tyopoyta-suodatin-tili" class="valinta-kentta" style="width: auto; padding: 4px 8px; font-size: 0.85rem;" aria-label="Suodata sometilin mukaan" onchange="suodataTyopoyta()"><option value="KAIKKI">Kaikki tilit</option></select></div></div>
+            <div id="julkaisut-lista" data-i18n="loadingPending">Ladataan odottavia julkaisuja...</div>
+        </section>
+        <section id="nakymapaneeli-ajastetut" hidden style="display:none;">
+            <div class="osio-otsikko"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><span data-solone-nakymateksti="ajastetut">Ajastetut</span><select id="ajastetut-suodatin-tili" class="valinta-kentta" style="width: auto; padding: 4px 8px; font-size: 0.85rem;" aria-label="Suodata sometilin mukaan" onchange="suodataAjastetut()"><option value="KAIKKI">Kaikki tilit</option></select></div></div>
+            <div id="ajastetut-lista" role="region" aria-live="polite"></div>
+        </section>
+        <section id="nakymapaneeli-historia" hidden style="display:none;">
         <div class="osio-otsikko">
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <span data-i18n="sectionHistory">Julkaisuhistoria</span>
@@ -1031,6 +1046,7 @@
             <span class="osio-infoteksti" data-i18n="showingTen">Näytetään 10 kerrallaan</span>
         </div>
         <div id="historia-lista" data-i18n="loadingHistory">Ladataan historiaa...</div>
+        </section>
     </div>
 </div>
 
@@ -1094,6 +1110,7 @@
             }
         });
         paivitaMetaTilienKielet(kieli);
+        if (typeof paivitaValvomoNakymaKieli === 'function') paivitaValvomoNakymaKieli();
     }
 
     // Yleisilmoituksen ajastin: aiempi ilmoitus ei saa piilottaa uutta.

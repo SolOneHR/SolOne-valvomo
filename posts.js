@@ -682,8 +682,11 @@ if (!Array.isArray(poistetutRivit) ||
     }
 
 
+    // Korttikohtaiset ilmoitukset säilyvät automaattisen DOM-uudelleenpiirron yli.
+    const soloneJulkaisunIlmoitukset = new Map();
+    const soloneAiMuotoiluOdottaa = new Map();
+
     // Näytä muokkauspalautteet kyseisen julkaisun yhteydessä, älä sivun yläosassa.
-    // Palaute säilyy seuraavaan kortin päivitykseen tai uuteen ilmoitukseen saakka.
     function naytaJulkaisunIlmoitus(id, viesti, tyyppi) {
         const alue = document.getElementById('julkaisu-ilmoitus-' + id);
         if (!alue) {
@@ -692,6 +695,7 @@ if (!Array.isArray(poistetutRivit) ||
             console.warn('Julkaisukohtainen ilmoitusalue ei ole enää näkyvissä:', id);
             return;
         }
+        soloneJulkaisunIlmoitukset.set(String(id), { viesti: viesti, tyyppi: tyyppi || 'success' });
         alue.textContent = viesti;
         alue.className = 'ilmoitus ' + (tyyppi || 'success');
         alue.style.display = 'block';
@@ -707,11 +711,11 @@ if (!Array.isArray(poistetutRivit) ||
         // Säilytä julkaisun oma kohdekieli myös profiilia vaihdettaessa.
         card.dataset.kohdekieli = julkaisu.kohdekieli || 'Suomi';
         
-        if (julkaisu.status === 'kasittelyssa') {
+        if (julkaisu.status === 'kasittelyssa' || julkaisu.status === 'julkaistaan') {
             card.className = 'julkaisu-card kasittelyssa';
             card.id = 'card-' + julkaisu.id;
             let htmlK = '';
-            htmlK += '<div class="tilamerkinta kasittelyssa-badge">' + sanasto.postProcessing + '</div>';
+            htmlK += '<div class="tilamerkinta kasittelyssa-badge">' + (julkaisu.status === 'julkaistaan' ? ({fi:'Julkaistaan',en:'Publishing',sv:'Publicerar'})[aktiivinenKieli] : sanasto.postProcessing) + '</div>';
             const laatijaK = julkaisu.asiakastunnus || sanasto.unknownAuthor;
             htmlK += '<div class="meta-info"><span><strong>' + sanasto.metaLuotu + '</strong> ' + pvm + '</span><span><strong>' + sanasto.metaLaatija + '</strong> ' + laatijaK + '</span></div>';
             htmlK += '<label class="field-label">' + sanasto.lblRawTextCard + '</label>';
@@ -723,7 +727,7 @@ if (!Array.isArray(poistetutRivit) ||
         const onHylatty = julkaisu.status === 'hylatty';
         const onVirhe = julkaisu.status === 'virhe';
         // Hyväksytty ja ajastettu julkaisu odottaa varsinaista julkaisutulosta.
-        const onAjastettu = julkaisu.status === 'hyvaksytty' && Boolean(julkaisu.ajastettu_aika) && !julkaisu.julkaistu_aika;
+        const onAjastettu = julkaisu.status === 'hyvaksytty' && Boolean(julkaisu.ajastettu_aika);
         card.className = 'julkaisu-card' + (onHistoria ? ((onHylatty || onVirhe) ? ' hylatty-kortti' : (onAjastettu ? '' : ' historia')) : '');
         card.id = 'card-' + julkaisu.id;
 
@@ -762,7 +766,9 @@ if (!Array.isArray(poistetutRivit) ||
         }
 
         let aikaTeksti = '';
-        if (julkaisu.julkaistu_aika) {
+        if (onAjastettu) {
+            aikaTeksti = '<span><strong>' + sanasto.metaAjastettu + '</strong> ' + new Date(julkaisu.ajastettu_aika).toLocaleString('fi-FI') + '</span>';
+        } else if (julkaisu.julkaistu_aika && julkaisu.status === 'julkaistu') {
             aikaTeksti = '<span><strong>' + sanasto.metaJulkaistu + '</strong> ' + new Date(julkaisu.julkaistu_aika).toLocaleString('fi-FI') + '</span>';
         } else if (julkaisu.ajastettu_aika) {
             aikaTeksti = '<span><strong>' + sanasto.metaAjastettu + '</strong> ' + new Date(julkaisu.ajastettu_aika).toLocaleString('fi-FI') + '</span>';
@@ -932,6 +938,23 @@ if (!Array.isArray(poistetutRivit) ||
         }
 
         card.innerHTML = htmlSisalto;
+        if (!onHistoria) {
+            const tunnus = String(julkaisu.id);
+            const muotoilunLahtoteksti = soloneAiMuotoiluOdottaa.get(tunnus);
+            // Muotoilu valmistui vasta, kun uusi julkaisuteksti näkyy tietokannasta.
+            if (muotoilunLahtoteksti !== undefined &&
+                String(julkaisu.julkaisuteksti || '') !== muotoilunLahtoteksti) {
+                soloneAiMuotoiluOdottaa.delete(tunnus);
+                soloneJulkaisunIlmoitukset.delete(tunnus);
+            }
+            const tallessa = soloneJulkaisunIlmoitukset.get(tunnus);
+            const ilmoitusAlue = card.querySelector('#julkaisu-ilmoitus-' + tunnus);
+            if (tallessa && ilmoitusAlue) {
+                ilmoitusAlue.textContent = tallessa.viesti;
+                ilmoitusAlue.className = 'ilmoitus ' + tallessa.tyyppi;
+                ilmoitusAlue.style.display = 'block';
+            }
+        }
         return card;
     }
 
@@ -940,6 +963,7 @@ if (!Array.isArray(poistetutRivit) ||
         const profiiliSelect = document.getElementById('profiili-' + id);
         const profiili = profiiliSelect ? profiiliSelect.value : 'Yleinen';
         const reformatNappi = document.getElementById('btn-reformat-' + id);
+        const ennenMuotoilua = document.getElementById('teksti-' + id)?.value || '';
         const db = haeSupabaseAsiakas();
         const token = localStorage.getItem('supabase_token');
 
@@ -991,6 +1015,7 @@ if (!Array.isArray(poistetutRivit) ||
             });
 
             if (response.ok) {
+                soloneAiMuotoiluOdottaa.set(String(id), ennenMuotoilua);
                 naytaJulkaisunIlmoitus(id, solonePostSanasto().notifFormatSent, 'success');
                 setTimeout(function() { haeValvomonTiedot(); }, 4000);
             } else {
@@ -1010,23 +1035,103 @@ if (!Array.isArray(poistetutRivit) ||
         }
   }
 
-    function paivitaHistoriaSuodatinValikko() {
-        const valikko = document.getElementById('historia-suodatin-tili');
-        if (!valikko || !kayttajanSometilit) return;
-
-        const nykyinenValinta = valikko.value;
-        const aktiivinenKieli = localStorage.getItem('solone_kieli') || 'fi';
-        const sanasto = tekstit[aktiivinenKieli];
-        let html = '<option value="KAIKKI">' + sanasto.filterAllAccounts + '</option>';
-
-        kayttajanSometilit.forEach(function(tili) {
-            html += '<option value="' + tili.id + '">' + (tili.sivun_nimi || 'Nimetön sivu') + '</option>';
-        });
-
-        valikko.innerHTML = html;
-        if (nykyinenValinta && valikko.querySelector('option[value="' + nykyinenValinta + '"]')) {
-            valikko.value = nykyinenValinta;
+    // Näkymäkohtainen suodatus pitää tietokantahaun ja oikeudet ennallaan.
+    let viimeisinTyopoytaData = [];
+    let viimeisinAjastetutData = [];
+    function soloneNaytettavaSometiliNimi(tili) {
+        return tili.sivun_nimi || 'Nimetön sivu';
+    }
+    function soloneValitunTilinJulkaisut(data, valikonId) {
+        const select = document.getElementById(valikonId);
+        const id = select ? select.value : 'KAIKKI';
+        return id === 'KAIKKI' ? data : data.filter(function(j) { return String(j.sometili_id) === id; });
+    }
+    function suodataTyopoyta() {
+        const lista = document.getElementById('julkaisut-lista');
+        if (!lista) return;
+        const julkaisut = soloneValitunTilinJulkaisut(viimeisinTyopoytaData, 'tyopoyta-suodatin-tili');
+        lista.replaceChildren();
+        if (!julkaisut.length) {
+            const tyhja = document.createElement('div');
+            tyhja.className = 'tyhja-tila';
+            tyhja.textContent = soloneNakymaSanasto().eiTyopoydalla;
+            lista.appendChild(tyhja);
+            return;
         }
+        julkaisut.forEach(function(j) { lista.appendChild(luoKorttiHtml(j, false)); });
+    }
+    function suodataAjastetut() {
+        naytaAjastetut(viimeisinAjastetutData);
+    }
+
+    // Kolmen näkymän käyttöliittymä: ei uusia julkaisutiloja tai tietokantamuutoksia.
+    let soloneValittuNakyma = 'tyopoyta';
+    const soloneNakymaTekstit = {
+        fi: {tyopoyta:'Työpöytä', ajastetut:'Ajastetut', historia:'Julkaisuhistoria', eiAjastettuja:'Ei ajastettuja julkaisuja.', eiTyopoydalla:'Ei käsiteltäviä julkaisuja.'},
+        en: {tyopoyta:'Workspace', ajastetut:'Scheduled', historia:'Publication history', eiAjastettuja:'No scheduled posts.', eiTyopoydalla:'No posts requiring attention.'},
+        sv: {tyopoyta:'Arbetsyta', ajastetut:'Schemalagda', historia:'Publiceringshistorik', eiAjastettuja:'Inga schemalagda inlägg.', eiTyopoydalla:'Inga inlägg att behandla.'}
+    };
+    function soloneNakymaSanasto() {
+        return soloneNakymaTekstit[localStorage.getItem('solone_kieli') || 'fi'] || soloneNakymaTekstit.fi;
+    }
+    function paivitaValvomoNakymaKieli() {
+        const labels = soloneNakymaSanasto();
+        ['tyopoyta','ajastetut','historia'].forEach(function(n) {
+            const btn = document.getElementById('nakymavalinta-' + n);
+            if (btn) btn.textContent = labels[n];
+            const otsikko = document.querySelector('[data-solone-nakymateksti="' + n + '"]');
+            if (otsikko) otsikko.textContent = labels[n];
+        });
+    }
+    function vaihdaValvomoNakyma(nakyma) {
+        if (!['tyopoyta','ajastetut','historia'].includes(nakyma)) return;
+        soloneValittuNakyma = nakyma;
+        ['tyopoyta','ajastetut','historia'].forEach(function(n) {
+            const paneeli = document.getElementById('nakymapaneeli-' + n);
+            if (paneeli) { paneeli.hidden = n !== nakyma; paneeli.style.display = n === nakyma ? '' : 'none'; }
+            const btn = document.getElementById('nakymavalinta-' + n);
+            if (btn) btn.setAttribute('aria-pressed', String(n === nakyma));
+        });
+        paivitaValvomoNakymaKieli();
+    }
+    function naytaAjastetut(data) {
+        const lista = document.getElementById('ajastetut-lista');
+        if (!lista) return;
+        lista.textContent = '';
+        const suodatetut = soloneValitunTilinJulkaisut(data, 'ajastetut-suodatin-tili');
+        if (!suodatetut.length) {
+            const tyhja = document.createElement('div');
+            tyhja.className = 'tyhja-tila';
+            tyhja.textContent = soloneNakymaSanasto().eiAjastettuja;
+            lista.appendChild(tyhja);
+            return;
+        }
+        suodatetut.forEach(function(julkaisu) { lista.appendChild(luoKorttiHtml(julkaisu, true)); });
+    }
+
+    function paivitaHistoriaSuodatinValikko() {
+        if (!Array.isArray(kayttajanSometilit)) return;
+        const lang = localStorage.getItem('solone_kieli') || 'fi';
+        const sanasto = tekstit[lang] || tekstit.fi;
+        ['tyopoyta-suodatin-tili', 'ajastetut-suodatin-tili', 'historia-suodatin-tili'].forEach(function(id) {
+            const valikko = document.getElementById(id);
+            if (!valikko) return;
+            const valittu = valikko.value || 'KAIKKI';
+            valikko.replaceChildren();
+            const kaikki = document.createElement('option');
+            kaikki.value = 'KAIKKI';
+            kaikki.textContent = sanasto.filterAllAccounts;
+            valikko.appendChild(kaikki);
+            kayttajanSometilit.forEach(function(tili) {
+                const option = document.createElement('option');
+                option.value = String(tili.id);
+                option.textContent = soloneNaytettavaSometiliNimi(tili);
+                valikko.appendChild(option);
+            });
+            if (Array.from(valikko.options).some(function(o) { return o.value === valittu; })) {
+                valikko.value = valittu;
+            }
+        });
     }
 
     function suodataHistoria(nollaaSivu) {
@@ -1143,20 +1248,36 @@ if (!Array.isArray(poistetutRivit) ||
 
             await tarkistaAktiivinenTilausOhjaus();
 
-            const resOdottavat = await fetch(db.url + '/rest/v1/somepostaukset?status=in.(odotetaan,kasittelyssa)&order=luotu_aika.desc', { method: 'GET', headers: headers });
-            if (resOdottavat.status === 401) { 
-                kirjauduUlos(); 
-                return; 
-            }
-            const dataOdottavat = await resOdottavat.json();
+            // Työpöytä ja Ajastetut haetaan historian 100 tietueen rajasta riippumatta.
+            const resOdottavat = await fetch(db.url + '/rest/v1/somepostaukset?status=in.(odotetaan,kasittelyssa,hyvaksytty,julkaistaan)&order=luotu_aika.desc', { method: 'GET', headers: headers });
+            if (resOdottavat.status === 401) { kirjauduUlos(); return; }
+            if (!resOdottavat.ok) throw new Error('Avoimien julkaisujen haku epäonnistui (HTTP ' + resOdottavat.status + ')');
+            const avoimet = await resOdottavat.json();
+            if (!Array.isArray(avoimet)) throw new Error('Avoimien julkaisujen vastaus ei ollut lista.');
+            // Työpöytä: uusin ensin. LIVE Ajastetut: lähin ajastus ensin.
+            const aikaArvo = function(j, kentta) {
+                const aika = Date.parse(j[kentta] || j.luotu_aika || '');
+                return Number.isFinite(aika) ? aika : 0;
+            };
+            const dataAjastetut = avoimet.filter(function(j) {
+                return j.status === 'hyvaksytty' && Boolean(j.ajastettu_aika);
+            }).sort(function(a,b) { return aikaArvo(a, 'ajastettu_aika') - aikaArvo(b, 'ajastettu_aika'); });
+            const dataOdottavat = avoimet.filter(function(j) {
+                return !(j.status === 'hyvaksytty' && Boolean(j.ajastettu_aika));
+            }).sort(function(a,b) { return aikaArvo(b, 'luotu_aika') - aikaArvo(a, 'luotu_aika'); });
 
-            const resHistoria = await fetch(db.url + '/rest/v1/somepostaukset?status=not.in.(odotetaan,kasittelyssa)&order=luotu_aika.desc&limit=100', { method: 'GET', headers: headers });
+            const resHistoria = await fetch(db.url + '/rest/v1/somepostaukset?status=not.in.(odotetaan,kasittelyssa,hyvaksytty,julkaistaan)&order=luotu_aika.desc&limit=100', { method: 'GET', headers: headers });
+            if (resHistoria.status === 401) { kirjauduUlos(); return; }
+            if (!resHistoria.ok) throw new Error('Julkaisuhistorian haku epäonnistui (HTTP ' + resHistoria.status + ')');
             const dataHistoria = await resHistoria.json();
+            if (!Array.isArray(dataHistoria)) throw new Error('Julkaisuhistorian vastaus ei ollut lista.');
+            // Julkaisuhistoria: uusin julkaisu ensin; puuttuva julkaisuajankohta -> luontiaika.
+            dataHistoria.sort(function(a,b) { return aikaArvo(b, 'julkaistu_aika') - aikaArvo(a, 'julkaistu_aika'); });
 
             // Päättele valmistuminen tietokantaan tallennetusta tilasta, ei Make-kutsun kuittauksesta.
             if (soloneSeurattavaLuonnosId && resOdottavat.ok && resHistoria.ok &&
                 Array.isArray(dataOdottavat) && Array.isArray(dataHistoria)) {
-                const seurattu = [...dataOdottavat, ...dataHistoria].find(function(j) {
+                const seurattu = [...dataOdottavat, ...dataAjastetut, ...dataHistoria].find(function(j) {
                     return String(j.id) === soloneSeurattavaLuonnosId;
                 });
                 if (seurattu && seurattu.status !== 'kasittelyssa') {
@@ -1173,16 +1294,12 @@ if (!Array.isArray(poistetutRivit) ||
                 }
             }
 
-            if (!dataOdottavat || dataOdottavat.length === 0) {
-                const aktiivinenKieli = localStorage.getItem('solone_kieli') || 'fi';
-                const sanasto = tekstit[aktiivinenKieli] || tekstit.fi;
-                odottavatLista.innerHTML = '<div class="tyhja-tila">' + (sanasto.eiOdottavia || "Ei odottavia somejulkaisuja. Kaikki valmiina!") + '</div>';
-            } else {
-                odottavatLista.innerHTML = '';
-                dataOdottavat.forEach(function(julkaisu) { odottavatLista.appendChild(luoKorttiHtml(julkaisu, false)); });
-            }
-            viimeisinHistoriaData = dataHistoria || [];
+            viimeisinTyopoytaData = dataOdottavat;
+            viimeisinAjastetutData = dataAjastetut;
+            viimeisinHistoriaData = dataHistoria;
             paivitaHistoriaSuodatinValikko();
+            suodataTyopoyta();
+            suodataAjastetut();
             suodataHistoria(false);
 
             if (automaattiPäivitysAjastin) clearTimeout(automaattiPäivitysAjastin);
